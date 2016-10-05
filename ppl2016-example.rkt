@@ -109,7 +109,15 @@
      (assert (eq? (array-nth xs 0) (array-nth ys 0))))))
 
 (define (synth-reduce ntrd size)
-  (define xs (make-array (for/vector ([i (in-range ntrd)]) (make-element 1))))
+  (define xs (for/vector ([i (in-range ntrd)])
+               (define-symbolic* n integer?)
+               n))
+  (define arr (make-array (vector-map make-element xs)))
+  (define sum (apply + (take (vector->list xs) size)))
   (synthesize
-   #:forall '()
-   #:guarantee (invoke-kernel reduce-opt-sketch ntrd xs size (n-iter ntrd))))
+   #:forall (vector->list xs)
+   #:guarantee 
+   (begin
+     (invoke-kernel reduce-opt-sketch ntrd arr size (n-iter ntrd))
+     (printf "arr[0] = ~a\n" (array-nth arr 0))
+     (assert (eq? (array-nth arr 0) sum)))))
