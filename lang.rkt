@@ -37,6 +37,8 @@
 
 (define-syntax (while stx)
   (syntax-case stx ()
+    [(_ b #:bound bound body ...)
+     #'(while-with-bound/LS (lambda () b) (lambda () body ...) bound)]
     [(_ b body ...)
      #'(while/LS (lambda () b) (lambda () body ...))]))
 
