@@ -1,6 +1,6 @@
 #lang rosette
 
-(require "lang.rkt" rosette/lib/synthax)
+(require "lang.rkt")
 
 ;; vector addition from Sec. 1.1 of ``A Hoare Logic for SIMT Programs''
 (define (vec-add out arr1 arr2 len)

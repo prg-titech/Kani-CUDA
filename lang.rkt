@@ -23,7 +23,9 @@
  ;; real type
  int
  ;; memory
- global-memory)
+ global-memory
+ 
+ (all-from-out rosette/lib/synthax))
 
 ;; syntax
 (define-syntax (if- stx)
