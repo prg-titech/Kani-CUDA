@@ -1,21 +1,21 @@
 #lang rosette
 
-(require "lang.rkt")
+(require "lang.rkt" rosette/lib/synthax)
 
 ;; vector addition from Sec. 1.1 of ``A Hoare Logic for SIMT Programs''
 (define (vec-add out arr1 arr2 len)
   (:= int ix (tid))
-  (while (</LS ix len)
+  (while (</LS ix len) #:bound len
          ; (printf "ix = ~a\n" ix)
          (= [out ix] ((choose -/LS +/LS) [arr1 ix] [arr2 ix]))
-         (= ix (+/LS ix (choose (ntid) (ntid)))))
+         (= ix (+/LS ix (choose 1 (ntid)))))
   )
 
 ;(define out (new-sh-array 100 integer?))
-(define out (make-array (for/vector ([i (in-range 100)]) (make-element 0))))
-(define in1 (make-array (for/vector ([i (in-range 100)]) (make-element i))))
-(define in2 (make-array (for/vector ([i (in-range 100)]) (make-element i))))
-(define ans (make-array (for/vector ([i (in-range 100)]) (make-element (* 2 i)))))
+(define out (make-array (for/vector ([i (in-range 10)]) (make-element 0))))
+(define in1 (make-array (for/vector ([i (in-range 10)]) (make-element i))))
+(define in2 (make-array (for/vector ([i (in-range 10)]) (make-element i))))
+(define ans (make-array (for/vector ([i (in-range 10)]) (make-element (* 2 i)))))
 (define (array-eq-verify arr1 arr2 len)
   (define cont1 (array-contents arr1))
   (define cont2 (array-contents arr2))
@@ -27,10 +27,10 @@
 
 (define out1
   (begin
-    (invoke-kernel vec-add 32 out in1 in2 100)
+    (invoke-kernel vec-add 4 out in1 in2 10)
     out))
 
-(generate-forms
+(define p 
  (synthesize
   #:forall '()
-  #:guarantee (array-eq-verify out1 ans 100)))
+  #:guarantee (array-eq-verify out1 ans 10)))
