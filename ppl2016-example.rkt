@@ -1,7 +1,11 @@
 #lang rosette
 
+;; An example from "GPGPU向けデータ並列コードテンプレートの形式検証"
+;; http://prg.is.titech.ac.jp/wp-content/uploads/2016/02/ppl.pdf
+
 (require "lang.rkt")
 
+;; number of iteration, min{ 2^n | ntid <= 2^n}
 (define (n-iter ntid)
   (define (n-iter-aux n)
     (if (< n ntid) (n-iter-aux (* 2 n)) n))
@@ -36,6 +40,22 @@
            (= x1 x2)
            (= [arr (tid)] x1)))
     (= s (quotient/LS s 2))))
+
+(define (reduce-opt-sketch arr len nb)
+  (:= int s (quotient/LS nb 2))
+  (: int x0 x1 x2)
+  (= x1 [arr (tid)])
+  (while (</LS 0 s) 
+    (choose (barrier) (void))
+    (if- (&&/LS (</LS (+/LS (tid) s) len)
+                (</LS (tid) s))
+         (begin 
+           (= x0 [arr (+/LS (tid) s)])
+           (= x2 (+/LS x1 x0))
+           (= x1 x2)
+           (= [arr (tid)] x1)))
+    (choose (barrier (void))
+    (= s (quotient/LS s 2)))))
 
 (define (create-array size)
   (make-array
@@ -88,8 +108,8 @@
      (printf "(eq? xs[0] ys[0]) = ~a\n" (eq? (array-nth xs 0) (array-nth ys 0)))
      (assert (eq? (array-nth xs 0) (array-nth ys 0))))))
 
-;; (define (synth-reduce ntrd size)
-;;   (define xs (make-array (for/vector ([i (in-range size)]) (make-element 1))))
-;;   (synthesize
-;;    #:forall '()
-;;    #:guarantee (invoke-kernel reduce ntrd xs size))) 
+(define (synth-reduce ntrd size)
+  (define xs (make-array (for/vector ([i (in-range ntrd)]) (make-element 1))))
+  (synthesize
+   #:forall '()
+   #:guarantee (invoke-kernel reduce-opt-sketch ntrd xs size (n-iter ntrd))))
