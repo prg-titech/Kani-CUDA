@@ -65,7 +65,11 @@
      #'(array-set! arr idx exp)]))
 
 ;; execute kernel
-(define (invoke-kernel ker n . arg)
-  (parameterize ([ntid n]
-                 [mask (make-vector n #t)])
-    (apply ker arg)))
+(define (invoke-kernel ker block thread . arg)
+  (for ([b (in-range block)])
+    (parameterize ([ntid thread]
+                   [mask (make-vector thread #t)]
+                   [block-dim block]
+                   [bid b])
+      (apply ker arg))))
+  
