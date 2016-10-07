@@ -54,8 +54,8 @@
            (= x2 (+/LS x1 x0))
            (= x1 x2)
            (= [arr (tid)] x1)))
-    (choose (barrier (void))
-    (= s (quotient/LS s 2)))))
+    (choose (barrier) (void))
+    (= s (quotient/LS s 2))))
 
 (define (create-array size)
   (make-array
