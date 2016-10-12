@@ -89,9 +89,20 @@
                  [write (element-write elem)])
             ;(print write)
             (if (or (eq? write tid) (eq? write #f))
-                (begin
-                  (set-element-read! elem tid)
-                  cont)
+                (cond
+                  [(eq? read #f)
+                   ;; If this element is not read, its read set is rewritten to tid
+                   (begin
+                     (set-element-read! elem tid)
+                     cont)]
+                  [(eq? read tid)
+                   ;; If this element is read in this thread, its read set is through
+                   cont]
+                  [else
+                   ;; If this element is read in a other thread, its read is rewritten to -1
+                   (begin
+                     (set-element-read! elem -1)
+                     cont)])
                 (assert false)))
         'masked-value)))
 
@@ -118,10 +129,20 @@
              [read (element-read elem)]
              [write (element-write elem)])
         (if (and (or (eq? write tid) (eq? write #f)) (or (eq? read tid) (eq? read #f)))
-            (begin
-              (set-element-read! elem tid)
-              (set-element-write! elem tid)
-              (set-element-content! elem v))
+            (cond
+              [(eq? write #f)
+               ;; If this element is not written, its write set is rewritten to tid
+               (begin
+                 (set-element-write! elem tid)
+                 (set-element-content! elem v))]
+              [(eq? write tid)
+               ;; If this element is written in this thread, its write set is through
+               (set-element-content! elem v)]
+              [else
+               ;; If this element is written in a other thread, its write set is rewritten to -1
+               (begin
+                 (set-element-write! elem -1)
+                 (set-element-content! elem v))])
             (assert false))))))
 
 (define (array-set! arr ixs vs)
