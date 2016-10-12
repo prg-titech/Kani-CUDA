@@ -17,7 +17,6 @@
   (vector-set! (memory-contents mem) (memory-length mem) arr)
   (set-memory-length! mem (add1 (memory-length mem))))
 
-
 (define (shared-memory-set! mem blockid arr)
   (let ([vec (memory-contents mem)])
     (vector-set! vec blockid (cons arr (vector-ref vec blockid)))))

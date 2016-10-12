@@ -13,7 +13,7 @@
  bid
  ;; arithmetic/Boolean operators
  ;; /LS is for avoiding naming conflicts 
- +/LS -/LS eq?/LS !/LS &&/LS </LS >/LS quotient/LS
+ +/LS -/LS */LS eq?/LS !/LS &&/LS </LS >/LS quotient/LS
  ;; barrier
  barrier
  ;; kernel invocation
