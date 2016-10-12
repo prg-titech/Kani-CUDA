@@ -10,13 +10,15 @@
 (struct element
   ([content #:mutable] ;int or boolean
    [read #:mutable]    ;int or boolean
-   [write #:mutable]) ;int or boolean
+   [write #:mutable]   ;int or boolean
+   [read/B #:mutable]  ;int or boolean 
+   [write/B #:mutable]);int or boolean
   #:property prop:procedure
   (lambda (elem) (element-content elem)))
 
 ;; make new element
 (define (make-element e)
-  (element e #f #f))
+  (element e #f #f #f #f))
 
 ;; return element rewrited its read to #f
 (define (read-reset! elem)
@@ -82,28 +84,36 @@
   (for/vector ([tid (tid)] 
                [i (vecfy ixs)]
                [m (mask)])
-    (if m (let* ([vec (array-contents arr)]
-                 [elem (vector-ref vec i)]
-                 [cont (element-content elem)]
-                 [read (element-read elem)]
-                 [write (element-write elem)])
-            ;(print write)
-            (if (or (eq? write tid) (eq? write #f))
-                (cond
-                  [(eq? read #f)
-                   ;; If this element is not read, its read set is rewritten to tid
-                   (begin
-                     (set-element-read! elem tid)
-                     cont)]
-                  [(eq? read tid)
-                   ;; If this element is read in this thread, its read set is through
-                   cont]
-                  [else
-                   ;; If this element is read in a other thread, its read is rewritten to -1
-                   (begin
-                     (set-element-read! elem -1)
-                     cont)])
-                (assert false)))
+    (if m
+        (let* ([bid (bid)]
+               [vec (array-contents arr)]
+               [elem (vector-ref vec i)]
+               [cont (element-content elem)]
+               [read (element-read elem)]
+               [write (element-write elem)]
+               [read/B (element-read/B elem)]
+               [write/B (element-write/B elem)])
+          ;(print write)
+          (if (or (eq? write tid) (eq? write #f))
+              (if (or (eq? write/B bid) (eq? write/B #f))
+                  (begin
+                    (set-element-read/B! elem bid)
+                    (cond
+                      [(eq? read #f)
+                       ;; If this element is not read, its read set is rewritten to tid
+                       (begin
+                         (set-element-read! elem tid)
+                         cont)]
+                      [(eq? read tid)
+                       ;; If this element is read in this thread, its read set is through
+                       cont]
+                      [else
+                       ;; If this element is read in a other thread, its read is rewritten to -1
+                       (begin
+                         (set-element-read! elem -1)
+                         cont)]))
+                  (assert false))
+              (assert false)))
         'masked-value)))
 
 (define (array-ref! arr ixs)
@@ -123,26 +133,33 @@
         [v (vecfy vs)])
     ;;(printf "m, i, v = ~a, ~a, ~a\n" m i v)
     (when m
-      (let* ([vec (array-contents arr)]
+      (let* ([bid (bid)]
+             [vec (array-contents arr)]
              [elem (vector-ref vec i)]
              [cont (element-content elem)]
              [read (element-read elem)]
-             [write (element-write elem)])
+             [write (element-write elem)]
+             [read/B (element-read/B elem)]
+             [write/B (element-write/B elem)])
         (if (and (or (eq? write tid) (eq? write #f)) (or (eq? read tid) (eq? read #f)))
-            (cond
-              [(eq? write #f)
-               ;; If this element is not written, its write set is rewritten to tid
-               (begin
-                 (set-element-write! elem tid)
-                 (set-element-content! elem v))]
-              [(eq? write tid)
-               ;; If this element is written in this thread, its write set is through
-               (set-element-content! elem v)]
-              [else
-               ;; If this element is written in a other thread, its write set is rewritten to -1
-               (begin
-                 (set-element-write! elem -1)
-                 (set-element-content! elem v))])
+            (if (and (or (eq? write/B bid) (eq? write/B #f)) (or (eq? read/B bid) (eq? read/B #f)))
+                (begin
+                  (set-element-write/B! elem bid)
+                  (cond
+                    [(eq? write #f)
+                     ;; If this element is not written, its write set is rewritten to tid
+                     (begin
+                       (set-element-write! elem tid)
+                       (set-element-content! elem v))]
+                    [(eq? write tid)
+                     ;; If this element is written in this thread, its write set is through
+                     (set-element-content! elem v)]
+                    [else
+                     ;; If this element is written in a other thread, its write set is rewritten to -1
+                     (begin
+                       (set-element-write! elem -1)
+                       (set-element-content! elem v))]))
+                (assert false))
             (assert false))))))
 
 (define (array-set! arr ixs vs)

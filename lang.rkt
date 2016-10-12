@@ -9,6 +9,8 @@
  if- while : = := invoke-kernel
  ;; thread ID
  tid ntid
+ ;; block ID
+ bid
  ;; arithmetic/Boolean operators
  ;; /LS is for avoiding naming conflicts 
  +/LS -/LS eq?/LS !/LS &&/LS </LS >/LS quotient/LS
@@ -66,10 +68,9 @@
 
 ;; execute kernel
 (define (invoke-kernel ker block thread . arg)
-  (for ([b (in-range block)])
-    (parameterize ([ntid thread]
-                   [mask (make-vector thread #t)]
-                   [block-dim block]
-                   [bid b])
-      (apply ker arg))))
-  
+  (parameterize ([ntid thread]
+                 [block-dim block])
+    (for ([b (in-range block)])
+      (parameterize ([bid b]
+                     [mask (make-vector thread #t)])
+        (apply ker arg)))))
