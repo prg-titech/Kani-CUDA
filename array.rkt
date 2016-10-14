@@ -47,7 +47,7 @@
 ;; make new shared array
 (define (make-shared-array len type)
   (define arr (new-symbolic-array len type))
-  (shared-memory-allocate! (bid) arr)
+  (shared-memory-allocate! arr)
   arr)
 
 ;; make a symbolic vector with length ``n'' and type ``type''

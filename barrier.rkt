@@ -24,5 +24,6 @@
 ;; just do the barrier divergence check
 (define (barrier)
   (memory-synchronize! global-memory)
+  (memory-synchronize! (vector-ref (shared-memory) (bid)))
   (let ([m (mask)])
     (assert (barrier-ok m))))

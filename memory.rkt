@@ -14,21 +14,16 @@
   (memory null))
 
 (define (make-shared-memory size)
-  (memory (make-vector (block-size))))
+  (make-vector size (make-memory)))
 
 (define (memory-allocate! arr)
   (set-memory-contents! global-memory (cons arr (memory-contents global-memory))))
 
-(define (shared-memory-allocate! blockid arr)
-  (let ([vec (memory-contents (shared-memory))])
-    (vector-set! vec blockid (cons arr (vector-ref vec blockid)))))
+(define (shared-memory-allocate! arr)
+  (let* ([vec (shared-memory)]
+         [smem (vector-ref vec (bid))])
+    (set-memory-contents! smem (cons arr (memory-contents smem)))))
 
 (define global-memory (make-memory))
 
 (define shared-memory (make-parameter '#()))
-
-
-
-
-
-
