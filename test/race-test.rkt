@@ -6,7 +6,7 @@
 
 (define (test arr)
   (:= int x [arr 0])
-  (if- (eq?/LS (tid) (- (ntid) 1))
+  (if- (eq?/LS (tid) (- (thread-dim) 1))
        (= [arr 0] 1)))
 
 (define (test-block-race arr)

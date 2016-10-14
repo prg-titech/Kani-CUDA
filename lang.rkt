@@ -8,7 +8,7 @@
  ;; syntax
  if- while : = := invoke-kernel
  ;; thread ID
- tid ntid
+ tid thread-dim
  ;; block ID
  bid
  ;; arithmetic/Boolean operators
@@ -68,7 +68,7 @@
 
 ;; execute kernel
 (define (invoke-kernel ker block thread . arg)
-  (parameterize ([ntid thread]
+  (parameterize ([thread-dim thread]
                  [block-dim block])
     (for ([b (in-range block)])
       (parameterize ([bid b]

@@ -4,11 +4,11 @@
 
 ;; vector addition from Sec. 1.1 of ``A Hoare Logic for SIMT Programs''
 (define (vec-add out arr1 arr2 len)
-  (:= int ix (+/LS (tid) (*/LS (bid) (ntid))))
+  (:= int ix (+/LS (tid) (*/LS (bid) (thread-dim))))
   (while (</LS ix len) #:bound len
          ;(printf "ix = ~a\n" ix)
          (= [out ix] ((choose -/LS +/LS) [arr1 ix] [arr2 ix]))
-         (= ix (+/LS ix (choose (*/LS 2 (ntid)) (ntid)))))
+         (= ix (+/LS ix (choose (*/LS 2 (thread-dim)) (thread-dim)))))
   )
 
 ;(define out (new-sh-array 100 integer?))

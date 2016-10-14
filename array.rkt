@@ -54,11 +54,11 @@
 
 ;; create a new vector value with type ``type''
 (define (new-vec type)
-  (new-symbolic-vector (ntid) type))
+  (new-symbolic-vector (thread-dim) type))
 
 ;; create a scalar value from scalar ``s''
 (define (scalar->vec s)
-  (make-vector (ntid) s))
+  (make-vector (thread-dim) s))
 
 ;; create a new array with length n and type ``type''
 (define (new-sh-array n type)
@@ -67,7 +67,7 @@
 ;; denotation of the statement ``xs = vs''
 ;; assign each element of vs to xs, except masked values
 (define (vec-set-const! xs vs)
-  (for ([i (in-range (ntid))]
+  (for ([i (in-range (thread-dim))]
         [m (mask)]
         [v (vecfy vs)])
     (when m (vector-set! xs i v))))

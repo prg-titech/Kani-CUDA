@@ -11,7 +11,7 @@
          (barrier)))
 
 (define xs (make-array (for/vector ([i (in-range 32)]) (make-element 1))))
-(invoke-kernel reduce 16 xs 32)
+(invoke-kernel reduce 1 16 xs 32)
 
 (for ([i (in-range 32)])
   (printf "~a " (element-content (vector-ref (array-contents xs) i))))
