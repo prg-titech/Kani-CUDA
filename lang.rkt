@@ -6,7 +6,7 @@
 
 (provide
  ;; syntax
- if- while : = := invoke-kernel
+ if- while : = := invoke-kernel :shared
  ;; thread ID
  tid thread-dim
  ;; block ID
@@ -51,6 +51,11 @@
     [(_ type x ...)
      #'(begin (define x (new-vec type)) ...)]))
 
+(define-syntax (:shared stx)
+  (syntax-case stx ()
+    [(_ type arr[len])
+     #'(define arr (make-shared-array len type))]))
+
 (define-syntax (:= stx)
   (syntax-case stx ()
     [(_ type x val)
@@ -68,8 +73,9 @@
 
 ;; execute kernel
 (define (invoke-kernel ker block thread . arg)
-  (parameterize ([thread-dim thread]
-                 [block-dim block])
+  (parameterize* ([thread-dim thread]
+                  [block-dim block]
+                  [shared-memory (make-shared-memory (block-size))])
     (for ([b (in-range block)])
       (parameterize ([bid b]
                      [mask (make-vector thread #t)])

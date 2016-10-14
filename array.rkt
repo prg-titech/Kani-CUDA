@@ -4,7 +4,7 @@
 
 (provide array array-contents element-content read-reset! write-reset!
          make-element new-vec vec-set! array-ref! array-set!
-         memory-contents make-array)
+         memory-contents make-array make-shared-array)
 
 ;; element of array 
 (struct element
@@ -41,7 +41,13 @@
 ;; make new array
 (define (make-array vec)
   (define arr (array vec))
-  (memory-allocate! global-memory arr)
+  (memory-allocate! arr)
+  arr)
+
+;; make new shared array
+(define (make-shared-array len type)
+  (define arr (new-symbolic-array len type))
+  (shared-memory-allocate! (bid) arr)
   arr)
 
 ;; make a symbolic vector with length ``n'' and type ``type''
@@ -49,6 +55,13 @@
   (for/vector ([i (in-range n)])
     (define-symbolic* x type)
     x))
+
+;; Make an array consisting elements containing a symbolic value
+(define (new-symbolic-array n type)
+  (array
+   (for/vector ([i (in-range n)])
+    (define-symbolic* x type)
+    (make-element x))))
 
 ;(define (new-symbolic-vector n type)
 

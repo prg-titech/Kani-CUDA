@@ -2,7 +2,7 @@
 
 (require "work.rkt")
 
-(provide make-memory memory-contents memory-allocate! global-memory shared-memory-set!)
+(provide make-memory make-shared-memory memory-contents memory-allocate! global-memory shared-memory shared-memory-allocate!)
 
 ;; TODO use list
 ;; Model of memory
@@ -13,11 +13,22 @@
 (define (make-memory)
   (memory null))
 
-(define (memory-allocate! mem arr)
-  (set-memory-contents! mem (cons arr (memory-contents mem))))
+(define (make-shared-memory size)
+  (memory (make-vector (block-size))))
 
-(define (shared-memory-set! mem blockid arr)
-  (let ([vec (memory-contents mem)])
+(define (memory-allocate! arr)
+  (set-memory-contents! global-memory (cons arr (memory-contents global-memory))))
+
+(define (shared-memory-allocate! blockid arr)
+  (let ([vec (memory-contents (shared-memory))])
     (vector-set! vec blockid (cons arr (vector-ref vec blockid)))))
 
 (define global-memory (make-memory))
+
+(define shared-memory (make-parameter '#()))
+
+
+
+
+
+
