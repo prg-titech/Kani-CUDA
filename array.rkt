@@ -4,7 +4,7 @@
 
 (provide array array-contents element-content read-reset! write-reset!
          make-element new-vec vec-set! array-ref! array-set!
-         memory-contents memory-length make-array)
+         memory-contents make-array)
 
 ;; element of array 
 (struct element
@@ -41,7 +41,7 @@
 ;; make new array
 (define (make-array vec)
   (define arr (array vec))
-  (memory-set! global-memory arr)
+  (memory-allocate! global-memory arr)
   arr)
 
 ;; make a symbolic vector with length ``n'' and type ``type''

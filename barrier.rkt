@@ -7,8 +7,8 @@
 ;; synchronize memory
 (define (memory-synchronize! mem)
   (define cont (memory-contents mem))
-  (for ([i (in-range 0 (memory-length mem))])
-    (let ([vec (array-contents (vector-ref cont i))])
+  (for ([i (in-range 0 (length cont))])
+    (let ([vec (array-contents (list-ref cont i))])
     (begin
       (vector-map! read-reset! vec)
       (vector-map! write-reset! vec)))))
