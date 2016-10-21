@@ -29,18 +29,27 @@
        (for ([i (in-range (* 2 p))])
          (= [smemA i]
             [A (+/LS i (*/LS (choose block-x block-y) (* 2 p)))])
-         (if- (</LS i p)
-              (= [smemB i]
-                 [B (+/LS (*/LS i m) (*/LS (choose block-x block-y) 2))])
-              (= [smemB i]
-                 [B (+/LS (+/LS (*/LS (-/LS i p) m) (*/LS (choose block-x block-y) 2)) 1)]))))
+         (= [smemB i]
+            [B (+/LS
+                (+/LS
+                 (*/LS (modulo/LS i p) m)
+                 (*/LS (choose block-x block-y) 2)) (quotient/LS i p))])))
   (choose (barrier) (void))
   (:= int x 0)
   (for ([i (in-range p)])
     (+= x (*/LS [smemA (+/LS i (*/LS (choose thread-x thread-y) p))]
                 [smemB (+/LS i (*/LS (choose thread-x thread-y) p))])))
   (choose (barrier) (void))
-  (= [C (+/LS (+/LS (+/LS (*/LS (choose block-x block-y) (*/LS 2 p)) (*/LS 2 (choose block-x block-y))) (*/LS (choose thread-x thread-y) p)) (choose thread-x thread-y))] x))
+  (= [C (+/LS
+         (+/LS
+          (+/LS
+           (*/LS
+            (choose block-x block-y)
+            (*/LS 2 p))
+           (*/LS 2 (choose block-x block-y)))
+          (*/LS (choose thread-x thread-y) p))
+         (choose thread-x thread-y))]
+     x))
 
 
 (define src1 (make-array (for/vector ([i (in-range 36)]) (make-element i))))
