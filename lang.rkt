@@ -6,14 +6,14 @@
 
 (provide
  ;; syntax
- if- while : = := invoke-kernel :shared
+ if- while : = += := invoke-kernel :shared
  ;; thread ID
  tid thread-dim
  ;; block ID
  bid
  ;; arithmetic/Boolean operators
  ;; /LS is for avoiding naming conflicts 
- +/LS -/LS */LS eq?/LS !/LS &&/LS </LS >/LS quotient/LS
+ +/LS -/LS */LS eq?/LS !/LS &&/LS </LS >/LS quotient/LS modulo/LS
  ;; barrier
  barrier
  ;; kernel invocation
@@ -26,6 +26,10 @@
  int
  ;; memory
  global-memory
+ ;; option
+ printmatrix
+ ;; function for host
+ array-ref-host array-set-host!
  
  (all-from-out rosette/lib/synthax))
 
@@ -62,6 +66,11 @@
      #'(begin
          (define x (new-vec type))
          (vec-set! x val))]))
+
+(define-syntax (+= stx)
+  (syntax-case stx ()
+    [(_ var exp)
+     #'(vec-set! var (+/LS var exp))]))
 
 (define-syntax (= stx)
   (syntax-case stx ()

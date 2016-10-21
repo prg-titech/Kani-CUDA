@@ -4,7 +4,8 @@
 
 (provide array array-contents element-content read-reset! write-reset!
          make-element new-vec vec-set! array-ref! array-set!
-         memory-contents make-array make-shared-array)
+         memory-contents make-array make-shared-array
+         printmatrix array-set-host! array-ref-host)
 
 ;; element of array 
 (struct element
@@ -38,6 +39,13 @@
   (lambda (arr idx)
     (array-ref! arr idx)))
 
+(define (printmatrix arr n m)
+  (let* ([cont (array-contents arr)])
+    (for ([j m])
+      (for ([i n])
+        (printf "~a " (element-content (vector-ref cont (+ i (* j n))))))
+      (newline))))
+
 ;; make new array
 (define (make-array vec)
   (define arr (array vec))
@@ -60,8 +68,8 @@
 (define (new-symbolic-array n type)
   (array
    (for/vector ([i (in-range n)])
-    (define-symbolic* x type)
-    (make-element x))))
+     (define-symbolic* x type)
+     (make-element x))))
 
 ;(define (new-symbolic-vector n type)
 
@@ -137,6 +145,10 @@
       (array-ref-const! arr ixs)
       )))
 
+(define (array-ref-host arr ix)
+  (let ([cont (array-contents arr)])
+    (element-content (vector-ref cont ix))))
+
 ;; denotation of the statement arr[ixs] = vs
 ;; array-set! assigns vs to each elements of arr[ixs]
 (define (array-set-const! arr ixs vs)
@@ -183,3 +195,7 @@
     (parameterize ([mask m])
       (array-set-const! arr ixs vs)
       )))
+
+(define (array-set-host! arr ix v)
+  (let ([cont (array-contents arr)])
+    (set-element-content! (vector-ref cont ix) v)))
