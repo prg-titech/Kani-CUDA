@@ -4,15 +4,16 @@
 
 (provide make-memory make-shared-memory memory-contents memory-allocate! global-memory shared-memory shared-memory-allocate!)
 
-;; TODO use list
-;; Model of memory
-(struct memory ([contents #:mutable]))
+;; DONE use list
+;; Model of memory for global memory and shared memory.
+(struct memory ([contents #:mutable] ; list of array
+                ))
 
-;; Create a freash, empty memory with the given capacity
-;; or 64 if no capacity is given.
+;; Create a freash, empty memory
 (define (make-memory)
   (memory null))
 
+;; Create a freash, empty shared memory
 (define (make-shared-memory size)
   (make-vector size (make-memory)))
 
@@ -26,4 +27,5 @@
 
 (define global-memory (make-memory))
 
+;; Type of shared memory is vector of list of array.
 (define shared-memory (make-parameter '#()))

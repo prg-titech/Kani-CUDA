@@ -14,31 +14,35 @@
   C)
 
 (define (mmul-kernel A B C n p m)
-    (:shared int smemA ((* 2 p)))
-    (:shared int smemB ((* 2 p)))
-    (:= int gsize-x (quotient/LS (choose n m) 2))
-    (:= int gsize-y (quotient/LS (choose n m) 2))
-    (:= int block-x (modulo/LS (bid) gsize-x))
-    (:= int block-y (quotient/LS (bid) gsize-x))
-    (:= int thread-x (modulo/LS (tid) 2))
-    (:= int thread-y (quotient/LS (tid) 2))
-    (if-
-     (eq?/LS (tid) 0)
-     (for
-      ((i (in-range (* 2 p))))
-      (= (smemA i) (A (+/LS i (*/LS block-x (* 2 p)))))
-      (if-
-       (</LS i p)
-       (= (smemB i) (B (+/LS (*/LS i m) (*/LS block-y 2))))
-       (= (smemB i) (B (+/LS (+/LS (*/LS (-/LS i p) m) (*/LS block-y 2)) 1))))))
-    (barrier)
-    (:= int x 0)
-    (for
-     ((i (in-range p)))
-     (+= x (*/LS (smemA (+/LS i (*/LS thread-x p))) (smemB (+/LS i (*/LS thread-y p))))))
-    (=
-     (C (+/LS (+/LS (+/LS (*/LS block-x (*/LS 2 p)) (*/LS 2 block-y)) (*/LS thread-x p)) thread-y))
-     x))
+  (:shared int smemA ((* 2 p)))
+  (:shared int smemB ((* 2 p)))
+  (:= int gsize-x (quotient/LS (choose n m) 2))
+  (:= int gsize-y (quotient/LS (choose n m) 2))
+  (:= int block-x (modulo/LS (bid) gsize-x))
+  (:= int block-y (quotient/LS (bid) gsize-x))
+  (printf "~a\n" block-x)
+  (printf "~a\n" block-y)
+  (:= int thread-x (modulo/LS (tid) 2))
+  (:= int thread-y (quotient/LS (tid) 2))
+  (if-
+   (eq?/LS (tid) 0)
+   (for
+       ((i (in-range (* 2 p))))
+     (= (smemA i) (A (+/LS i (*/LS block-x (* 2 p)))))
+     (if-
+      (</LS i p)
+      (= (smemB i) (B (+/LS (*/LS i m) (*/LS block-y 2))))
+      (= (smemB i) (B (+/LS (+/LS (*/LS (-/LS i p) m) (*/LS block-y 2)) 1))))))
+  (print (choose block-x block-y))
+  (newline)
+  (barrier)
+  (:= int x 0)
+  (for
+      ((i (in-range p)))
+    (+= x (*/LS (smemA (+/LS i (*/LS thread-x p))) (smemB (+/LS i (*/LS thread-y p))))))
+  (=
+   (C (+/LS (+/LS (+/LS (*/LS block-x (*/LS 2 p)) (*/LS 2 block-y)) (*/LS thread-x p)) thread-y))
+   x))
 
 (define (kernel-out src1 src2 dst n)
   (begin

@@ -57,8 +57,10 @@
 
 (define-syntax (:shared stx)
   (syntax-case stx ()
-    [(_ type arr[len])
-     #'(define arr (make-shared-array len type))]))
+    [(_ type arr[n])
+     #'(define arr (make-shared-array type n))]
+    [(_ type arr[n][m])
+     #'(define arr (make-shared-array type n m))]))
 
 (define-syntax (:= stx)
   (syntax-case stx ()

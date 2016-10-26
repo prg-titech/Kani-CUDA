@@ -34,10 +34,27 @@
 ;; array
 ;; type check?
 (struct array
-  ([contents #:mutable])
+  ([contents #:mutable]  ;vector of element
+   [dimension #:mutable]);list of int
   #:property prop:procedure
-  (lambda (arr idx)
-    (array-ref! arr idx)))
+  (lambda (arr . ixs)
+    (let* ([dim (array-dimension arr)]
+           [size (length dim)])
+      (cond
+        [(not (eq? size (length ixs))) (assert false)]
+        [(eq? size 1) (let ([id (list-ref ixs 0)]) (array-ref! arr id))]
+        [(eq? size 2) (let ([ixs0 (vecfy (list-ref ixs 0))]
+                            [ixs1 (vecfy (list-ref ixs 1))])
+                        (define id
+                          (for/vector ([i (thread-dim)])
+                            (let ([ix0 (vector-ref ixs0 i)]
+                                  [ix1 (vector-ref ixs1 i)])
+                              (if (and (< ix0 (list-ref dim 0)) (< ix1 (list-ref dim 1)))
+                                  (+ (* ix0 (list-ref dim 1)) ix1)
+                                  (assert false)))))
+                        (array-ref! arr id))]))))
+
+
 
 (define (printmatrix arr n m)
   (let* ([cont (array-contents arr)])
@@ -47,14 +64,14 @@
       (newline))))
 
 ;; make new array
-(define (make-array vec)
-  (define arr (array vec))
+(define (make-array vec . dim)
+  (define arr (array vec dim))
   (memory-allocate! arr)
   arr)
 
 ;; make new shared array
-(define (make-shared-array len type)
-  (define arr (new-symbolic-array len type))
+(define (make-shared-array type . dim)
+  (define arr (new-symbolic-array type dim))
   (shared-memory-allocate! arr)
   arr)
 
@@ -65,11 +82,13 @@
     x))
 
 ;; Make an array consisting elements containing a symbolic value
-(define (new-symbolic-array n type)
-  (array
-   (for/vector ([i (in-range n)])
-     (define-symbolic* x type)
-     (make-element x))))
+(define (new-symbolic-array type dim)
+  (let ([n (apply * dim)])
+    (array
+     (for/vector ([i (in-range n)])
+       (define-symbolic* x type)
+       (make-element x))
+     dim)))
 
 ;(define (new-symbolic-vector n type)
 
