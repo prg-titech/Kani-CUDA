@@ -5,7 +5,7 @@
 (define (test-smem src)
   (:shared int arr[10][1])
   (:= int ix (+/LS (tid) (*/LS (bid) (thread-dim))))
-  (= [arr (tid)] [src ix])
+  (= [arr (tid) 0] [src ix])
   (barrier)
   (print [arr 0 0])
 )

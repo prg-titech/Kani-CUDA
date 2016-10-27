@@ -3,7 +3,7 @@
 (require "work.rkt" "memory.rkt")
 
 (provide array array-contents element-content read-reset! write-reset!
-         make-element new-vec vec-set! array-ref! array-set!
+         make-element new-vec vec-set! array-ref! array-set! array-set-dim!
          memory-contents make-array make-shared-array
          printmatrix array-set-host! array-ref-host)
 
@@ -38,21 +38,7 @@
    [dimension #:mutable]);list of int
   #:property prop:procedure
   (lambda (arr . ixs)
-    (let* ([dim (array-dimension arr)]
-           [size (length dim)])
-      (cond
-        [(not (eq? size (length ixs))) (assert false)]
-        [(eq? size 1) (let ([id (list-ref ixs 0)]) (array-ref! arr id))]
-        [(eq? size 2) (let ([ixs0 (vecfy (list-ref ixs 0))]
-                            [ixs1 (vecfy (list-ref ixs 1))])
-                        (define id
-                          (for/vector ([i (thread-dim)])
-                            (let ([ix0 (vector-ref ixs0 i)]
-                                  [ix1 (vector-ref ixs1 i)])
-                              (if (and (< ix0 (list-ref dim 0)) (< ix1 (list-ref dim 1)))
-                                  (+ (* ix0 (list-ref dim 1)) ix1)
-                                  (assert false)))))
-                        (array-ref! arr id))]))))
+    (array-ref-dim! arr ixs)))
 
 
 
@@ -117,7 +103,7 @@
              [vs vs])
     (vec-set-const! xs vs)))
 
-;; TODO; implement Read/Write set
+;; DONE; implement Read/Write set
 ;; denotation of an expression arr[ixs]
 ;; if a thread is masked, array-ref! returns the special symbol 'masked-value
 (define (array-ref-const! arr ixs)
@@ -163,6 +149,23 @@
     (parameterize ([mask m])
       (array-ref-const! arr ixs)
       )))
+
+(define (array-ref-dim! arr ixs)
+  (let* ([dim (array-dimension arr)]
+         [size (length dim)])
+    (cond
+      [(not (eq? size (length ixs))) (assert false)]
+      [(eq? size 1) (let ([id (list-ref ixs 0)]) (array-ref! arr id))]
+      [(eq? size 2) (let ([ixs0 (vecfy (list-ref ixs 0))]
+                          [ixs1 (vecfy (list-ref ixs 1))])
+                      (define id
+                        (for/vector ([i (thread-dim)])
+                          (let ([ix0 (vector-ref ixs0 i)]
+                                [ix1 (vector-ref ixs1 i)])
+                            (if (and (< ix0 (list-ref dim 0)) (< ix1 (list-ref dim 1)))
+                                (+ (* ix0 (list-ref dim 1)) ix1)
+                                (assert false)))))
+                      (array-ref! arr id))])))
 
 (define (array-ref-host arr ix)
   (let ([cont (array-contents arr)])
@@ -214,6 +217,23 @@
     (parameterize ([mask m])
       (array-set-const! arr ixs vs)
       )))
+
+(define (array-set-dim! arr vs . ixs)
+  (let* ([dim (array-dimension arr)]
+         [size (length dim)])
+    (cond
+      [(not (eq? size (length ixs))) (assert false)]
+      [(eq? size 1) (let ([id (list-ref ixs 0)]) (array-set! arr id vs))]
+      [(eq? size 2) (let ([ixs0 (vecfy (list-ref ixs 0))]
+                          [ixs1 (vecfy (list-ref ixs 1))])
+                      (define id
+                        (for/vector ([i (thread-dim)])
+                          (let ([ix0 (vector-ref ixs0 i)]
+                                [ix1 (vector-ref ixs1 i)])
+                            (if (and (< ix0 (list-ref dim 0)) (< ix1 (list-ref dim 1)))
+                                (+ (* ix0 (list-ref dim 1)) ix1)
+                                (assert false)))))
+                      (array-set! arr id vs))])))
 
 (define (array-set-host! arr ix v)
   (let ([cont (array-contents arr)])

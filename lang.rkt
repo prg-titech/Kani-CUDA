@@ -79,8 +79,8 @@
     [(_ var exp)
      (identifier? #'var)
      #'(vec-set! var exp)]
-    [(_ [arr idx] exp)
-     #'(array-set! arr idx exp)]))
+    [(_ [arr idx ...] exp)
+     #'(array-set-dim! arr exp idx ...)]))
 
 ;; execute kernel
 (define (invoke-kernel ker block thread . arg)
