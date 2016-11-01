@@ -80,11 +80,11 @@
 
 ;; create a new vector value with type ``type''
 (define (new-vec type)
-  (new-symbolic-vector (thread-dim) type))
+  (new-symbolic-vector (block-size) type))
 
 ;; create a scalar value from scalar ``s''
 (define (scalar->vec s)
-  (make-vector (thread-dim) s))
+  (make-vector (block-size) s))
 
 ;; create a new array with length n and type ``type''
 (define (new-sh-array n type)
@@ -93,7 +93,7 @@
 ;; denotation of the statement ``xs = vs''
 ;; assign each element of vs to xs, except masked values
 (define (vec-set-const! xs vs)
-  (for ([i (in-range (thread-dim))]
+  (for ([i (in-range (block-size))]
         [m (mask)]
         [v (vecfy vs)])
     (when m (vector-set! xs i v))))
@@ -159,7 +159,7 @@
       [(eq? size 2) (let ([ixs0 (vecfy (list-ref ixs 0))]
                           [ixs1 (vecfy (list-ref ixs 1))])
                       (define id
-                        (for/vector ([i (thread-dim)])
+                        (for/vector ([i (block-size)])
                           (let ([ix0 (vector-ref ixs0 i)]
                                 [ix1 (vector-ref ixs1 i)])
                             (if (and (< ix0 (list-ref dim 0)) (< ix1 (list-ref dim 1)))
@@ -227,7 +227,7 @@
       [(eq? size 2) (let ([ixs0 (vecfy (list-ref ixs 0))]
                           [ixs1 (vecfy (list-ref ixs 1))])
                       (define id
-                        (for/vector ([i (thread-dim)])
+                        (for/vector ([i (block-size)])
                           (let ([ix0 (vector-ref ixs0 i)]
                                 [ix1 (vector-ref ixs1 i)])
                             (if (and (< ix0 (list-ref dim 0)) (< ix1 (list-ref dim 1)))

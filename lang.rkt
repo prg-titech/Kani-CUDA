@@ -2,15 +2,15 @@
 
 (require "array.rkt" "control.rkt" "work.rkt"
          "real.rkt" "operators.rkt" "barrier.rkt" "memory.rkt"
-         rosette/lib/synthax)
+         rosette/lib/synthax rosette/lib/angelic)
 
 (provide
  ;; syntax
  if- while : = += := invoke-kernel :shared
  ;; thread ID
- tid thread-dim
+ thread-idx block-size
  ;; block ID
- bid
+ block-idx
  ;; arithmetic/Boolean operators
  ;; /LS is for avoiding naming conflicts 
  +/LS -/LS */LS eq?/LS !/LS &&/LS </LS >/LS quotient/LS modulo/LS
@@ -19,7 +19,7 @@
  ;; kernel invocation
  invoke-kernel
  ;; queue
- choose generate-forms
+ choose choose* generate-forms
  ;; objects
  array array-contents element-content make-element make-array
  ;; real type
@@ -83,11 +83,16 @@
      #'(array-set-dim! arr exp idx ...)]))
 
 ;; execute kernel
-(define (invoke-kernel ker block thread . arg)
-  (parameterize* ([thread-dim thread]
-                  [block-dim block]
+(define (invoke-kernel
+         ker   ; string
+         gdim  ; list of int
+         bdim  ; list of int
+         . arg); any
+  (parameterize* ([grid-dimension gdim]
+                  [block-dimension bdim]
                   [shared-memory (make-shared-memory (block-size))])
-    (for ([b (in-range block)])
+    (for ([b (in-range (block-size))])
       (parameterize ([bid b]
-                     [mask (make-vector thread #t)])
+                     [block-index (to-bid b)]
+                     [mask (make-vector (block-size) #t)])
         (apply ker arg)))))
