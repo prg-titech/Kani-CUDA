@@ -92,7 +92,7 @@
                   [block-dimension bdim]
                   [shared-memory (make-shared-memory (block-size))])
     (for ([b (in-range (block-size))])
-      (parameterize ([bid b]
-                     [block-index (to-bid b)]
-                     [mask (make-vector (block-size) #t)])
+      (parameterize* ([bid b]
+                      [block-index (to-bid b)]
+                      [mask (make-vector (block-size) #t)])
         (apply ker arg)))))

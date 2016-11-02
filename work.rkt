@@ -43,7 +43,7 @@
 ;; Convert a block number(integer) to block ID(list of int)
 (define (to-bid i)
   (if (eq? (length (grid-dimension)) 1)
-      '(i)
+      (list i)
       (list (modulo i (grid-dim 0)) (quotient i (grid-dim 0)))))
 
 ;; Return current thread ID(vector of int), idx represent a dimension thread ID
@@ -66,7 +66,7 @@
       (assert false))))
 
 
-(define tid (for/vector ([i (block-size)]) i))
+(define (tid) (for/vector ([i (block-size)]) i))
 (define bid (make-parameter 0))
                         
   
