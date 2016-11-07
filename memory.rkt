@@ -22,7 +22,7 @@
 
 (define (shared-memory-allocate! arr)
   (let* ([vec (shared-memory)]
-         [smem (vector-ref vec bid)])
+         [smem (vector-ref vec (bid))])
     (set-memory-contents! smem (cons arr (memory-contents smem)))))
 
 (define global-memory (make-memory))

@@ -91,7 +91,7 @@
   (parameterize* ([grid-dimension gdim]
                   [block-dimension bdim]
                   [shared-memory (make-shared-memory (block-size))])
-    (for ([b (in-range (block-size))])
+    (for ([b (in-range (grid-size))])
       (parameterize* ([bid b]
                       [block-index (to-bid b)]
                       [mask (make-vector (block-size) #t)])

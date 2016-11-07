@@ -15,7 +15,7 @@
 (define (grid-dim idx) (list-ref (grid-dimension) idx))
   
 ;; Return current grid size
-(define grid-size (apply * (grid-dimension)))
+(define (grid-size) (apply * (grid-dimension)))
 
 ;; Return current block id
 (define block-index (make-parameter '(0)))
