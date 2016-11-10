@@ -3,7 +3,7 @@
 (require "work.rkt"
          rosette/lib/synthax)
 
-(provide +/LS -/LS */LS eq?/LS !/LS &&/LS </LS >/LS quotient/LS modulo/LS)
+(provide +/LS -/LS */LS //LS eq?/LS !/LS &&/LS </LS >/LS quotient/LS modulo/LS)
 
 ;; map, zipWith
 ;; 'masked-value は mask されたスレッドが返す値を表し,map, zipWith は 'masked-value を無視する
@@ -41,6 +41,7 @@
 (define +/LS (LSop2 +))
 (define -/LS (LSop2 -))
 (define */LS (LSop2 *))
+(define //LS (LSop2 /))
 (define eq?/LS (LSop2 eq?))
 (define !/LS (LSop !))
 (define &&/LS (LSop2 &&))
