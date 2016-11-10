@@ -6,14 +6,14 @@
 
 (provide
  ;; syntax
- if- while : = += := invoke-kernel :shared
+ if- ?: while : = += := invoke-kernel :shared
  ;; thread ID
  thread-idx block-size
  ;; block ID
  block-idx
  ;; arithmetic/Boolean operators
  ;; /LS is for avoiding naming conflicts 
- +/LS -/LS */LS eq?/LS !/LS &&/LS </LS >/LS quotient/LS modulo/LS
+ +/LS -/LS */LS //LS eq?/LS !/LS &&/LS </LS >/LS quotient/LS modulo/LS
  ;; barrier
  barrier
  ;; kernel invocation
@@ -23,7 +23,7 @@
  ;; objects
  array array-contents element-content make-element make-array
  ;; real type
- int
+ int real
  ;; memory
  global-memory
  ;; option
@@ -42,6 +42,11 @@
               (lambda () else-cl))]
     [(_ b then-cl)
      #'(if- b then-cl (void))]))
+
+(define-syntax (?: stx)
+  (syntax-case stx ()
+    [(_ b then-ex else-ex)
+     #'(?:/LS b then-ex else-ex)]))
 
 (define-syntax (while stx)
   (syntax-case stx ()

@@ -2,7 +2,7 @@
 
 (require "operators.rkt" "work.rkt")
 
-(provide if/LS while/LS while-with-bound/LS)
+(provide if/LS ?:/LS while/LS while-with-bound/LS)
 
 ;; denotation of if (b) {then-cl} {else-cl}
 ;; execute each clause with additional masks by b
@@ -12,6 +12,12 @@
   (let ([bval (b)])
     (parameterize ([mask (&&/LS bval (mask))]) (then-cl))
     (parameterize ([mask (&&/LS (!/LS bval) (mask))]) (else-cl))))
+
+(define (?:/LS b then-ex else-ex)
+  (let ([bval b])
+    (parameterize ([mask (&&/LS bval (mask))])
+      (for/vector ([m (mask)])
+        (if m then-ex else-ex)))))
 
 ;; denotation of while (b) {body}
 ;; execute body with addtional mask by b until all threads are masked
