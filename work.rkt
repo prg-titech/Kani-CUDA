@@ -36,15 +36,18 @@
 ;; Convert a scalar value to a vector value
 (define (vecfy x)
   ;(printf "vecfy x = ~a\n" x)
-  (cond [(or (integer? x) (boolean? x)) (make-vector (block-size) x)]
+  (cond [(or (integer? x) (boolean? x) (real? x)) (make-vector (block-size) x)]
         [(vector? x) x]
         [else (raise "vecfy: expected an integer/boolean or a vector")]))
 
 ;; Convert a block number(integer) to block ID(list of int)
 (define (to-bid i)
-  (if (eq? (length (grid-dimension)) 1)
-      (list i)
-      (list (modulo i (grid-dim 0)) (quotient i (grid-dim 0)))))
+  (cond
+    [(eq? (length (grid-dimension)) 1) (list i)]
+    [(eq? (length (grid-dimension)) 2) (list (modulo i (grid-dim 0)) (quotient i (grid-dim 0)))]
+    [else (list (modulo (modulo i (* (grid-dim 0) (grid-dim 1))) (grid-dim 0))
+                (quotient (modulo i (* (grid-dim 0) (grid-dim 1))) (grid-dim 0))
+                (quotient i (* (grid-dim 0) (grid-dim 1))))]))
 
 ;; Return current thread ID(vector of int), idx represent a dimension thread ID
 ;; Use in kernel

@@ -8,9 +8,9 @@
  ;; syntax
  if- ?: while : = += := invoke-kernel :shared
  ;; thread ID
- thread-idx block-size
+ thread-idx block-size block-dim
  ;; block ID
- block-idx
+ block-idx grid-size grid-dim
  ;; arithmetic/Boolean operators
  ;; /LS is for avoiding naming conflicts 
  +/LS -/LS */LS //LS eq?/LS !/LS &&/LS </LS >/LS quotient/LS modulo/LS

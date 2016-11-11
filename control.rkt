@@ -14,10 +14,13 @@
     (parameterize ([mask (&&/LS (!/LS bval) (mask))]) (else-cl))))
 
 (define (?:/LS b then-ex else-ex)
-  (let ([bval b])
-    (parameterize ([mask (&&/LS bval (mask))])
-      (for/vector ([m (mask)])
-        (if m then-ex else-ex)))))
+  (for/vector ([bval b]
+               [m (mask)]
+               [then then-ex]
+               [else else-ex])
+    (cond [(not m) 'masked-value]
+          [bval then]
+          [else else])))
 
 ;; denotation of while (b) {body}
 ;; execute body with addtional mask by b until all threads are masked
