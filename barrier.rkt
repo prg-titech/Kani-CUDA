@@ -4,7 +4,7 @@
 
 (provide barrier)
 
-;; synchronize memory
+;; Synchronize memory
 (define (memory-synchronize! mem)
   (define cont (memory-contents mem))
   (for ([i (in-range 0 (length cont))])
@@ -13,15 +13,15 @@
       (vector-map! read-reset! vec)
       (vector-map! write-reset! vec)))))
 
-;; barrier divergence check
-;; when the execution reach a barrier, we need to check that all 
+;; Barrier divergence check
+;; When the execution reach a barrier, we need to check that all 
 ;; threads are participate in this barrier
 (define (barrier-ok m)
   (or (for/and ([x m]) x)
       (for/and ([x m]) (! x))))
 
-;; barrier
-;; just do the barrier divergence check
+;; Barrier
+;; Just do the barrier divergence check
 (define (barrier)
   (memory-synchronize! global-memory)
   (memory-synchronize! (vector-ref (shared-memory) (bid)))

@@ -5,34 +5,45 @@
          rosette/lib/synthax rosette/lib/angelic)
 
 (provide
- ;; syntax
- if- ?: while : = += := invoke-kernel :shared
- ;; thread ID
- thread-idx block-size block-dim
- ;; block ID
- block-idx grid-size grid-dim
- ;; arithmetic/Boolean operators
- ;; /LS is for avoiding naming conflicts 
- +/LS -/LS */LS //LS eq?/LS !/LS &&/LS </LS >/LS quotient/LS modulo/LS
- ;; barrier
+ ;; Syntax
+ ;; Control statement
+ if- while
+ ;; Variable declaration
+ : := :shared
+ ;; Assignment operators
+ += =
+ ;; Thread ID
+ thread-idx
+ ;; Function on the block
+ block-idx block-size block-dim
+ ;; Function on the grid
+ grid-size grid-dim
+ ;; Arithmetic/Boolean operators
+ ;; /LS is for avoiding naming conflicts
+ +/LS -/LS */LS //LS
+ eq?/LS !/LS &&/LS </LS >/LS
+ quotient/LS modulo/LS
+ ;; Ternary operator
+ ?:
+ ;; Barrier
  barrier
- ;; kernel invocation
+ ;; Kernel invocation
  invoke-kernel
- ;; queue
+ ;; Synthesis library
  choose choose* generate-forms
- ;; real type
+ ;; Real type
  int real
- ;; memory
+ ;; Memory
  global-memory
- ;; option
- printmatrix
- ;; function for host
+ ;; Option
+ print-matrix
+ ;; Function/procedure for host
  array-ref-host array-set-host!
  make-element make-array
  
  (all-from-out rosette/lib/synthax))
 
-;; kernel syntax
+;; Kernel syntax
 (define-syntax (if- stx)
   (syntax-case stx ()
     [(_ b then-cl else-cl)
@@ -86,9 +97,9 @@
     [(_ [arr idx ...] exp)
      #'(array-set-dim! arr exp idx ...)]))
 
-;; execute kernel
+;; Execute kernel
 (define (invoke-kernel
-         ker   ; string
+         ker   ; procedure/function
          gdim  ; list of int
          bdim  ; list of int
          . arg); any

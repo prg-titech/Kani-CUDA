@@ -5,9 +5,9 @@
 (provide array array-contents element-content read-reset! write-reset!
          make-element new-vec vec-set! array-ref! array-set! array-set-dim!
          memory-contents make-array make-shared-array
-         printmatrix array-set-host! array-ref-host)
+         print-matrix array-set-host! array-ref-host)
 
-;; element of array 
+;; Structure of element of array 
 (struct element
   ([content #:mutable] ;int or boolean
    [read #:mutable]    ;int or boolean
@@ -17,22 +17,22 @@
   #:property prop:procedure
   (lambda (elem) (element-content elem)))
 
-;; make new element
+;; Make new element
 (define (make-element e)
   (element e #f #f #f #f))
 
-;; return element rewrited its read to #f
+;; Return element rewrited its read to #f
 (define (read-reset! elem)
   (set-element-read! elem #f)
   elem)
 
-;; return element rewrited its write to #f
+;; Return element rewrited its write to #f
 (define (write-reset! elem)
   (set-element-write! elem #f)
   elem)
 
-;; array
-;; type check?
+;; Structure of array
+;; TODO? type check
 (struct array
   ([contents #:mutable]  ;vector of element
    [dimension #:mutable]);list of int
@@ -40,28 +40,27 @@
   (lambda (arr . ixs)
     (array-ref-dim! arr ixs)))
 
-
-
-(define (printmatrix arr n m)
+;; Print an array as a m * n matrix
+(define (print-matrix arr n m)
   (let* ([cont (array-contents arr)])
     (for ([j m])
       (for ([i n])
         (printf "~a " (element-content (vector-ref cont (+ i (* j n))))))
       (newline))))
 
-;; make new array
+;; Make a new array
 (define (make-array vec . dim)
   (define arr (array vec dim))
   (memory-allocate! arr)
   arr)
 
-;; make new shared array
+;; Make a new shared array
 (define (make-shared-array type . dim)
   (define arr (new-symbolic-array type dim))
   (shared-memory-allocate! arr)
   arr)
 
-;; make a symbolic vector with length ``n'' and type ``type''
+;; Make a symbolic vector with length ``n'' and type ``type''
 (define (new-symbolic-vector n type)
   (for/vector ([i (in-range n)])
     (define-symbolic* x type)
@@ -78,20 +77,20 @@
 
 ;(define (new-symbolic-vector n type)
 
-;; create a new vector value with type ``type''
+;; Create a new vector value with type ``type''
 (define (new-vec type)
   (new-symbolic-vector (block-size) type))
 
-;; create a scalar value from scalar ``s''
+;; Create a scalar value from scalar ``s''
 (define (scalar->vec s)
   (make-vector (block-size) s))
 
-;; create a new array with length n and type ``type''
+;; Create a new array with length n and type ``type''
 (define (new-sh-array n type)
   (new-symbolic-vector n type))
 
-;; denotation of the statement ``xs = vs''
-;; assign each element of vs to xs, except masked values
+;; Denotation of the statement ``xs = vs''
+;; Assign each element of vs to xs, except masked values
 (define (vec-set-const! xs vs)
   (for ([i (in-range (block-size))]
         [m (mask)]
@@ -104,8 +103,8 @@
     (vec-set-const! xs vs)))
 
 ;; DONE; implement Read/Write set
-;; denotation of an expression arr[ixs]
-;; if a thread is masked, array-ref! returns the special symbol 'masked-value
+;; Denotation of an expression arr[ixs]
+;; If a thread is masked, array-ref! returns the special symbol 'masked-value
 (define (array-ref-const! arr ixs)
   (for/vector ([tid (tid)] 
                [i (vecfy ixs)]
@@ -171,7 +170,7 @@
   (let ([cont (array-contents arr)])
     (element-content (vector-ref cont ix))))
 
-;; denotation of the statement arr[ixs] = vs
+;; Denotation of the statement arr[ixs] = vs
 ;; array-set! assigns vs to each elements of arr[ixs]
 (define (array-set-const! arr ixs vs)
   (for ([tid (tid)]

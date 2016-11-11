@@ -3,7 +3,10 @@
 (require "work.rkt"
          rosette/lib/synthax)
 
-(provide +/LS -/LS */LS //LS eq?/LS !/LS &&/LS </LS >/LS quotient/LS modulo/LS)
+(provide +/LS -/LS */LS //LS
+         eq?/LS　!/LS &&/LS </LS >/LS
+         quotient/LS modulo/LS
+         ?:/LS)
 
 ;; map, zipWith
 ;; 'masked-value は mask されたスレッドが返す値を表し,map, zipWith は 'masked-value を無視する
@@ -19,7 +22,6 @@
              [ys ys])
     (zipWith-vec-const f xs ys)))
 
-
 (define (map-vec-const f xs)
   (for/vector ([x xs])
     (if (eq? x 'masked-value) 'masked-value
@@ -29,18 +31,6 @@
   (for*/all ([f f]
              [xs xs])
     (map-vec-const f xs)))
-
-;; lifting an operator on scalar values to an operator on vector
-(define (LSop1 op)
-  (lambda (x)
-    (let ([x (vecfy x)])
-      (map-vec op x))))
-
-(define (LSop2 op)
-  (lambda (x y)
-    (let ([x (vecfy x)]
-          [y (vecfy y)])
-      (zipWith-vec op x y))))
 
 ;; Return a transposed matrix.
 ;; The type of argument is list of list, list of vector
@@ -60,6 +50,18 @@
 
 ;(transpose l)
 
+;; Lifting an operator on scalar values to an operator on vector
+(define (LSop1 op)
+  (lambda (x)
+    (let ([x (vecfy x)])
+      (map-vec op x))))
+
+(define (LSop2 op)
+  (lambda (x y)
+    (let ([x (vecfy x)]
+          [y (vecfy y)])
+      (zipWith-vec op x y))))
+
 (define (LSop-many op)
   (lambda (x . xs)
     (let* ([xs (map vecfy (cons x xs))]
@@ -69,7 +71,17 @@
             'masked-value
             (apply op y))))))
 
-;; lifting basic operators
+;; Denotation of (b)? then-val : else-val
+(define (?:/LS b then-val else-val)
+  (for/vector ([bval b]
+               [m (mask)]
+               [then then-val]
+               [else else-val])
+    (cond [(not m) 'masked-value]
+          [bval then]
+          [else else])))
+
+;; Lifting basic operators
 (define +/LS (LSop-many +))
 (define -/LS (LSop-many -))
 (define */LS (LSop-many *))
