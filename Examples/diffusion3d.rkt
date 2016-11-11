@@ -90,7 +90,7 @@
   r)
 
 (define CPU-in (make-array (for/vector ([i 64]) (make-element (r))) 64))
-(define GPU-in (make-array (for/vector ([i 64]) (make-element (r))) 64))
+(define GPU-in (make-array (for/vector ([i 64]) (make-element (array-ref-host CPU-in i))) 64))
 (define CPU-out (make-array (for/vector ([i 64]) (make-element 0)) 64))
 (define GPU-out (make-array (for/vector ([i 64]) (make-element 0)) 64))
 
@@ -111,9 +111,7 @@
                4 4 4
                e w n s t b c)
 
-(array-eq-verify CPU-out GPU-out 64)
-
 (verify (array-eq-verify CPU-out GPU-out 64))
 
-(printmatrix CPU-out 1 64)
-;(printmatrix GPU-in 1 64)
+;(printmatrix CPU-out 1 64)
+;(printmatrix GPU-out 1 64)
