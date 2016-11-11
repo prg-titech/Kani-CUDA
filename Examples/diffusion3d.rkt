@@ -77,13 +77,11 @@
 ;; Add a constraint that it is equal to each of the elements of
 ;; two arrays, arr1 and arr2, to asserts.
 (define (array-eq-verify arr1 arr2 len)
-  (define cont1 (array-contents arr1))
-  (define cont2 (array-contents arr2))
   (for ([i (in-range len)])
     (assert
      (eq?
-      (element-content (vector-ref cont1 i))
-      (element-content (vector-ref cont2 i))))))
+      (array-ref-host arr1 i)
+      (array-ref-host arr2 i)))))
 
 (define (r)
   (define-symbolic* r real?)

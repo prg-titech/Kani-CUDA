@@ -20,8 +20,6 @@
  invoke-kernel
  ;; queue
  choose choose* generate-forms
- ;; objects
- array array-contents element-content make-element make-array
  ;; real type
  int real
  ;; memory
@@ -30,10 +28,11 @@
  printmatrix
  ;; function for host
  array-ref-host array-set-host!
+ make-element make-array
  
  (all-from-out rosette/lib/synthax))
 
-;; syntax
+;; kernel syntax
 (define-syntax (if- stx)
   (syntax-case stx ()
     [(_ b then-cl else-cl)
