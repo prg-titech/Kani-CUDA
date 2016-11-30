@@ -33,7 +33,8 @@
   ;(printf "vecfy x = ~a\n" x)
   (cond [(or (integer? x) (boolean? x) (real? x)) (make-vector (block-size) x)]
         [(vector? x) x]
-        [else (raise "vecfy: expected an integer/boolean or a vector")]))
+        [else ;(begin (printf "~a\n" x)
+                     (raise "vecfy: expected an integer/boolean or a vector")]))
 
 ;; Convert a block number(integer) to block ID(list of int)
 (define (to-bid i)

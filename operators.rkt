@@ -64,7 +64,7 @@
           [y (vecfy y)])
       (zipWith-vec op x y))))
 
-(define (LSop-many op)
+(define (LSop-many-trans op)
   (lambda (x . xs)
     (let* ([xs (map vecfy (cons x xs))]
            [ys (transpose xs)])
@@ -72,6 +72,17 @@
           (if (member 'masked-value y)
               'masked-value 
               (apply op y))))))
+
+(define (LSop-many-rec op)
+  (lambda (x xs)
+    (if (null? xs)
+        (vecfy x)
+        (begin (printf "~a\n" xs)
+               ((LSop-many-rec op) ((LSop2 op) x (car xs)) (cdr xs))))))
+
+(define (LSop-many op)
+  (lambda (x . xs)
+    ((LSop-many-rec op) x xs)))
 
 ;; Denotation of (b)? then-val : else-val
 (define (?:/LS b then-cl else-cl)
@@ -94,12 +105,12 @@
 
 ;; Lifting basic operators
 (define +/LS (LSop-many +))
-(define -/LS (LSop2 -))
+(define -/LS (LSop-many -))
 (define */LS (LSop-many *))
-(define //LS (LSop2 /))
+(define //LS (LSop-many /))
 (define eq?/LS (LSop2 eq?))
 (define !/LS (LSop1 !))
-(define &&/LS (LSop2 &&))
+(define &&/LS (LSop-many &&))
 (define >/LS (LSop2 >))
 (define </LS (LSop2 <))
 (define quotient/LS (LSop2 quotient))

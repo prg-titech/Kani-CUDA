@@ -32,7 +32,7 @@
  ;; Synthesis library
  choose generate-forms
  ;; Real type
- int real
+ int real bool
  ;; Memory
  global-memory
  ;; Option
