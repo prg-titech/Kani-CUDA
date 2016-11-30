@@ -15,45 +15,43 @@
           (array-set-host! C (+ (* i m) j) (+ c (* a b)))))))
   C)
 
-(define (mmul-kernel A B C n p m)
-  (:shared int smemA[(* 2 p)])
-  (:shared int smemB[(* 2 p)])
-  (:= int gsize-x (quotient/LS (choose n m) 2))
-  (:= int gsize-y (quotient/LS (choose n m) 2))
-  (:= int block-x (modulo/LS (block-idx 0) gsize-x))
-  (:= int block-y (quotient/LS (block-idx 0) gsize-x))
-  (:= int thread-x (modulo/LS (thread-idx 0) 2))
-  (:= int thread-y (quotient/LS (thread-idx 0) 2))
-  ;(choose (barrier) (void))
-  (if- (eq?/LS (thread-idx 0) 0)
-       (for ([i (in-range (* 2 p))])
-         (= [smemA i]
-            [A (+/LS i (*/LS (choose block-x block-y) (* 2 p)))])
-         (= [smemB i]
-            [B (+/LS
-                (+/LS
-                 (*/LS (modulo/LS i p) m)
-                 (*/LS (choose block-x block-y) 2)) (quotient/LS i p))])))
-  ;(print [A (choose block-x block-y)])
-  ;(newline)
-  ;(print (choose block-x block-y))
-  ;(newline)
-  (choose (barrier) (void))
-  (:= int x 0)
-  (for ([i (in-range p)])
-    (+= x (*/LS [smemA (+/LS i (*/LS (choose thread-x thread-y) p))]
-                [smemB (+/LS i (*/LS (choose thread-x thread-y) p))])))
-  (choose (barrier) (void))
-  (= [C (+/LS
-         (+/LS
-          (+/LS
-           (*/LS
-            (choose block-x block-y)
-            (*/LS 2 p))
-           (*/LS 2 (choose block-x block-y)))
-          (*/LS (choose thread-x thread-y) p))
-         (choose thread-x thread-y))]
-     x))
+(define (mmul-kernel A B C n m l)
+  (:= int BLOCK_SIZE (block-dim 0))
+  (:= int row (+/LS (*/LS (block-idx 1) BLOCK_SIZE) (thread-idx 1)))
+  (:= int col (+/LS (*/LS (block-idx 0) BLOCK_SIZE) (thread-idx 0)))
+  
+  (if- (&&/LS (</LS row (choose n l)) (</LS col (choose n l)))
+       (begin
+         (:= int brow (block-idx 1))
+         (:= int bcol (block-idx 0))
+         
+         (:= int csub (+/LS (*/LS (*/LS l BLOCK_SIZE) (choose bcol brow)) (*/LS BLOCK_SIZE bcol)))
+         
+         (:= int trow (thread-idx 1))
+         (:= int tcol (thread-idx 0))
+         
+         (:= int x 0)
+         (:= int i 0)
+         (for- [: (</LS i (quotient/LS (+/LS m (-/LS BLOCK_SIZE 1)) BLOCK_SIZE)) : (++ i)]
+               (:= int asub (+/LS (*/LS (*/LS m BLOCK_SIZE) (choose bcol brow)) (*/LS BLOCK_SIZE i)))
+               (:= int bsub (+/LS (*/LS (*/LS l BLOCK_SIZE) i) (*/LS BLOCK_SIZE (choose brow bcol))))
+               
+               (:shared int smemA[BLOCK_SIZE][BLOCK_SIZE])
+               (:shared int smemB[BLOCK_SIZE][BLOCK_SIZE])
+
+               (= [smemA trow tcol] [A (+/LS asub (+/LS tcol (*/LS m trow)))])
+               (= [smemB trow tcol] [B (+/LS bsub (+/LS tcol (*/LS l trow)))])
+               
+               (choose (barrier) (void))
+
+               (:= int k 0) 
+               (for- [: (</LS k BLOCK_SIZE) : (++ k)]
+                     (+= x (*/LS [smemA (choose tcol trow k) (choose tcol trow k)] [smemB (choose tcol trow k) (choose tcol trow k)])))
+               
+               (choose (barrier) (void)))
+         (= [C (+/LS csub (+/LS (choose trow tcol) (*/LS (choose tcol trow) (choose n l))))] x))))
+
+
 
 
 (define src1 (make-array (for/vector ([i (in-range 36)]) (make-element i)) 36))
@@ -80,8 +78,10 @@
   (begin
     (invoke-kernel
      mmul-kernel
-     (list (* (quotient n 2) (quotient n 2))) '(4) src1 src2 dst n n n)
+     (list (quotient n 2) (quotient n 2)) '(2 2) src1 src2 dst n n n)
     dst))
+
+;(kernel-out src1 src2 dst 6)
 
 ;(printmatrix out1 4 4)
 
