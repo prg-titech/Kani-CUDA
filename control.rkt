@@ -1,8 +1,8 @@
 #lang rosette
 
-(require "operators.rkt" "work.rkt")
+(require "operators.rkt" "work.rkt" "array.rkt")
 
-(provide if/LS while/LS while-with-bound/LS)
+(provide if/LS while/LS while-with-bound/LS for/LS)
 
 ;; Denotation of if (b) {then-cl} {else-cl}
 ;; Execute each clause with additional masks by b
@@ -33,4 +33,14 @@
       (parameterize ([mask m])
         (body)
         (while-with-bound/LS b body (sub1 bound))))))
+
+
+;; Denotation of for (init;cond;change) {body}
+(define (for/LS init cond change body)
+  (init)
+  (while/LS
+   cond
+   (lambda ()
+     (body)
+     (change))))
 
