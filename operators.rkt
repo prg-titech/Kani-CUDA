@@ -37,11 +37,13 @@
 (define (transpose xs)
   (match xs
     ['() '()]
-    [(cons x '()) (for/list ([elem x]) (list elem))]
+    [(cons x '()) (for/all ([x x]) (for/list ([elem x]) (list elem)))]
     [(cons x rst)
-     (for/list ([head x]
-                [tail (transpose rst)])
-       (cons head tail))]))
+     (for*/all ([x x]
+               [rst rst])
+       (for/list ([head x]
+                  [tail (transpose rst)])
+         (cons head tail)))]))
 
 ;(define l
 ;    (for/list ([i 5])
@@ -66,30 +68,43 @@
   (lambda (x . xs)
     (let* ([xs (map vecfy (cons x xs))]
            [ys (transpose xs)])
-      (for/vector ([y ys])
-        (if (member 'masked-value y)
-            'masked-value
-            (apply op y))))))
+        (for/vector ([y ys])
+          (if (member 'masked-value y)
+              'masked-value 
+              (apply op y))))))
 
 ;; Denotation of (b)? then-val : else-val
-(define (?:/LS b then-val else-val)
-  (for/vector ([bval b]
-               [m (mask)]
-               [then then-val]
-               [else else-val])
-    (cond [(not m) 'masked-value]
-          [bval then]
-          [else else])))
+(define (?:/LS b then-cl else-cl)
+  (let ([bval (b)])
+    (let ([then-val (parameterize ([mask (&&/LS bval (mask))]) (then-cl))]
+          [else-val (parameterize ([mask (&&/LS (!/LS bval) (mask))]) (else-cl))]
+          [mthen (&&/LS bval (mask))]
+          [melse (&&/LS (!/LS bval) (mask))])
+      (for/vector ([i (block-size)])
+        (cond [(and (eq? (vector-ref mthen i) #f)
+                    (eq? (vector-ref melse i) #f))
+               'masked-value]
+              [(eq? (vector-ref mthen i) #f)
+               (vector-ref (vecfy else-val) i)]
+              [(eq? (vector-ref melse i) #f)
+               (vector-ref (vecfy then-val) i)]
+              [else (begin (printf "check error\n")
+                           (assert false))])))))
+
 
 ;; Lifting basic operators
 (define +/LS (LSop-many +))
-(define -/LS (LSop-many -))
+(define -/LS (LSop2 -))
 (define */LS (LSop-many *))
-(define //LS (LSop-many /))
+(define //LS (LSop2 /))
 (define eq?/LS (LSop2 eq?))
 (define !/LS (LSop1 !))
-(define &&/LS (LSop-many &&))
+(define &&/LS (LSop2 &&))
 (define >/LS (LSop2 >))
 (define </LS (LSop2 <))
 (define quotient/LS (LSop2 quotient))
 (define modulo/LS (LSop2 modulo))
+
+(define b (choose (vecfy 1) (vecfy 2)))
+(define a (choose 1 2))
+(define c (vecfy a))
