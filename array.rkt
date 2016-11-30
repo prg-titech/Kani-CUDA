@@ -54,11 +54,37 @@
   (memory-allocate! arr)
   arr)
 
+;; Check whether all the elements of vector is same
+(define (check-const vec)
+  (if (vector? vec)
+      (let ([elem (vector-ref vec 0)])
+        (for/and ([i (block-size)])
+          (eq? elem (vector-ref vec i))))
+      #f))
+
 ;; Make a new shared array
-(define (make-shared-array type . dim)
+(define (make-shared-array-content type dim)
   (define arr (new-symbolic-array type dim))
   (shared-memory-allocate! arr)
   arr)
+
+(define (make-shared-array type . dim)
+  (cond
+    [(eq? (length dim) 1) (let ([elem (list-ref dim 0)])
+                            (if (check-const elem)
+                                (make-shared-array-content type (list (vector-ref elem 0)))
+                                (make-shared-array-content type dim)))]
+    [else (let ([elem1 (list-ref dim 0)]
+                [elem2 (list-ref dim 1)])
+            (if (check-const elem1)
+                (if (check-const elem2)
+                    (make-shared-array-content type (list (vector-ref elem1 0) (vector-ref elem2 0)))
+                    (make-shared-array-content type (list (vector-ref elem1 0) elem2)))
+                (if (check-const elem2)
+                    (make-shared-array-content type (list elem1 (vector-ref elem2 0)))
+                    (make-shared-array-content type (list elem1 elem2)))))]))
+
+
 
 ;; Make a symbolic vector with length ``n'' and type ``type''
 (define (new-symbolic-vector n type)

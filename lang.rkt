@@ -7,11 +7,11 @@
 (provide
  ;; Syntax
  ;; Control statement
- if- while
+ if- while for-
  ;; Variable declaration
  : := :shared
  ;; Assignment operators
- += =
+ += = -- ++
  ;; Thread ID
  thread-idx
  ;; Function on the block
@@ -30,7 +30,7 @@
  ;; Kernel invocation
  invoke-kernel
  ;; Synthesis library
- choose choose* generate-forms
+ choose generate-forms
  ;; Real type
  int real
  ;; Memory
@@ -56,7 +56,9 @@
 (define-syntax (?: stx)
   (syntax-case stx ()
     [(_ b then-ex else-ex)
-     #'(?:/LS b then-ex else-ex)]))
+     #'(?:/LS (lambda () b)
+              (lambda () then-ex)
+              (lambda () else-ex))]))
 
 (define-syntax (while stx)
   (syntax-case stx ()
@@ -64,6 +66,22 @@
      #'(while-with-bound/LS (lambda () b) (lambda () body ...) bound)]
     [(_ b body ...)
      #'(while/LS (lambda () b) (lambda () body ...))]))
+
+(define-syntax (for- stx)
+  (syntax-case stx (:)
+    [(_ [init : cond : change] body ...)
+     #'(for/LS
+           (lambda () init)
+         (lambda () cond)
+         (lambda () change)
+         (lambda () body ...))]
+    [(_ [: cond : change] body ...)
+     #'(for/LS
+           void
+         (lambda () cond)
+         (lambda () change)
+         (lambda () body ...))]))
+
 
 (define-syntax (: stx)
   (syntax-case stx ()
@@ -89,6 +107,16 @@
     [(_ var exp)
      #'(vec-set! var (+/LS var exp))]))
 
+(define-syntax (++ stx)
+  (syntax-case stx ()
+    [(_ var)
+     #'(vec-set! var (+/LS var 1))]))
+
+(define-syntax (-- stx)
+  (syntax-case stx ()
+    [(_ var)
+     #'(vec-set! var (-/LS var 1))]))
+
 (define-syntax (= stx)
   (syntax-case stx ()
     [(_ var exp)
@@ -97,17 +125,23 @@
     [(_ [arr idx ...] exp)
      #'(array-set-dim! arr exp idx ...)]))
 
+
+
 ;; Execute kernel
 (define (invoke-kernel
-         ker   ; procedure/function
+         kernel ; procedure/function
          gdim  ; list of int
          bdim  ; list of int
          . arg); any
   (parameterize* ([grid-dimension gdim]
                   [block-dimension bdim]
-                  [shared-memory (make-shared-memory (block-size))])
+                  [shared-memory (make-shared-memory (grid-size))])
     (for ([b (in-range (grid-size))])
       (parameterize* ([bid b]
                       [block-index (to-bid b)]
                       [mask (make-vector (block-size) #t)])
-        (apply ker arg)))))
+        (apply kernel arg)))))
+
+;(define b (? (vecfy 1) (vecfy 2)))
+;(define a (? 1 2))
+;(define c (vecfy a))

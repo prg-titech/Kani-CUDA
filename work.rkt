@@ -4,11 +4,6 @@
           block-index block-idx block-size mask thread-idx vecfy to-bid
           tid bid)
 
-;; TODO ntid -> thread-dim
-;; number of threads and mask
-;; before running the kernel, ntid need to be specified with a number: 
-;;   (parameterize ([ntid ?]) (kernel))
-
 ;; Model of grid structure
 (define grid-dimension (make-parameter '(1)))
 
@@ -61,11 +56,11 @@
                           (for/vector ([i (block-size)]) (quotient i (block-dim 0))))]
         [(eq? bdim 3) (cond
                         [(eq? idx 0) (for/vector ([i (block-size)])
-                                       (modulo (modulo i (* (block-dim 0) (block-dim 1))) ((block-dim 0))))]
+                                       (modulo (modulo i (* (block-dim 0) (block-dim 1))) (block-dim 0)))]
                         [(eq? idx 1) (for/vector ([i (block-size)])
-                                       (quotient (modulo i (* (block-dim 0) (block-dim 1))) ((block-dim 0))))]
+                                       (quotient (modulo i (* (block-dim 0) (block-dim 1))) (block-dim 0)))]
                         [(eq? idx 2) (for/vector ([i (block-size)])
-                                       (quotient i (* (block-dim 0) (block-dim 1))) ((block-dim 0)))])])
+                                       (quotient i (* (block-dim 0) (block-dim 1))) (block-dim 0))])])
       (assert false))))
 
 
