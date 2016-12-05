@@ -39,4 +39,5 @@
                                     out
                                     nx ny nz
                                     ce cw cn cs ct cb cc)
-    (set! in out)))
+    (set! in out))
+  out)

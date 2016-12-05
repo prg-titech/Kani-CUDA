@@ -24,16 +24,21 @@
                      (*/LS cn [in n]) (*/LS cb [in b]) (*/LS ct [in t])))
     (+= c xy)))
 
-(define (diffusion-run-kernel count
+(define (diffusion-run-kernel grid
+                              block
+                              count
                               in
                               out
                               nx ny nz
                               ce cw cn cs ct cb cc)
   (for ([i (in-range count)])
-    (diffusion-kernel in
-                      out
-                      nx ny nz
-                      ce cw cn cs ct cb cc)
+    (invoke-kernel diffusion-kernel
+                   grid
+                   block
+                   in
+                   out
+                   nx ny nz
+                   ce cw cn cs ct cb cc)
     (set! in out)))
 
 ;; Add a constraint that it is equal to each of the elements of
@@ -49,7 +54,7 @@
   (define-symbolic* r real?)
   r)
 
-(define-values (SIZEX SIZEY SIZEZ) (values 36 36 36))
+(define-values (SIZEX SIZEY SIZEZ) (values 16 16 16))
 (define SIZE (* SIZEX SIZEY SIZEZ))
 
 (define CPU-in (make-array (for/vector ([i SIZE]) (make-element (r))) SIZE))
@@ -66,13 +71,13 @@
                       e w n s t b c)
 
 ;; Execute a diffusion program on GPU
-(invoke-kernel diffusion-run-kernel
-               '(6 6)
-               '(6 6)
-               1
-               GPU-in GPU-out
-               SIZEX SIZEY SIZEZ
-               e w n s t b c)
+(diffusion-run-kernel
+ '(4 4)
+ '(4 4)
+ 1
+ GPU-in GPU-out
+ SIZEX SIZEY SIZEZ
+ e w n s t b c)
 
 
 (define (diffusion-verify) (time (verify (array-eq-verify CPU-out GPU-out SIZE))))

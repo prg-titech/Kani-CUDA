@@ -29,6 +29,8 @@
        (for ([i (in-range (* 2 p))])
          (= [smemA i]
             [A (+/LS i (*/LS (choose block-x block-y) (* 2 p)))])
+         (print [A (+/LS i (*/LS (choose block-x block-y) (* 2 p)))])
+         (newline)
          (= [smemB i]
             [B (+/LS
                 (+/LS

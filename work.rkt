@@ -31,7 +31,7 @@
 ;; Convert a scalar value to a vector value
 (define (vecfy x)
   ;(printf "vecfy x = ~a\n" x)
-  (cond [(or (integer? x) (boolean? x) (real? x)) (make-vector (block-size) x)]
+  (cond [(or (integer? x) (boolean? x) (real? x)) (vector->immutable-vector (make-vector (block-size) x))]
         [(vector? x) x]
         [else ;(begin (printf "~a\n" x)
                      (raise "vecfy: expected an integer/boolean or a vector")]))

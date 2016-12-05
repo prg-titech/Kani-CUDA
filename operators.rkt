@@ -39,8 +39,7 @@
     ['() '()]
     [(cons x '()) (for/all ([x x]) (for/list ([elem x]) (list elem)))]
     [(cons x rst)
-     (for*/all ([x x]
-               [rst rst])
+     (for/all ([x x])
        (for/list ([head x]
                   [tail (transpose rst)])
          (cons head tail)))]))
@@ -68,17 +67,17 @@
   (lambda (x . xs)
     (let* ([xs (map vecfy (cons x xs))]
            [ys (transpose xs)])
-        (for/vector ([y ys])
-          (if (member 'masked-value y)
-              'masked-value 
-              (apply op y))))))
+      (for/vector ([y ys])
+        (if (member 'masked-value y)
+            'masked-value 
+            (apply op y))))))
 
 (define (LSop-many-rec op)
   (lambda (x xs)
     (if (null? xs)
         (vecfy x)
-        (begin (printf "~a\n" xs)
-               ((LSop-many-rec op) ((LSop2 op) x (car xs)) (cdr xs))))))
+        ;        (begin (printf "~a\n" xs)
+        ((LSop-many-rec op) ((LSop2 op) x (car xs)) (cdr xs)))))
 
 (define (LSop-many op)
   (lambda (x . xs)
@@ -104,13 +103,13 @@
 
 
 ;; Lifting basic operators
-(define +/LS (LSop-many +))
-(define -/LS (LSop-many -))
-(define */LS (LSop-many *))
-(define //LS (LSop-many /))
+(define +/LS (LSop-many-trans +))
+(define -/LS (LSop-many-trans -))
+(define */LS (LSop-many-trans *))
+(define //LS (LSop-many-trans /))
 (define eq?/LS (LSop2 eq?))
 (define !/LS (LSop1 !))
-(define &&/LS (LSop-many &&))
+(define &&/LS (LSop-many-trans &&))
 (define >/LS (LSop2 >))
 (define </LS (LSop2 <))
 (define quotient/LS (LSop2 quotient))

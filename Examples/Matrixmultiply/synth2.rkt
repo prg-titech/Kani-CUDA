@@ -26,7 +26,7 @@
          (:= int bcol (block-idx 0))
          
          (:= int csub (+/LS (*/LS (*/LS l BLOCK_SIZE) (choose bcol brow)) (*/LS BLOCK_SIZE bcol)))
-         
+         (printf "~a\n" csub)
          (:= int trow (thread-idx 1))
          (:= int tcol (thread-idx 0))
          
@@ -94,8 +94,8 @@
   (define A (make-array (for/vector ([j (in-range (* n n))]) (make-element (i))) (* n n)))
   (define B (make-array (for/vector ([j (in-range (* n n))]) (make-element (i))) (* n n)))
   (define C (make-array (for/vector ([j (in-range (* n n))]) (make-element 0)) (* n n)))
-  (synthesize
-   #:forall (append (list A) (list B))
-   #:guarantee (array-eq-verify (mmul-host A B n n n) (kernel-out A B C n) (* n n))))
+  (array-eq-verify (mmul-host A B n n n) (kernel-out A B C n) (* n n)))
 
-(map syntax->datum (generate-forms (synth-vector 4)))
+;(map syntax->datum (generate-forms (synth-vector 4)))
+
+(synth-vector 4)

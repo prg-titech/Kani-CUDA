@@ -23,6 +23,7 @@
  +/LS -/LS */LS //LS
  eq?/LS !/LS &&/LS </LS >/LS
  quotient/LS modulo/LS
+ max min
  ;; Ternary operator
  ?:
  ;; Barrier
@@ -59,6 +60,16 @@
      #'(?:/LS (lambda () b)
               (lambda () then-ex)
               (lambda () else-ex))]))
+
+(define-syntax (max stx)
+  (syntax-case stx ()
+    [(_ val1 val2)
+     #'(?: (>/LS val1 val2) val1 val2)]))
+
+(define-syntax (min stx)
+  (syntax-case stx ()
+    [(_ val1 val2)
+     #'(?: (</LS val1 val2) val1 val2)]))
 
 (define-syntax (while stx)
   (syntax-case stx ()
