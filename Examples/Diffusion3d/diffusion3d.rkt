@@ -27,19 +27,19 @@
 (define (diffusion-run-kernel grid
                               block
                               count
-                              in
-                              out
+                              in out
                               nx ny nz
                               ce cw cn cs ct cb cc)
   (for ([i (in-range count)])
     (invoke-kernel diffusion-kernel
                    grid
                    block
-                   in
-                   out
+                   in out
                    nx ny nz
                    ce cw cn cs ct cb cc)
-    (set! in out)))
+    (define temp in)
+    (set! in out)
+    (set! out temp)))
 
 ;; Add a constraint that it is equal to each of the elements of
 ;; two arrays, arr1 and arr2, to asserts.
@@ -54,33 +54,35 @@
   (define-symbolic* r real?)
   r)
 
-(define-values (SIZEX SIZEY SIZEZ) (values 16 16 16))
+(define-values (SIZEX SIZEY SIZEZ) (values 8 8 8))
 (define SIZE (* SIZEX SIZEY SIZEZ))
 
-(define CPU-in (make-array (for/vector ([i SIZE]) (make-element (r))) SIZE))
+(define CPU-in (make-array (for/vector ([i SIZE]) (make-element i)) SIZE))
 (define GPU-in (make-array (for/vector ([i SIZE]) (make-element (array-ref-host CPU-in i))) SIZE))
 (define CPU-out (make-array (for/vector ([i SIZE]) (make-element 0)) SIZE))
 (define GPU-out (make-array (for/vector ([i SIZE]) (make-element 0)) SIZE))
 
-(define-symbolic e w n s t b c real?)
+;(define-symbolic e w n s t b c real?)
+(define-values (e w n s t b c) (values 1 1 1 1 1 1 1))
 
 ;; Execute a diffusion program on CPU
-(diffusion3d-baseline 1
+(diffusion3d-baseline 2
                       CPU-in CPU-out
                       SIZEX SIZEY SIZEZ
                       e w n s t b c)
 
 ;; Execute a diffusion program on GPU
 (diffusion-run-kernel
+ '(2 2)
  '(4 4)
- '(4 4)
- 1
+ 3
  GPU-in GPU-out
  SIZEX SIZEY SIZEZ
  e w n s t b c)
 
 
-(define (diffusion-verify) (time (verify (array-eq-verify CPU-out GPU-out SIZE))))
+(define (diffusion-verify) (time (verify (array-eq-verify CPU-in GPU-in SIZE))))
 
-;(print-matrix CPU-out 1 64)
-;(print-matrix GPU-out 1 64)
+(print-matrix CPU-in 8 8)
+(newline)
+(print-matrix GPU-in 8 8)

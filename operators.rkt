@@ -6,7 +6,7 @@
 (provide +/LS -/LS */LS //LS
          eq?/LS　!/LS &&/LS </LS >/LS
          quotient/LS modulo/LS
-         ?:/LS)
+         ?:/LS min/LS max/LS)
 
 ;; map, zipWith
 ;; 'masked-value は mask されたスレッドが返す値を表し,map, zipWith は 'masked-value を無視する
@@ -90,30 +90,36 @@
           [else-val (parameterize ([mask (&&/LS (!/LS bval) (mask))]) (else-cl))]
           [mthen (&&/LS bval (mask))]
           [melse (&&/LS (!/LS bval) (mask))])
-      (for/vector ([i (block-size)])
-        (cond [(and (eq? (vector-ref mthen i) #f)
-                    (eq? (vector-ref melse i) #f))
-               'masked-value]
-              [(eq? (vector-ref mthen i) #f)
-               (vector-ref (vecfy else-val) i)]
-              [(eq? (vector-ref melse i) #f)
-               (vector-ref (vecfy then-val) i)]
-              [else (begin (printf "check error\n")
-                           (assert false))])))))
+      (for*/all ([mthen mthen]
+                 [melse melse]
+                 [then-val then-val]
+                 [else-val else-val])
+        (for/vector ([i (block-size)])
+          (cond [(and (eq? (vector-ref mthen i) #f)
+                      (eq? (vector-ref melse i) #f))
+                 'masked-value]
+                [(eq? (vector-ref mthen i) #f)
+                 (vector-ref (vecfy else-val) i)]
+                [(eq? (vector-ref melse i) #f)
+                 (vector-ref (vecfy then-val) i)]
+                [else (begin (printf "check error\n")
+                             (assert false))]))))))
 
 
 ;; Lifting basic operators
-(define +/LS (LSop-many-trans +))
-(define -/LS (LSop-many-trans -))
-(define */LS (LSop-many-trans *))
-(define //LS (LSop-many-trans /))
+(define +/LS (LSop-many +))
+(define -/LS (LSop-many -))
+(define */LS (LSop-many *))
+(define //LS (LSop-many /))
 (define eq?/LS (LSop2 eq?))
 (define !/LS (LSop1 !))
-(define &&/LS (LSop-many-trans &&))
+(define &&/LS (LSop-many &&))
 (define >/LS (LSop2 >))
 (define </LS (LSop2 <))
 (define quotient/LS (LSop2 quotient))
 (define modulo/LS (LSop2 modulo))
+(define min/LS (LSop2 min))
+(define max/LS (LSop2 max))
 
 (define b (choose (vecfy 1) (vecfy 2)))
 (define a (choose 1 2))

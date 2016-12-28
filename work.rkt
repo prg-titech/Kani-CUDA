@@ -8,7 +8,7 @@
 (define grid-dimension (make-parameter '(1)))
 
 (define (grid-dim idx) (list-ref (grid-dimension) idx))
-  
+
 ;; Return current grid size
 (define (grid-size) (apply * (grid-dimension)))
 
@@ -30,11 +30,13 @@
 
 ;; Convert a scalar value to a vector value
 (define (vecfy x)
-  ;(printf "vecfy x = ~a\n" x)
-  (cond [(or (integer? x) (boolean? x) (real? x)) (vector->immutable-vector (make-vector (block-size) x))]
-        [(vector? x) x]
-        [else ;(begin (printf "~a\n" x)
-                     (raise "vecfy: expected an integer/boolean or a vector")]))
+  (for/all ([x x])
+    ;(printf "vecfy x = ~a\n" x)
+    (cond [(or (integer? x) (boolean? x) (real? x)) (vector->immutable-vector (make-vector (block-size) x))]
+          [(vector? x) x]
+          [else (begin (print x)
+                       (newline)
+                       (raise "vecfy: expected an integer/boolean or a vector"))])))
 
 ;; Convert a block number(integer) to block ID(list of int)
 (define (to-bid i)
@@ -50,25 +52,25 @@
 (define (thread-idx idx)
   (let ([bdim (length (block-dimension))])
     (if (< idx bdim)
-      (cond
-        [(eq? bdim 1) (for/vector ([i (block-size)]) i)]
-        [(eq? bdim 2) (if (eq? idx 0)
-                          (for/vector ([i (block-size)]) (modulo i (block-dim 0)))
-                          (for/vector ([i (block-size)]) (quotient i (block-dim 0))))]
-        [(eq? bdim 3) (cond
-                        [(eq? idx 0) (for/vector ([i (block-size)])
-                                       (modulo (modulo i (* (block-dim 0) (block-dim 1))) (block-dim 0)))]
-                        [(eq? idx 1) (for/vector ([i (block-size)])
-                                       (quotient (modulo i (* (block-dim 0) (block-dim 1))) (block-dim 0)))]
-                        [(eq? idx 2) (for/vector ([i (block-size)])
-                                       (quotient i (* (block-dim 0) (block-dim 1))) (block-dim 0))])])
-      (assert false))))
+        (cond
+          [(eq? bdim 1) (for/vector ([i (block-size)]) i)]
+          [(eq? bdim 2) (if (eq? idx 0)
+                            (for/vector ([i (block-size)]) (modulo i (block-dim 0)))
+                            (for/vector ([i (block-size)]) (quotient i (block-dim 0))))]
+          [(eq? bdim 3) (cond
+                          [(eq? idx 0) (for/vector ([i (block-size)])
+                                         (modulo (modulo i (* (block-dim 0) (block-dim 1))) (block-dim 0)))]
+                          [(eq? idx 1) (for/vector ([i (block-size)])
+                                         (quotient (modulo i (* (block-dim 0) (block-dim 1))) (block-dim 0)))]
+                          [(eq? idx 2) (for/vector ([i (block-size)])
+                                         (quotient i (* (block-dim 0) (block-dim 1))) (block-dim 0))])])
+        (assert false))))
 
 
 (define (tid) (for/vector ([i (block-size)]) i))
 (define bid (make-parameter 0))
-                        
-  
+
+
 
 
 

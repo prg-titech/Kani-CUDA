@@ -2,7 +2,7 @@
 
 (require "work.rkt" "memory.rkt")
 
-(provide array array-contents element-content read-reset! write-reset!
+(provide array array-contents element-content read-reset! write-reset! read/B-reset! write/B-reset!
          make-element new-vec vec-set! array-ref! array-set! array-set-dim!
          memory-contents make-array make-shared-array
          print-matrix array-set-host! array-ref-host)
@@ -29,6 +29,16 @@
 ;; Return element rewrited its write to #f
 (define (write-reset! elem)
   (set-element-write! elem #f)
+  elem)
+
+;; Return element rewrited its read/B to #f
+(define (read/B-reset! elem)
+  (set-element-read/B! elem #f)
+  elem)
+
+;; Return element rewrited its write/B to #f
+(define (write/B-reset! elem)
+  (set-element-write/B! elem #f)
   elem)
 
 ;; Structure of array

@@ -39,5 +39,6 @@
                                     out
                                     nx ny nz
                                     ce cw cn cs ct cb cc)
-    (set! in out))
-  out)
+    (define temp in)
+    (set! in out)
+    (set! out temp)))

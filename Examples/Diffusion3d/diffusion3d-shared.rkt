@@ -89,24 +89,23 @@
 
 (define-symbolic e w n s t b c real?)
 
-;; Execute a diffusion program on CPU
-(diffusion3d-baseline 1
-                      CPU-in CPU-out
-                      SIZEX SIZEY SIZEZ
-                      e w n s t b c)
 
-;; Execute a diffusion program on GPU
-(invoke-kernel diffusion-run-kernel
-               '(4 4 4)
-               '(4 4)
-               1
-               GPU-in GPU-out
-               SIZEX SIZEY SIZEZ
-               e w n s t b c)
-
-
-(define (diffusion-verify) (time (verify (array-eq-verify CPU-out GPU-out SIZE))))
-
-;(print-matrix CPU-out 1 64)
-;(print-matrix GPU-out 1 64)
-
+(define (diffusion-verify) (time (verify (begin
+                                           ;; Execute a diffusion program on CPU
+                                           (diffusion3d-baseline 1
+                                                                 CPU-in CPU-out
+                                                                 SIZEX SIZEY SIZEZ
+                                                                 e w n s t b c)                                           
+                                           ;; Execute a diffusion program on GPU
+                                           (invoke-kernel diffusion-run-kernel
+                                                          '(4 4 4)
+                                                          '(4 4)
+                                                          1
+                                                          GPU-in GPU-out
+                                                          SIZEX SIZEY SIZEZ
+                                                          e w n s t b c)(array-eq-verify CPU-out GPU-out SIZE)))))
+  
+  ;(print-matrix CPU-out 1 64)
+  ;(print-matrix GPU-out 1 64)
+  
+  
