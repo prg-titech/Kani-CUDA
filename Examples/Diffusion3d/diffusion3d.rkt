@@ -72,17 +72,17 @@
                       e w n s t b c)
 
 ;; Execute a diffusion program on GPU
-(diffusion-run-kernel
- '(2 2)
- '(4 4)
- 3
- GPU-in GPU-out
- SIZEX SIZEY SIZEZ
- e w n s t b c)
+(time (diffusion-run-kernel
+       '(2 2)
+       '(4 4)
+       3
+       GPU-in GPU-out
+       SIZEX SIZEY SIZEZ
+       e w n s t b c))
 
 
 (define (diffusion-verify) (time (verify (array-eq-verify CPU-in GPU-in SIZE))))
 
-(print-matrix CPU-in 8 8)
-(newline)
-(print-matrix GPU-in 8 8)
+;(print-matrix CPU-in 8 8)
+;(newline)
+;(print-matrix GPU-in 8 8)

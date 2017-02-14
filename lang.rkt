@@ -87,7 +87,17 @@
 (define-syntax (: stx)
   (syntax-case stx ()
     [(_ type x ...)
-     #'(begin (define x (new-vec type)) ...)]))
+     #'(begin (define x (new-vec type)) ...)]
+    [(_ type arr[n])
+     #'(begin
+         (define (t)
+           (define-symbolic* t type)
+           t)
+         (define arr
+           (make-array
+            (for/vector ([i n])
+              (make-element (t)))
+            n)))]))
 
 (define-syntax (:shared stx)
   (syntax-case stx ()
@@ -125,8 +135,6 @@
      #'(vec-set! var exp)]
     [(_ [arr idx ...] exp)
      #'(array-set-dim! arr exp idx ...)]))
-
-
 
 ;; Execute kernel
 (define (invoke-kernel
