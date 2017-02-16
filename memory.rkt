@@ -2,26 +2,30 @@
 
 (require "work.rkt")
 
-(provide make-memory memory-contents memory-length memory-set! global-memory shared-memory-set!)
+(provide make-memory make-shared-memory memory-contents memory-allocate! global-memory shared-memory shared-memory-allocate!)
 
-;; TODO use list
-;; Model of memory
-(struct memory ([length #:mutable] [contents #:mutable] [shared-mem #:mutable]))
+;; DONE use list
+;; Model of memory for global memory and shared memory.
+(struct memory ([contents #:mutable] ; list of array
+                ))
 
-;; Create a freash, empty memory with the given capacity
-;; or 64 if no capacity is given.
-(define (make-memory block-size [capacity 64])
-  (memory 0 (make-vector capacity) (make-vector block-size '())))
+;; Create a freash, empty memory
+(define (make-memory)
+  (memory null))
 
-(define (memory-set! mem arr)
-  (vector-set! (memory-contents mem) (memory-length mem) arr)
-  (set-memory-length! mem (add1 (memory-length mem))))
+;; Create a freash, empty shared memory
+(define (make-shared-memory size)
+  (make-vector size (make-memory)))
 
+(define (memory-allocate! arr)
+  (set-memory-contents! global-memory (cons arr (memory-contents global-memory))))
 
-(define (shared-memory-set! mem blockid arr)
-  (let ([vec (memory-shared-mem mem)])
-    (vector-set! vec blockid (cons arr (vector-ref vec blockid)))))
+(define (shared-memory-allocate! arr)
+  (let* ([vec (shared-memory)]
+         [smem (vector-ref vec (bid))])
+    (set-memory-contents! smem (cons arr (memory-contents smem)))))
 
 (define global-memory (make-memory))
 
-
+;; Type of shared memory is vector of list of array.
+(define shared-memory (make-parameter '#()))

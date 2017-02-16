@@ -1,11 +1,11 @@
 #lang rosette
 
-(require "operators.rkt" "work.rkt")
+(require "operators.rkt" "work.rkt" "array.rkt")
 
-(provide if/LS while/LS while-with-bound/LS)
+(provide if/LS while/LS while-with-bound/LS for/LS)
 
-;; denotation of if (b) {then-cl} {else-cl}
-;; execute each clause with additional masks by b
+;; Denotation of if (b) {then-cl} {else-cl}
+;; Execute each clause with additional masks by b
 ;; then-cl, else-cl :: M -> ()
 ;; b :: () -> (vector? boolean?)
 (define (if/LS b then-cl else-cl)
@@ -13,8 +13,8 @@
     (parameterize ([mask (&&/LS bval (mask))]) (then-cl))
     (parameterize ([mask (&&/LS (!/LS bval) (mask))]) (else-cl))))
 
-;; denotation of while (b) {body}
-;; execute body with addtional mask by b until all threads are masked
+;; Denotation of while (b) {body}
+;; Execute body with addtional mask by b until all threads are masked
 ;; b :: () -> boolean? 
 ;; body :: M -> ()
 (define (while/LS b body)
@@ -33,3 +33,14 @@
       (parameterize ([mask m])
         (body)
         (while-with-bound/LS b body (sub1 bound))))))
+
+
+;; Denotation of for (init;cond;change) {body}
+(define (for/LS init cond change body)
+  (init)
+  (while/LS
+   cond
+   (lambda ()
+     (body)
+     (change))))
+
