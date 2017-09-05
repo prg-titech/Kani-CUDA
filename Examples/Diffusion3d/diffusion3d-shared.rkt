@@ -108,4 +108,15 @@
   ;(print-matrix CPU-out 1 64)
   ;(print-matrix GPU-out 1 64)
   
-  
+;(define-symbolic b2 b3 boolean?)
+;
+;(if b2 (+ 1 1) (- 2 1))
+;
+;(cond ([b2 (+ 1 1)]
+;       [(! b2) (+ 1 2)]
+;       [else 0]))
+;
+;(cond [(and (! (and b2 b3)) (! (and (! b2) b3))) (+ 1 1)]
+;        [(! (and b2 b3)) (+ 2 1)]
+;        [(! (and (! b2) b3)) (+ 3 1)]
+;        [else 0])

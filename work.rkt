@@ -1,8 +1,12 @@
 #lang rosette
 
+(require rosette/lib/synthax)
+
 (provide  grid-dimension grid-dim grid-size block-dimension block-dim
           block-index block-idx block-size mask thread-idx vecfy to-bid
-          tid bid)
+          tid bid barrier-count mask)
+
+(define barrier-count (make-parameter 0))
 
 ;; Model of grid structure
 (define grid-dimension (make-parameter '(1)))

@@ -85,11 +85,11 @@
 
 ;; Denotation of (b)? then-val : else-val
 (define (?:/LS b then-cl else-cl)
-  (let ([bval (b)])
-    (let ([then-val (parameterize ([mask (&&/LS bval (mask))]) (then-cl))]
-          [else-val (parameterize ([mask (&&/LS (!/LS bval) (mask))]) (else-cl))]
-          [mthen (&&/LS bval (mask))]
-          [melse (&&/LS (!/LS bval) (mask))])
+    (let* ([bval (b)]
+           [mthen (&&/LS bval (mask))]
+           [melse (&&/LS (!/LS bval) (mask))]
+           [then-val (parameterize ([mask mthen]) (then-cl))]
+           [else-val (parameterize ([mask melse]) (else-cl))])
       (for*/all ([mthen mthen]
                  [melse melse]
                  [then-val then-val]
@@ -102,8 +102,11 @@
                  (vector-ref (vecfy else-val) i)]
                 [(eq? (vector-ref melse i) #f)
                  (vector-ref (vecfy then-val) i)]
-                [else (begin (printf "check error\n")
-                             (assert false))]))))))
+                [else (begin
+                        ;(print (vector-ref melse i))
+                        ;(newline)
+                        ;(printf "error: Check operators.rkt\n")
+                        (assert false))])))))
 
 
 ;; Lifting basic operators

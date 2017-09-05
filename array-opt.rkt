@@ -5,9 +5,7 @@
 (provide array array-contents element-content read-reset! write-reset! read/B-reset! write/B-reset!
          make-element new-vec vec-set! array-ref! array-set! array-set-dim!
          memory-contents make-array make-shared-array
-         print-matrix array-set-host! array-ref-host)
-
-(define switch 1)
+         print-matrix array-set-host! array-ref-host barrier barrier/B)
 
 ;; Structure of element of array 
 (struct element
@@ -160,25 +158,23 @@
           ;(newline)
           ;(print write)
           ;(newline)
-          (if (or (eq? write tid) (eq? write #f))
-              (if (or (eq? write/B bid) (eq? write/B #f))
-                  (begin
-                    (set-element-read/B! elem bid)
-                    (cond
-                      [(eq? read #f)
-                       ;; If this element is not read, its read set is rewritten to tid
-                       (begin
-                         (set-element-read! elem tid)
-                         cont)]
-                      [(eq? read tid)
-                       ;; If this element is read in this thread, its read set is through
-                       cont]
-                      [else
-                       ;; If this element is read in a other thread, its read is rewritten to -1
-                       (begin
-                         (set-element-read! elem -1)
-                         cont)]))
-                  (assert false))
+          (if (and (or (eq? write tid) (eq? write #f)) (or (eq? write/B bid) (eq? write/B #f)))
+              (begin
+                (set-element-read/B! elem bid)
+                (cond
+                  [(eq? read #f)
+                   ;; If this element is not read, its read set is rewritten to tid
+                   (begin
+                     (set-element-read! elem tid)
+                     cont)]
+                  [(eq? read tid)
+                   ;; If this element is read in this thread, its read set is through
+                   cont]
+                  [else
+                   ;; If this element is read in a other thread, its read is rewritten to -1
+                   (begin
+                     (set-element-read! elem -1)
+                     cont)]))
               (assert false)))
         'masked-value)))
 
@@ -278,3 +274,42 @@
 (define (array-set-host! arr ix v)
   (let ([cont (array-contents arr)])
     (set-element-content! (vector-ref cont ix) v)))
+
+;; Synchronize memory
+(define (memory-synchronize! mem)
+  (define cont (memory-contents mem))
+  (for ([i (in-range 0 (length cont))])
+    (let ([vec (array-contents (list-ref cont i))])
+    (begin
+      (vector-map! read-reset! vec)
+      (vector-map! write-reset! vec)))))
+
+(define (memory-synchronize/B! mem)
+  (define cont (memory-contents mem))
+  (for ([i (in-range 0 (length cont))])
+    (let ([vec (array-contents (list-ref cont i))])
+    (begin
+      (vector-map! read/B-reset! vec)
+      (vector-map! write/B-reset! vec)))))
+
+;; Barrier divergence check
+;; When the execution reach a barrier, we need to check that all 
+;; threads are participate in this barrier
+(define (barrier-ok m)
+  (or (for/and ([x m]) x)
+      (for/and ([x m]) (! x))))
+
+;; Barrier
+;; Just do the barrier divergence check
+(define (barrier)
+  (memory-synchronize! global-memory)
+  (memory-synchronize! (vector-ref (shared-memory) (bid)))
+  (let ([m (mask)])
+    (assert (barrier-ok m))))
+
+(define (barrier/B)
+  (memory-synchronize/B! global-memory)
+  (memory-synchronize/B! (vector-ref (shared-memory) (bid)))
+  (let ([m (mask)])
+    (assert (barrier-ok m))))
+

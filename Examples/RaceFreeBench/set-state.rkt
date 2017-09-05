@@ -32,7 +32,11 @@
 ;; number of threads, length of the accessed array, number of iterations
 (define n-th 10)
 (define len-arr 20)
+<<<<<<< Updated upstream
 (define n-iter 30)
+=======
+(define n-iter 10)
+>>>>>>> Stashed changes
 
 (define (write-arr v tid add race-free?)
   (define-symbolic* idx integer?)

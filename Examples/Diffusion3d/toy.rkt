@@ -1,7 +1,6 @@
 #lang rosette
 
-(require "diffusion3d-baseline.rkt"
-         "../../lang.rkt")
+(require "../../lang.rkt")
 
 (current-bitwidth 10)
 
@@ -45,48 +44,51 @@
                              (array-eq-verify
                               out out 2)))))
 
+;; Specification of a rotate function
 (define (rotate arr)
   (:= int i (thread-idx 0))
   (:= int x [arr i])
   (barrier)
   (= [arr (modulo/LS (+/LS i 1) (block-dim 0))] x))
 
-(define (rotates arr SIZE)
+;; Sketch of a rotate fuction
+(define (rotate-sketch arr SIZE)
   (:= int i (thread-idx 0))
   (:= int x [arr i])
   (choose (barrier) (void))
   (= [arr (modulo/LS (+/LS i (??)) SIZE)] x))
 
-(for/list ([SIZE (in-range 10 1001 2)])
-  ;(define SIZE 20)
-  (define in0 (make-array (for/vector ([i SIZE]) (make-element i)) SIZE))
-  (define in1 (make-array (for/vector ([i 5]) (make-element i)) 5))
-  (define in2 (make-array (for/vector ([i 4]) (make-element i)) 4))
-  (define out0 (make-array (for/vector ([i SIZE]) (make-element (modulo (+ i -1) SIZE))) SIZE))
-  (define out2 (make-array (for/vector ([i 5]) (make-element (modulo (+ i -1) 4))) 4))
-  
-  (define (spec-rotate)
-    (begin 
-      (invoke-kernel rotates '(1) (list SIZE) in0 SIZE)
-      (invoke-kernel rotates '(1) '(4) in2 4)
-      (for ([i SIZE]) (assert (eq? (array-ref-host in0 i) (array-ref-host out0 i))))
-      (for ([i 4]) (assert (eq? (array-ref-host in2 i) (array-ref-host out2 i))))))
-  
-  
-  (define (synth-rotate)
-    (define-values (_ cpu real gc)
-      (time-apply
-       (lambda () (synthesize #:forall '()
-                              #:guarantee (spec-rotate)))
-       '()))
-    (list cpu real gc))
+(define SIZE 20)
+(define in0 (make-array (for/vector ([i SIZE]) (make-element i)) SIZE))
+(define in1 (make-array (for/vector ([i 5]) (make-element i)) 5))
+(define in2 (make-array (for/vector ([i 4]) (make-element i)) 4))
+(define out0 (make-array (for/vector ([i SIZE]) (make-element (modulo (+ i -1) SIZE))) SIZE))
+(define out2 (make-array (for/vector ([i 5]) (make-element (modulo (+ i -1) 4))) 4))
 
-  (printf "~a ~a" (car (synth-rotate)) (cadr (synth-rotate)))
-  (newline)
-  )
-  ;(print-matrix out0 5 1)
-  
-  ;(map syntax->datum (generate-forms (synth-rotate))))
+(define (spec-rotate)
+  (begin 
+    (invoke-kernel rotate-sketch '(1) (list SIZE) in0 SIZE)
+    (invoke-kernel rotate-sketch '(1) '(4) in2 4)
+    (for ([i SIZE]) (assert (eq? (array-ref-host in0 i) (array-ref-host out0 i))))
+    (for ([i 4]) (assert (eq? (array-ref-host in2 i) (array-ref-host out2 i))))))
+
+(map syntax->datum (generate-forms (time (synthesize #:forall '()
+                                                     #:guarantee (spec-rotate)))))
+
+
+;(define (synth-rotate)
+;  (define-values (_ cpu real gc)
+;    (time-apply
+;     (lambda () (synthesize #:forall '()
+;                            #:guarantee (spec-rotate)))
+;     '()))
+;  (list cpu real gc))
+
+;(printf "cpu time = ~a, real time = ~a" (car (synth-rotate)) (cadr (synth-rotate)))
+;(newline)
+;(print-matrix out0 5 1)
+
+;(map syntax->datum (generate-forms (synth-rotate))))
 
 ;(define (rotate0 arr) (:= int i (thread-idx 0)) (:= int x (arr i)) (barrier) (= (arr (modulo/LS (+/LS i 8) (block-dim 0))) x))
 

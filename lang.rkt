@@ -1,10 +1,12 @@
 #lang rosette
 
 (require "array.rkt" "control.rkt" "work.rkt"
-         "real.rkt" "operators.rkt" "barrier.rkt" "memory.rkt"
+         "real.rkt" "operators.rkt" ;;"barrier.rkt"
+         "memory.rkt"
          rosette/lib/synthax rosette/lib/angelic)
 
 (provide
+ mask
  ;; Syntax
  ;; Control statement
  if- while for-
@@ -149,9 +151,9 @@
       (parameterize* ([bid b]
                       [block-index (to-bid b)]
                       [mask (make-vector (block-size) #t)])
-        (apply kernel arg)))
-    (barrier)
-    (barrier/B)))
+        (apply kernel arg)))))
+;    (barrier)
+;    (barrier/B)))
 
 ;(define b (? (vecfy 1) (vecfy 2)))
 ;(define a (? 1 2))
