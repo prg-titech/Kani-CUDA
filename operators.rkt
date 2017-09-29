@@ -4,7 +4,7 @@
          rosette/lib/synthax)
 
 (provide +/LS -/LS */LS //LS
-         eq?/LS　!/LS &&/LS </LS >/LS
+         eq?/LS　!/LS &&/LS ||/LS </LS >/LS
          quotient/LS modulo/LS
          ?:/LS min/LS max/LS)
 
@@ -117,6 +117,7 @@
 (define eq?/LS (LSop2 eq?))
 (define !/LS (LSop1 !))
 (define &&/LS (LSop-many &&))
+(define ||/LS (LSop-many ||))
 (define >/LS (LSop2 >))
 (define </LS (LSop2 <))
 (define quotient/LS (LSop2 quotient))
