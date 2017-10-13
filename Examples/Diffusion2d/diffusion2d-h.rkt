@@ -1,0 +1,22 @@
+#lang rosette
+
+(provide (all-defined-out))
+
+(define M-PI 8)
+(define Lx (* 2 M-PI))
+(define Ly (* 2 M-PI))
+(define Nx 16)
+(define Ny 16)
+(define dx (/ Lx (- Nx 1)))
+(define dy (/ Ly (- Ny 1)))
+(define dt 0.0001)
+(define endT 1.0)
+(define Nt (/ endT dt))
+(define DIFF 1.0)
+(define dxdx (* dx dx))
+(define dydy (* dy dy))
+(define THREADX 8)
+(define THREADY 8)
+(define BLOCKX (quotient Nx THREADX))
+(define BLOCKY (quotient Ny THREADY))
+(define Nbytes (* Nx Ny 12))
