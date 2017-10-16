@@ -48,8 +48,8 @@
   (= ij (+/LS i (*/LS Nx j)))
   
   (= x (*/LS i dx))
-  (= x (*/LS j dy))
-  (= [u ij] (*/LS x y))
-  (= [unew ij] 0)
-  (= [ulap ij] 0)
+  (= y (*/LS j dy))
+  ;(= [u ij] (*/LS x y))
+  (= [unew ij] 0.0)
+  (= [ulap ij] 0.0)
   )
