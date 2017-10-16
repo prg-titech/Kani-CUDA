@@ -5,6 +5,7 @@
 
 (provide +/LS -/LS */LS //LS
          eq?/LS　!/LS &&/LS ||/LS </LS >/LS
+         sin/LS cos/LS neq?/LS
          quotient/LS modulo/LS
          ?:/LS min/LS max/LS)
 
@@ -113,9 +114,12 @@
 (define +/LS (LSop-many +))
 (define -/LS (LSop-many -))
 (define */LS (LSop-many *))
-(define //LS (LSop-many /))
+;(define //LS (LSop-many /))
+(define (//LS a b) ((LSop1 exact->inexact) ((LSop2 /) a b)))
 (define eq?/LS (LSop2 eq?))
 (define !/LS (LSop1 !))
+(define sin/LS (LSop1 sin))
+(define cos/LS (LSop1 cos))
 (define &&/LS (LSop-many &&))
 (define ||/LS (LSop-many ||))
 (define >/LS (LSop2 >))
@@ -124,6 +128,7 @@
 (define modulo/LS (LSop2 modulo))
 (define min/LS (LSop2 min))
 (define max/LS (LSop2 max))
+(define (neq?/LS a b) (!/LS (eq?/LS a b)))
 
 (define b (choose (vecfy 1) (vecfy 2)))
 (define a (choose 1 2))
