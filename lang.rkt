@@ -23,7 +23,8 @@
  ;; Arithmetic/Boolean operators
  ;; /LS is for avoiding naming conflicts
  +/LS -/LS */LS //LS
- eq?/LS !/LS &&/LS </LS >/LS
+ eq?/LS !/LS &&/LS ||/LS </LS >/LS
+ sin/LS cos/LS neq?/LS
  quotient/LS modulo/LS
  max/LS min/LS
  ;; Ternary operator
@@ -151,9 +152,9 @@
       (parameterize* ([bid b]
                       [block-index (to-bid b)]
                       [mask (make-vector (block-size) #t)])
-        (apply kernel arg)))))
-;    (barrier)
-;    (barrier/B)))
+        (apply kernel arg)))
+    (barrier)
+    (barrier/B)))
 
 ;(define b (? (vecfy 1) (vecfy 2)))
 ;(define a (? 1 2))
