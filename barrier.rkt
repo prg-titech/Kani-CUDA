@@ -2,7 +2,7 @@
 
 (require "work.rkt" "array.rkt" "memory.rkt")
 
-(provide barrier barrier/B)
+(provide barrier barrier/B syncthreads)
 
 ;; Synchronize memory
 (define (memory-synchronize! mem)
@@ -35,6 +35,10 @@
   (memory-synchronize! (vector-ref (shared-memory) (bid)))
   (let ([m (mask)])
     (assert (barrier-ok m))))
+
+(define (syncthreads)
+  (barrier)
+  (incl-bc))
 
 (define (barrier/B)
   (memory-synchronize/B! global-memory)
