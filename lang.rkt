@@ -1,9 +1,11 @@
 #lang rosette
 
 (require "array.rkt" "control.rkt" "work.rkt"
-         "real.rkt" "operators.rkt" ;;"barrier.rkt"
+         "real.rkt" "operators.rkt" "barrier.rkt"
          "memory.rkt"
-         rosette/lib/synthax rosette/lib/angelic)
+         rosette/lib/synthax rosette/lib/angelic
+         (rename-in rosette/lib/synthax [choose ?])
+         racket/hash)
 
 (provide
  mask
@@ -30,7 +32,7 @@
  ;; Ternary operator
  ?:
  ;; Barrier
- barrier
+ syncthreads
  ;; Kernel invocation
  invoke-kernel
  ;; Synthesis library
@@ -45,7 +47,11 @@
  array-ref-host array-set-host!
  make-element make-array
  
- (all-from-out rosette/lib/synthax))
+ optimize-barrier
+ barrier?
+ ?
+ 
+ (all-from-out rosette/lib/synthax racket/hash))
 
 ;; Kernel syntax
 (define-syntax (if- stx)
@@ -145,6 +151,7 @@
          gdim  ; list of int
          bdim  ; list of int
          . arg); any
+  (clear-bc)
   (parameterize* ([grid-dimension gdim]
                   [block-dimension bdim]
                   [shared-memory (make-shared-memory (grid-size))])
@@ -152,9 +159,47 @@
       (parameterize* ([bid b]
                       [block-index (to-bid b)]
                       [mask (make-vector (block-size) #t)])
-        (apply kernel arg)))
-    (barrier)
-    (barrier/B)))
+        (apply kernel arg)
+        (barrier)
+        (barrier/B)))))
+
+(define switch (make-parameter #f))
+
+(define (optimize-barrier guarantee)
+  (define res
+    (list-ref
+     (map
+      syntax->datum
+      (generate-forms (optimize
+                       #:minimize (list (get-bc))
+                       #:guarantee (parameterize ([switch #t])
+                                     guarantee))))
+     0))
+  
+  (define (replace-barrier lst)
+    (for/list ([e lst])
+      ;(displayln e)
+      (cond
+        [(! (list? e)) e]
+        [(eq? e '(if switch (void) (syncthreads))) '(void)]
+        [(eq? e '(if switch (syncthreads) (syncthreads))) '(syncthreads)]
+        [(member (list-ref e 0) (list 'if 'if- 'while 'for-)) (replace-barrier e)]
+        [else e])))
+  
+  (replace-barrier (list-ref res 2))
+  )
+
+(define (r)
+  (define-symbolic* x boolean?)
+  x)
+
+(define (barrier?)
+  (if (switch)
+      (let ([r (r)])
+        (begin
+          (displayln r)
+          (if r (void) (syncthreads))))
+      (syncthreads)))
 
 ;(define b (? (vecfy 1) (vecfy 2)))
 ;(define a (? 1 2))
