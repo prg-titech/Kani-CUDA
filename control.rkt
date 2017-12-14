@@ -1,6 +1,6 @@
 #lang rosette
 
-(require "operators.rkt" "work.rkt" "array.rkt")
+(require "operators.rkt" "work.rkt")
 
 (provide if/LS while/LS while-with-bound/LS for/LS)
 
@@ -36,11 +36,15 @@
 
 
 ;; Denotation of for (init;cond;change) {body}
-(define (for/LS init cond change body)
+;; Execute body with addtional mask by b until all threads are masked
+;; init :: M -> ()
+;; cond :: () -> boolean?
+;; incr :: M -> ()
+(define (for/LS init cond incr body)
   (init)
   (while/LS
    cond
    (lambda ()
      (body)
-     (change))))
+     (incr))))
 
