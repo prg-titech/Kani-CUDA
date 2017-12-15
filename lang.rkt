@@ -145,7 +145,7 @@
     [(_ [arr idx ...] exp)
      #'(array-set-dim! arr exp idx ...)]))
 
-;; Execute kernel
+;; A function to execute kernel
 (define (invoke-kernel
          kernel ; procedure/function
          gdim  ; list of int
@@ -163,8 +163,9 @@
         (barrier)
         (barrier/B)))))
 
-(define switch (make-parameter #f))
-
+;; A function that synthesize so as to minimize the number of barrier
+;; TODO Correspond when synthesizing multiple codes
+;; guarantee :: M -> ()
 (define (optimize-barrier guarantee)
   (define res
     (list-ref
@@ -178,16 +179,16 @@
   
   (define (replace-barrier lst)
     (for/list ([e lst])
-      ;(displayln e)
       (cond
         [(! (list? e)) e]
-        [(eq? e '(if switch (void) (syncthreads))) '(void)]
+        [(eq? e '(if switch (void) (syncthreads))) null]
         [(eq? e '(if switch (syncthreads) (syncthreads))) '(syncthreads)]
         [(member (list-ref e 0) (list 'if 'if- 'while 'for-)) (replace-barrier e)]
         [else e])))
-  
   (replace-barrier (list-ref res 2))
   )
+
+(define switch (make-parameter #f))
 
 (define (r)
   (define-symbolic* x boolean?)
@@ -200,7 +201,3 @@
           (displayln r)
           (if r (void) (syncthreads))))
       (syncthreads)))
-
-;(define b (? (vecfy 1) (vecfy 2)))
-;(define a (? 1 2))
-;(define c (vecfy a))
