@@ -50,6 +50,7 @@
  optimize-barrier
  barrier?
  ?
+ write-synth-result
  
  (all-from-out rosette/lib/synthax racket/hash))
 
@@ -186,6 +187,43 @@
         [(member (list-ref e 0) (list 'if 'if- 'while 'for-)) (replace-barrier e)]
         [else e])))
   (replace-barrier (list-ref res 2))
+  )
+
+(define (rewrite-name name)
+  (string->symbol (string-append* "res-" (list (symbol->string name)))))
+
+(define (function res)
+  (list-ref (cdr res) 0))
+
+(define (function-name res)
+  (list-ref (function res) 0))
+
+(define (body res)
+  (cdr (cdr res)))
+
+(define (write-synth-result res test)
+  (define out (open-output-file "res.rkt"
+                                #:exists 'truncate))
+  
+  (fprintf out "#lang rosette\n")
+  (for-each (lambda (e)
+              (writeln e out))
+            (list '(require "../../lang.rkt")
+                  '(define switch #t)
+                  (list 'define 'res-f
+                        (quasiquote
+                         (unquote (append (list 'lambda)
+                                          (list (cdr (function res)))
+                                          (body res)))))))
+  (for-each (lambda (e)
+              (writeln e out))
+            (quasiquote (unquote test)))
+  
+  (writeln '(for-each (lambda (e)
+                        (displayln e)
+                        23)
+                      (optimize-barrier (spec-rotate-opt res-f))) out)
+  (close-output-port out)
   )
 
 (define switch (make-parameter #f))
