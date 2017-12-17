@@ -51,6 +51,7 @@
  barrier?
  ?
  write-synth-result
+ switch
  
  (all-from-out rosette/lib/synthax racket/hash))
 
@@ -174,16 +175,15 @@
       syntax->datum
       (generate-forms (optimize
                        #:minimize (list (get-bc))
-                       #:guarantee (parameterize ([switch #t])
-                                     guarantee))))
+                       #:guarantee guarantee)))
      0))
   
   (define (replace-barrier lst)
     (for/list ([e lst])
       (cond
         [(! (list? e)) e]
-        [(eq? e '(if switch (void) (syncthreads))) null]
-        [(eq? e '(if switch (syncthreads) (syncthreads))) '(syncthreads)]
+        [(eq? e '(if (switch) (void) (syncthreads))) null]
+        [(eq? e '(if (switch) (syncthreads) (syncthreads))) '(syncthreads)]
         [(member (list-ref e 0) (list 'if 'if- 'while 'for-)) (replace-barrier e)]
         [else e])))
   (replace-barrier (list-ref res 2))
@@ -209,7 +209,6 @@
   (for-each (lambda (e)
               (writeln e out))
             (list '(require "../../lang.rkt")
-                  '(define switch #t)
                   (list 'define 'res-f
                         (quasiquote
                          (unquote (append (list 'lambda)
@@ -222,11 +221,12 @@
   (writeln '(for-each (lambda (e)
                         (displayln e)
                         23)
-                      (optimize-barrier (spec-rotate-opt res-f))) out)
+                      (optimize-barrier (parameterize ([switch #t])
+                                          (spec-rotate-opt res-f)))) out)
   (close-output-port out)
   )
 
-(define switch (make-parameter #f))
+(define switch (make-parameter #t))
 
 (define (r)
   (define-symbolic* x boolean?)
