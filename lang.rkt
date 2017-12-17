@@ -186,7 +186,8 @@
         [(eq? e '(if (switch) (syncthreads) (syncthreads))) '(syncthreads)]
         [(member (list-ref e 0) (list 'if 'if- 'while 'for-)) (replace-barrier e)]
         [else e])))
-  (replace-barrier (list-ref res 2))
+  (filter (lambda (e) (not (eq? e null)))
+          (replace-barrier (list-ref res 2)))
   )
 
 (define (rewrite-name name)
@@ -219,8 +220,7 @@
             (quasiquote (unquote test)))
   
   (writeln '(for-each (lambda (e)
-                        (displayln e)
-                        23)
+                        (displayln e))
                       (optimize-barrier (parameterize ([switch #t])
                                           (spec-rotate-opt res-f)))) out)
   (close-output-port out)
