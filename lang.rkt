@@ -48,7 +48,6 @@
  make-element make-array
  
  optimize-barrier
- barrier?
  ?
  write-synth-result
  switch
@@ -97,8 +96,6 @@
 
 (define-syntax (: stx)
   (syntax-case stx ()
-    [(_ type x ...)
-     #'(begin (define x (new-vec type)) ...)]
     [(_ type arr[n])
      #'(begin
          (define (t)
@@ -108,7 +105,9 @@
            (make-array
             (for/vector ([i n])
               (make-element (t)))
-            n)))]))
+            n)))]
+    [(_ type x ...)
+     #'(begin (define x (new-vec type)) ...)]))
 
 (define-syntax (:shared stx)
   (syntax-case stx ()
@@ -184,8 +183,9 @@
         [(! (list? e)) e]
         [(eq? e '(if (switch) (void) (syncthreads))) null]
         [(eq? e '(if (switch) (syncthreads) (syncthreads))) '(syncthreads)]
-        [(member (list-ref e 0) (list 'if 'if- 'while 'for-)) (replace-barrier e)]
+        [(member (list-ref e 0) (list 'if 'if- 'while 'for- 'begin)) (replace-barrier e)]
         [else e])))
+  
   (filter (lambda (e) (not (eq? e null)))
           (replace-barrier (list-ref res 2)))
   )
@@ -227,15 +227,3 @@
   )
 
 (define switch (make-parameter #t))
-
-(define (r)
-  (define-symbolic* x boolean?)
-  x)
-
-(define (barrier?)
-  (if (switch)
-      (let ([r (r)])
-        (begin
-          (displayln r)
-          (if r (void) (syncthreads))))
-      (syncthreads)))
