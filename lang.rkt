@@ -51,6 +51,7 @@
  ?
  write-synth-result
  switch
+ synth-with-kani-cuda
  
  (all-from-out rosette/lib/synthax racket/hash))
 
@@ -203,13 +204,13 @@
   (cdr (cdr res)))
 
 (define (write-synth-result res test)
-  (define out (open-output-file "res.rkt"
+  (define out (open-output-file "../../res.rkt"
                                 #:exists 'truncate))
   
   (fprintf out "#lang rosette\n")
   (for-each (lambda (e)
               (writeln e out))
-            (list '(require "../../lang.rkt")
+            (list '(require "lang.rkt")
                   (list 'define 'res-f
                         (quasiquote
                          (unquote (append (list 'lambda)
@@ -222,8 +223,68 @@
   (writeln '(for-each (lambda (e)
                         (displayln e))
                       (optimize-barrier (parameterize ([switch #t])
-                                          (spec-rotate-opt res-f)))) out)
+                                          (spec-opt res-f)))) out)
   (close-output-port out)
   )
 
 (define switch (make-parameter #t))
+
+(define (synth-with-kani-cuda path stx)
+  (define (aux-insert-barrier lst)
+    (for ([e lst])
+      (cond
+        [(eq? (car e) 'begin)
+         (insert-barrier (cdr e))]
+        [(member (car e) (list 'while 'for))
+         (insert-barrier (cddr e))]
+        [(member (car e) (list 'if 'if-))
+         (begin
+           (insert-barrier (list (list-ref e 2)))
+           (insert-barrier (list (list-ref e 3))))]
+        [else
+         23]))
+    (add-between lst
+                 '(if (switch)
+                      (? (syncthreads) (void))
+                      (syncthreads))))
+  
+  (define (insert-barrier def)
+    (append
+     (list 'define (cadr def))
+     (aux-insert-barrier (cddr def))))
+  
+  (define in (open-input-file path))
+  (read-line in)
+  (define stmt #f)
+  (define lst null)
+  (set! stmt (read in))
+  (while (not (eof-object? stmt))
+         (cond [(eq? (car stmt) 'define) (set! lst (append lst (list (insert-barrier stmt))))]
+               [(eq? (car stmt) 'require) (set! lst (append lst (list '(require "lang.rkt"))))]
+               [else (set! lst (append lst (list stmt)))])
+         (set! stmt (read in)))
+  (close-input-port in)
+  (define out (open-output-file "../../sketch.rkt" #:exists 'truncate))
+  (fprintf out "#lang rosette\n")
+  (for-each (lambda (e) (writeln e out))
+            lst)
+  
+  (for-each (lambda (e) (writeln e out))
+            stx)
+  
+  (close-output-port out)
+  
+  (define path-to-racket-exe
+    "/Applications/Racket v6.6/bin//racket")
+  (define path-to-rosette-code1
+    "/Users/akira/Masuhara Lab/Kani-CUDA/sketch.rkt")
+  (define path-to-rosette-code2
+    "/Users/akira/Masuhara Lab/Kani-CUDA/res.rkt")
+  
+  (system*
+   path-to-racket-exe
+   path-to-rosette-code1)
+  
+  (system*
+   path-to-racket-exe
+   path-to-rosette-code2))
