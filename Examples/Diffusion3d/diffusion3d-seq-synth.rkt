@@ -11,6 +11,7 @@
 (define switch-e #t)
 (define switch-n #t)
 (define switch-s #t)
+(define switch 0)
 
 (define (diffusion-kernel in
                           out
@@ -82,29 +83,28 @@
   ;                     [in (+/LS c nx)]))))
   
   (= [out c] (+/LS (*/LS cc tc)
-                   (if switch-w
-                       (*/LS cw (?: (&&/LS (eq?/LS tid-x (? 0 (-/LS (block-dim 0) 1))) (!/LS (eq?/LS i (? 0 (-/LS nx 1)))))
+                   (if (eq? switch 0)
+                       (*/LS cw (?: (&&/LS (eq?/LS tid-x (? 0 (-/LS (block-dim 0) 1))) (neq?/LS (block-idx 0) (? 0 (-/LS nx 1))))
                                     [in ((? +/LS -/LS) c 1)]
                                     [smem (?: (eq?/LS i (? 0 (-/LS nx 1))) c2 ((? +/LS -/LS) c2 (? 1 (block-dim 0) SIZE)))]))
                        (*/LS cw (?: (eq?/LS i 0)
                                     [in c]
                                     [in (-/LS c 1)])))
-                   ;(w c)
-                   (if switch-e
+                   (if (eq? switch 1)
                        (*/LS ce (?: (&&/LS (eq?/LS tid-x (? 0 (-/LS (block-dim 0) 1))) (!/LS (eq?/LS i (? 0 (-/LS nx 1)))))
                                     [in ((? +/LS -/LS) c 1)]
                                     [smem (?: (eq?/LS i (? 0 (-/LS nx 1))) c2 ((? +/LS -/LS) c2 (? 1 (block-dim 0) SIZE)))]))
                        (*/LS ce (?: (eq?/LS i (-/LS nx 1))
                                     [in c]
                                     [in (+/LS c 1)])))
-                   (if switch-n
+                   (if (eq? switch 2)
                        (*/LS cn (?: (&&/LS (eq?/LS tid-y (? 0 (-/LS (block-dim 1) 1))) (!/LS (eq?/LS j (? 0 (-/LS ny 1)))))
                                     [in ((? +/LS -/LS) c nx)]
                                     [smem (?: (eq?/LS j (? 0 (-/LS ny 1))) c2 ((? +/LS -/LS) c2 (? 1 (block-dim 0) SIZE)))]))
                        (*/LS cn (?: (eq?/LS j 0)
                                     [in c]
                                     [in (-/LS c nx)])))
-                   (if switch-s
+                   (if (eq? switch 3)
                        (*/LS cs (?: (&&/LS (eq?/LS tid-y (? 0 (-/LS (block-dim 1) 1))) (!/LS (eq?/LS j (? 0 (-/LS ny 1)))))
                                     [in ((? +/LS -/LS) c nx)]
                                     [smem (?: (eq?/LS j (? 0 (-/LS ny 1))) c2 ((? +/LS -/LS) c2 (? 1 (block-dim 0) SIZE)))]))
@@ -211,7 +211,7 @@
 (define (synth-stencil)
   (time
    (synthesize #:forall (append lst (list e w n s t b c))
-               #:guarantee (begin
+               #:guarantee　(begin
                              ;; Execute a diffusion program on CPU
                              (diffusion3d-baseline 1
                                                    CPU-in CPU-out
@@ -225,26 +225,35 @@
                                                    GPU-in GPU-out
                                                    SIZEX SIZEY SIZEZ
                                                    e w n s t b c)
-                             (array-eq-verify
-                              CPU-out GPU-out SIZE)))))
+                             (array-eq-verify CPU-out GPU-out SIZE)))))
 
 
-(define (seq-synth-stencil)
-  (set! switch-e #f)
-  (set! switch-n #f)
-  (set! switch-s #f)
-  (define ans (model (synth-stencil)))
-  (set! switch-w #f)
-  (set! switch-e #t)
-  (set! ans (hash-union ans (model (synth-stencil))))
-  (set! switch-e #f)
-  (set! switch-n #t)
-  (set! ans (hash-union ans (model (synth-stencil))))
-  (set! switch-n #f)
-  (set! switch-s #t)
-  (set! ans (hash-union ans (model (synth-stencil))))
-  (set! switch-w #t)
-  (set! switch-e #t)
-  (set! switch-n #t)
-  (set! switch-s #t)
-  (map syntax->datum (generate-forms (sat ans)))1)
+;(define (seq-synth-stencil)
+;  (time 
+;   (set! switch-e #f)
+;   (set! switch-n #f)
+;   (set! switch-s #f)
+;   (define ans (model (synth-stencil)))
+;   (set! switch-w #f)
+;   (set! switch-e #t)
+;   (set! ans (hash-union ans (model (synth-stencil))))
+;   (set! switch-e #f)
+;   (set! switch-n #t)
+;   (set! ans (hash-union ans (model (synth-stencil))))
+;   (set! switch-n #f)
+;   (set! switch-s #t)
+;   (set! ans (hash-union ans (model (synth-stencil))))
+;   (set! switch-w #t)
+;   (set! switch-e #t)
+;   (set! switch-n #t)
+;   (set! switch-s #t)
+;   (map syntax->datum (generate-forms (sat ans)))))
+
+(define (seq-synth-stencil n)
+  (time
+   (define ans (make-hash))
+   (for ([i n])
+     (set! switch i)
+     (set! ans (hash-union ans (model (synth-stencil))))
+     )
+   (map syntax->datum (generate-forms (sat ans)))))

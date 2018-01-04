@@ -41,4 +41,12 @@
                                     ce cw cn cs ct cb cc)
     (define temp in)
     (set! in out)
-    (set! out temp)))
+    (set! out temp))
+  (when (eq? (modulo count 2) 0)
+    (set! out in)))
+
+(define-values (nx ny nz) (values 3 3 3))
+(define-values (ce cw cn cs ct cb cc) (values 1 1 1 1 1 1 1))
+(define SIZE (* nx ny nz))
+(define in (make-array (for/vector ([i SIZE]) (make-element i)) SIZE))
+(define out (make-array (for/vector ([i SIZE]) (make-element 0)) SIZE))

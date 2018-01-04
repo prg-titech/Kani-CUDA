@@ -217,9 +217,14 @@
                          (unquote (append (list 'lambda)
                                           (list (cdr (function res)))
                                           (body res)))))))
-  (for-each (lambda (e)
-              (writeln e out))
-            (quasiquote (unquote test)))
+
+  (define stmt 0)
+  (define in-test (open-input-file test))
+  (set! stmt (read in-test))
+  (while (not (eof-object? stmt))
+         (writeln stmt out)
+         (set! stmt (read in-test)))
+  (close-input-port in-test)
   
   (writeln '(for-each (lambda (e)
                         (displayln e))
@@ -232,7 +237,7 @@
 (define switch (make-parameter #t))
 
 ;; 
-(define (synth-with-kani-cuda path stx)
+(define (synth-with-kani-cuda path spec test)
   (define (aux-insert-barrier lst)
     (for ([e lst])
       (cond
@@ -272,8 +277,15 @@
   (for-each (lambda (e) (writeln e out))
             lst)
   
-  (for-each (lambda (e) (writeln e out))
-            stx)
+  
+  (define in-spec (open-input-file spec))
+  (set! stmt (read in-spec))
+  (while (not (eof-object? stmt))
+         (writeln stmt out)
+         (set! stmt (read in-spec)))
+  (close-input-port in-spec)
+
+  (writeln (quasiquote (write-synth-result res (unquote test))) out)
   
   (close-output-port out)
   

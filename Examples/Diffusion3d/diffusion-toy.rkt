@@ -318,7 +318,7 @@
 
 ;(map syntax->datum (generate-forms (synth-stencil)))
 
-(map syntax->datum (generate-forms (synth-test)))
+;(generate-forms (synth-test))
 
 ;(define-symbolic b2 b3 boolean?)
 ;

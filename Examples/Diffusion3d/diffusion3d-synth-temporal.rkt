@@ -3,7 +3,9 @@
 (require "diffusion3d-baseline.rkt"
          "../../lang.rkt")
 
-(current-bitwidth 8)
+(current-bitwidth 7)
+
+(define switch 0)
 
 (define (diffusion-kernel-temporal-blocking in
                                             out
@@ -50,37 +52,39 @@
   ;(printf "sc = ~a\n" sc)
   ;(printf "c2 = ~a\n" c2)
   
-  (:= int w (?: (eq?/LS i (choose 0 (-/LS (choose nx ny nz) 1))) c ((choose +/LS -/LS) c (choose nx xy 1))))
-  (:= int e (?: (eq?/LS i (choose 0 (-/LS (choose nx ny nz) 1))) c ((choose +/LS -/LS) c (choose nx xy 1))))
-  (:= int n (?: (eq?/LS j (choose 0 (-/LS (choose nx ny nz) 1))) c ((choose +/LS -/LS) c (choose nx xy 1))))
-  (:= int s (?: (eq?/LS j (choose 0 (-/LS (choose nx ny nz) 1))) c ((choose +/LS -/LS) c (choose nx xy 1))))
+  (:= int w (?: (eq?/LS i 0) c (-/LS c 1)))
+  (:= int e (?: (eq?/LS i (-/LS nx 1)) c (+/LS c 1)))
+  (:= int n (?: (eq?/LS j 0) c (-/LS c nx)))
+  (:= int s (?: (eq?/LS j (-/LS ny 1)) c (+/LS c nx)))
   (:= int b c)
   (:= int t (?: (eq?/LS nz 1) c (+/LS c xy)))
   
   (:= real v (+/LS (*/LS cc [in c]) (*/LS cw [in w]) (*/LS ce [in e]) (*/LS cs [in s])
                    (*/LS cn [in n]) (*/LS cb [in b]) (*/LS ct [in t])))
   (= [sb sb2 sc] v)
+  (= [out c] v)
   (+= c xy)
   
   (:= int k 1)
   (for- [: (</LS k nz) : (++ k)]
-        (:= int w (?: (eq?/LS i (choose 0 (-/LS (choose nx ny nz) 1))) c ((choose +/LS -/LS) c (choose nx xy 1))))
-        (:= int e (?: (eq?/LS i (choose 0 (-/LS (choose nx ny nz) 1))) c ((choose +/LS -/LS) c (choose nx xy 1))))
-        (:= int n (?: (eq?/LS j (choose 0 (-/LS (choose nx ny nz) 1))) c ((choose +/LS -/LS) c (choose nx xy 1))))
-        (:= int s (?: (eq?/LS j (choose 0 (-/LS (choose nx ny nz) 1))) c ((choose +/LS -/LS) c (choose nx xy 1))))
-        (:= int b (?: (eq?/LS k (choose 0 (-/LS (choose nx ny nz) 1))) c ((choose +/LS -/LS) c (choose nx xy 1))))
-        (:= int t (?: (eq?/LS k (choose 0 (-/LS (choose nx ny nz) 1))) c ((choose +/LS -/LS) c (choose nx xy 1))))
+        (= w (?: (eq?/LS i 0) c (-/LS c 1)))
+        (= e (?: (eq?/LS i (-/LS nx 1)) c (+/LS c 1)))
+        (= n (?: (eq?/LS j 0) c (-/LS c nx)))
+        (= s (?: (eq?/LS j (-/LS ny 1)) c (+/LS c nx)))
+        (= b (?: (eq?/LS k 0) c (-/LS c xy)))
+        (= t (?: (eq?/LS k (-/LS nz 1)) c (+/LS c xy)))
         (:= real v (+/LS (*/LS cc [in c]) (*/LS cw [in w]) (*/LS ce [in e]) (*/LS cs [in s])
                          (*/LS cn [in n]) (*/LS cb [in b]) (*/LS ct [in t])))
         (= [sb sb3 sc] v)
+        (= [out c] v)
         (+= c xy)
         
-        (choose (barrier) (void))
+        (choose (syncthreads) (void))
         
-        (= w (?: (eq?/LS i2 (choose 0 (-/LS (choose nx ny nz) 1))) sc2 (-/LS sc2 1)))
-        (= e (?: (eq?/LS i2 (choose 0 (-/LS (choose nx ny nz) 1))) sc2 (+/LS sc2 1)))
-        (= n (?: (eq?/LS j2 (choose 0 (-/LS (choose nx ny nz) 1))) sc2 (-/LS sc2 (block-dim 0))))
-        (= s (?: (eq?/LS j2 (choose 0 (-/LS (choose nx ny nz) 1))) sc2 (+/LS sc2 (block-dim 0))))
+        ;        (= w (?: (eq?/LS i2 (choose 0 (-/LS (choose nx ny nz) 1))) sc2 (-/LS sc2 1)))
+        ;        (= e (?: (eq?/LS i2 (choose 0 (-/LS (choose nx ny nz) 1))) sc2 (+/LS sc2 1)))
+        ;        (= n (?: (eq?/LS j2 (choose 0 (-/LS (choose nx ny nz) 1))) sc2 (-/LS sc2 (block-dim 0))))
+        ;        (= s (?: (eq?/LS j2 (choose 0 (-/LS (choose nx ny nz) 1))) sc2 (+/LS sc2 (block-dim 0))))
         
         (:= int bv (?: (eq?/LS (-/LS k 1) 0) sb2 sb1))
         (:= int tv sb3)
@@ -91,11 +95,25 @@
         ;(printf "n = ~a\n" n)
         ;(printf "s = ~a\n" s)
         (if- (&&/LS (</LS (thread-idx 0) (-/LS (block-dim 0) 2)) (</LS (thread-idx 1) (-/LS (block-dim 1) 2)))
-             (= [out c2] (+/LS (*/LS cc [sb sb2 sc2]) (*/LS cw [sb sb2 w]) (*/LS ce [sb sb2 e]) (*/LS cs [sb sb2 s])
-                               (*/LS cn [sb sb2 n]) (*/LS cb [sb bv sc2]) (*/LS ct [sb tv sc2]))))
+             (= [out c2] (+/LS
+                          (*/LS cc [sb sb2 sc2])
+                          (if (eq? switch 1)
+                              (*/LS cw [sb sb2 (?: (eq?/LS i2 (choose 0 (-/LS (choose nx ny nz) 1))) sc2 (-/LS sc2 1))])
+                              (*/LS cw [out (?: (eq?/LS i 0) c (-/LS c 1))]))
+                          (if (eq? switch 2)
+                              (*/LS ce [sb sb2 (?: (eq?/LS i2 (choose 0 (-/LS (choose nx ny nz) 1))) sc2 (-/LS sc2 1))])
+                              (*/LS cw [out (?: (eq?/LS i (-/LS nx 1)) c (+/LS c 1))]))
+                          (if (eq? switch 3)
+                              (*/LS cs [sb sb2 (?: (eq?/LS j2 (choose 0 (-/LS (choose nx ny nz) 1))) sc2 (-/LS sc2 (block-dim 0)))])
+                              (*/LS cw [out (?: (eq?/LS j (-/LS ny 1)) c (+/LS c nx))]))
+                          (if (eq? switch 4)
+                              (*/LS cn [sb sb2 (?: (eq?/LS j2 (choose 0 (-/LS (choose nx ny nz) 1))) sc2 (-/LS sc2 (block-dim 0)))])
+                              (*/LS cw [out (?: (eq?/LS j (-/LS ny 1)) c (+/LS c nx))]))
+                          (*/LS cb [sb bv sc2])
+                          (*/LS ct [sb tv sc2]))))
         ;(printf "Pass!\n")
         (+= c2 xy)
-        (barrier)
+        (syncthreads)
         
         (:= int sb-temp sb1)
         (= sb1 sb2)
@@ -110,8 +128,14 @@
   (:= int tv sb2)
   ;(printf "sb2 = ~a\n" sb2)
   (if- (&&/LS (</LS (thread-idx 0) (-/LS (block-dim 0) 2)) (</LS (thread-idx 1) (-/LS (block-dim 1) 2)))
-       (= [out c2] (+/LS (*/LS cc [sb sb2 sc2]) (*/LS cw [sb sb2 w]) (*/LS ce [sb sb2 e]) (*/LS cs [sb sb2 s])
-                         (*/LS cn [sb sb2 n]) (*/LS cb [sb bv sc2]) (*/LS ct [sb tv sc2])))))
+       (= [out c2] (+/LS
+                    (*/LS cc [sb sb2 sc2])
+                    (*/LS cw [sb sb2 w])
+                    (*/LS ce [sb sb2 e])
+                    (*/LS cs [sb sb2 s])
+                    (*/LS cn [sb sb2 n])
+                    (*/LS cb [sb bv sc2])
+                    (*/LS ct [sb tv sc2])))))
 
 
 
@@ -144,10 +168,10 @@
   (define-symbolic* r real?)
   r)
 
-(define-values (SIZEX SIZEY SIZEZ) (values 3 3 2))
+(define-values (SIZEX SIZEY SIZEZ) (values 3 3 3))
 (define SIZE (* SIZEX SIZEY SIZEZ))
 
-(define-values (BLOCKSIZEX BLOCKSIZEY) (values 4 4))
+(define-values (BLOCKSIZEX BLOCKSIZEY) (values 5 5))
 
 (define CPU-in (make-array (for/vector ([i SIZE]) (make-element (r))) SIZE))
 (define GPU-in (make-array (for/vector ([i SIZE]) (make-element (array-ref-host CPU-in i))) SIZE))
@@ -164,7 +188,7 @@
 (define lst
   (for/list ([i SIZE])
     (array-ref-host CPU-in i)))
-    
+
 
 (define (synth-stencil)
   (time 
@@ -175,7 +199,7 @@
                                                    SIZEX SIZEY SIZEZ
                                                    e w n s t b c)
                              (diffusion-run-kernel '(1 1)
-                                                   '(5 5)
+                                                   (list BLOCKSIZEX BLOCKSIZEY)
                                                    1
                                                    GPU-in GPU-out
                                                    SIZEX SIZEY SIZEZ

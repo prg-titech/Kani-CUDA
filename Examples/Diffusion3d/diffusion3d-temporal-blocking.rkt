@@ -71,7 +71,7 @@
         (= [sb sb3 sc] v)
         (+= c xy)
         
-        (barrier)
+        (syncthreads)
         
         (= w (?: (eq?/LS i2 0) sc2 (-/LS sc2 1)))
         (= e (?: (eq?/LS i2 (-/LS nx 1)) sc2 (+/LS sc2 1)))
@@ -91,7 +91,7 @@
                                (*/LS cn [sb sb2 n]) (*/LS cb [sb bv sc2]) (*/LS ct [sb tv sc2]))))
         ;(printf "Pass!\n")
         (+= c2 xy)
-        (barrier)
+        (syncthreads)
         
         (:= int sb-temp sb1)
         (= sb1 sb2)
@@ -105,6 +105,7 @@
   (:= int bv sb1)
   (:= int tv sb2)
   ;(printf "sb2 = ~a\n" sb2)
+  (printf "c2 = ~a\n" c2)
   (if- (&&/LS (</LS (thread-idx 0) (-/LS (block-dim 0) 2)) (</LS (thread-idx 1) (-/LS (block-dim 1) 2)))
        (= [out c2] (+/LS (*/LS cc [sb sb2 sc2]) (*/LS cw [sb sb2 w]) (*/LS ce [sb sb2 e]) (*/LS cs [sb sb2 s])
                          (*/LS cn [sb sb2 n]) (*/LS cb [sb bv sc2]) (*/LS ct [sb tv sc2])))))
@@ -140,10 +141,10 @@
   (define-symbolic* r real?)
   r)
 
-(define-values (SIZEX SIZEY SIZEZ) (values 2 2 3))
+(define-values (SIZEX SIZEY SIZEZ) (values 6 6 3))
 (define SIZE (* SIZEX SIZEY SIZEZ))
 
-(define-values (BLOCKSIZEX BLOCKSIZEY) (values 4 4))
+(define-values (BLOCKSIZEX BLOCKSIZEY) (values 5 5))
 
 (define CPU-in (make-array (for/vector ([i SIZE]) (make-element (r))) SIZE))
 (define GPU-in (make-array (for/vector ([i SIZE]) (make-element (array-ref-host CPU-in i))) SIZE))
