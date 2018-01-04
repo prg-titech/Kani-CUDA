@@ -147,12 +147,16 @@
     [(_ [arr idx ...] exp)
      #'(array-set-dim! arr exp idx ...)]))
 
-;; A function to execute kernel
+;; A function to execute a Kani-CUDA kernel
+;; kernel :: 
+;; gdim :: list?
+;; bdim :: list?
+;; arf :: any/c
 (define (invoke-kernel
-         kernel ; procedure/function
-         gdim  ; list of int
-         bdim  ; list of int
-         . arg); any
+         kernel
+         gdim
+         bdim  
+         . arg)
   (clear-bc)
   (parameterize* ([grid-dimension gdim]
                   [block-dimension bdim]
@@ -191,19 +195,16 @@
           (replace-barrier (list-ref res 2)))
   )
 
-(define (rewrite-name name)
-  (string->symbol (string-append* "res-" (list (symbol->string name)))))
-
-(define (function res)
-  (list-ref (cdr res) 0))
-
-(define (function-name res)
-  (list-ref (function res) 0))
-
-(define (body res)
-  (cdr (cdr res)))
-
+;; A function that write a result of first synthesis to 'res.rkt'
+;; res :: list?
+;; test :: list?
 (define (write-synth-result res test)
+  (define (function res)
+    (list-ref (cdr res) 0))
+  
+  (define (body res)
+    (cdr (cdr res)))
+  
   (define out (open-output-file "../../res.rkt"
                                 #:exists 'truncate))
   
@@ -227,8 +228,10 @@
   (close-output-port out)
   )
 
+;; A global variable to sequential synthesis
 (define switch (make-parameter #t))
 
+;; 
 (define (synth-with-kani-cuda path stx)
   (define (aux-insert-barrier lst)
     (for ([e lst])
