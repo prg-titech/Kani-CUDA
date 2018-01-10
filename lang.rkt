@@ -191,8 +191,17 @@
         [(member (list-ref e 0) (list 'if 'if- 'while 'for- 'begin)) (replace-barrier e)]
         [else e])))
   
-  (filter (lambda (e) (not (eq? e null)))
-          (replace-barrier (list-ref res 2)))
+  
+  (define (delete-null lst)
+    (filter (lambda (e) (not (eq? e null)))
+            (for/list ([e lst])
+              (cond
+                [(! (list? e)) e]
+                [(null? e) e]
+                [(member (list-ref e 0) (list 'if 'if- 'while 'for- 'begin)) (delete-null e)]
+                [else e]))))
+
+  (delete-null (replace-barrier (list-ref res 2)))
   )
 
 ;; A function that write a result of first synthesis to 'res.rkt'
@@ -217,7 +226,7 @@
                          (unquote (append (list 'lambda)
                                           (list (cdr (function res)))
                                           (body res)))))))
-
+  
   (define stmt 0)
   (define in-test (open-input-file test))
   (set! stmt (read in-test))
@@ -227,7 +236,7 @@
   (close-input-port in-test)
   
   (writeln '(for-each (lambda (e)
-                        (displayln e))
+                        (pretty-display e))
                       (optimize-barrier (parameterize ([switch #t])
                                           (spec-opt res-f)))) out)
   (close-output-port out)
@@ -236,30 +245,36 @@
 ;; A global variable to sequential synthesis
 (define switch (make-parameter #t))
 
+(define (aux-insert-barrier lst)
+  (add-between 
+   (for/list ([e lst])
+     (cond
+       [(eq? (car e) 'begin)
+        (cons 'begin (aux-insert-barrier (cdr e)))]
+       [(member (car e) (list 'while 'for 'for-))
+        (cons (car e) (cons (cadr e) (aux-insert-barrier (cddr e))))]
+       [(member (car e) (list 'if 'if-))
+        (cons
+         (car e)
+         (cons
+          (cadr e)
+          (cons
+           (aux-insert-barrier (list (list-ref e 2)))
+           (aux-insert-barrier (list (list-ref e 3))))))]
+       [else
+        e]))
+   '(if (switch)
+        (? (syncthreads) (void))
+        (syncthreads))))
+
+
+(define (insert-barrier def)
+  (append
+   (list 'define (cadr def))
+   (aux-insert-barrier (cddr def))))
+
 ;; 
 (define (synth-with-kani-cuda path spec test)
-  (define (aux-insert-barrier lst)
-    (for ([e lst])
-      (cond
-        [(eq? (car e) 'begin)
-         (insert-barrier (cdr e))]
-        [(member (car e) (list 'while 'for))
-         (insert-barrier (cddr e))]
-        [(member (car e) (list 'if 'if-))
-         (begin
-           (insert-barrier (list (list-ref e 2)))
-           (insert-barrier (list (list-ref e 3))))]
-        [else
-         23]))
-    (add-between lst
-                 '(if (switch)
-                      (? (syncthreads) (void))
-                      (syncthreads))))
-  
-  (define (insert-barrier def)
-    (append
-     (list 'define (cadr def))
-     (aux-insert-barrier (cddr def))))
   
   (define in (open-input-file path))
   (read-line in)
@@ -277,14 +292,13 @@
   (for-each (lambda (e) (writeln e out))
             lst)
   
-  
   (define in-spec (open-input-file spec))
   (set! stmt (read in-spec))
   (while (not (eof-object? stmt))
          (writeln stmt out)
          (set! stmt (read in-spec)))
   (close-input-port in-spec)
-
+  
   (writeln (quasiquote (write-synth-result res (unquote test))) out)
   
   (close-output-port out)

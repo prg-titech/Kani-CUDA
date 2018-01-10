@@ -69,11 +69,11 @@
   (define-symbolic* r real?)
   r)
 
-(define-values (SIZEX SIZEY SIZEZ) (values 8 8 4))
+(define-values (SIZEX SIZEY SIZEZ) (values 6 6 5))
 
 (define SIZE (* SIZEX SIZEY SIZEZ))
 
-(define-values (BLOCKSIZEX BLOCKSIZEY) (values 4 4))
+(define-values (BLOCKSIZEX BLOCKSIZEY) (values 3 3))
 
 ;; Input array on CPU
 (define CPU-in (make-array (for/vector ([i SIZE]) (make-element (r))) SIZE))

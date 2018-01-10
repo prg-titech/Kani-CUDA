@@ -36,9 +36,7 @@
   (= tc [in c])
   (= tb tc)
   
-  ;(? (syncthreads) (void))
   (= [smem c2] tc)
-  ;(? (syncthreads) (void))
   
   (:= bool bw (&&/LS (eq?/LS tid-x (? 0 (-/LS (block-dim 0) 1))) (!/LS (eq?/LS i (? 0 (-/LS nx 1))))))
   (:= bool be (&&/LS (eq?/LS tid-x (? 0 (-/LS (block-dim 0) 1))) (!/LS (eq?/LS i (? 0 (-/LS nx 1))))))
