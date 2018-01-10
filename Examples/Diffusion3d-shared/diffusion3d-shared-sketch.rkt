@@ -1,7 +1,6 @@
 #lang rosette
 
-(require
-         "../../lang.rkt"
+(require "../../lang.rkt"
          (rename-in rosette/lib/synthax [choose ?])
          racket/hash)
 

@@ -219,7 +219,8 @@
   
   (fprintf out "#lang rosette\n")
   (for-each (lambda (e)
-              (writeln e out))
+              (pretty-write e out)
+              (newline out))
             (list '(require "lang.rkt")
                   (list 'define 'res-f
                         (quasiquote
@@ -231,14 +232,16 @@
   (define in-test (open-input-file test))
   (set! stmt (read in-test))
   (while (not (eof-object? stmt))
-         (writeln stmt out)
+         (pretty-write stmt out)
+         (newline out)
          (set! stmt (read in-test)))
   (close-input-port in-test)
   
-  (writeln '(for-each (lambda (e)
+  (pretty-write '(for-each (lambda (e)
                         (pretty-display e))
                       (optimize-barrier (parameterize ([switch #t])
                                           (spec-opt res-f)))) out)
+  (newline out)
   (close-output-port out)
   )
 
@@ -289,17 +292,21 @@
   (close-input-port in)
   (define out (open-output-file "../../sketch.rkt" #:exists 'truncate))
   (fprintf out "#lang rosette\n")
-  (for-each (lambda (e) (writeln e out))
+  (for-each (lambda (e)
+              (pretty-write e out)
+              (newline out))
             lst)
   
   (define in-spec (open-input-file spec))
   (set! stmt (read in-spec))
   (while (not (eof-object? stmt))
-         (writeln stmt out)
+         (pretty-write stmt out)
+         (newline out)
          (set! stmt (read in-spec)))
   (close-input-port in-spec)
   
-  (writeln (quasiquote (write-synth-result res (unquote test))) out)
+  (pretty-write (quasiquote (write-synth-result res (unquote test))) out)
+  (newline out)
   
   (close-output-port out)
   
