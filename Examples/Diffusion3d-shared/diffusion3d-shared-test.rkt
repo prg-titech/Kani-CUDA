@@ -54,8 +54,11 @@
 
 (define-values (BLOCKSIZEX BLOCKSIZEY) (values 4 4))
 
+(define (rand)
+    (random 1000))
+
 ;; Input array on CPU
-(define CPU-in (make-array (for/vector ([i SIZE]) (make-element i)) SIZE))
+(define CPU-in (make-array (for/vector ([i SIZE]) (make-element (rand))) SIZE))
 ;; Input array on GPU
 (define GPU-in (make-array (for/vector ([i SIZE]) (make-element (array-ref-host CPU-in i))) SIZE))
 ;; Output array on CPU
@@ -65,7 +68,7 @@
 
 ;(define-symbolic e w n s t b c real?)
 
-(define-values (e w n s t b c) (values 1 1 1 1 1 1 1))
+(define-values (e w n s t b c) (values (rand) (rand) (rand) (rand) (rand) (rand) (rand)))
 
 (define (spec-opt res-f)
   (define (diffusion-run-kernel grid

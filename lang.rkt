@@ -3,7 +3,7 @@
 (require "array.rkt" "control.rkt" "work.rkt"
          "real.rkt" "operators.rkt" "barrier.rkt"
          "memory.rkt"
-         rosette/lib/synthax rosette/lib/angelic
+         rosette/lib/synthax ;rosette/lib/angelic
          (rename-in rosette/lib/synthax [choose ?])
          racket/hash)
 
@@ -44,7 +44,7 @@
  ;; Option
  print-matrix
  ;; Function/procedure for host
- array-ref-host array-set-host!
+ array-ref-host array-set-host! array-ref-test
  make-element make-array
  
  optimize-barrier
@@ -52,6 +52,7 @@
  write-synth-result
  switch
  synth-with-kani-cuda
+ profiling-access
  
  (all-from-out rosette/lib/synthax racket/hash))
 
@@ -168,6 +169,7 @@
         (apply kernel arg)
         (barrier)
         (barrier/B)))))
+  ;(close-output-port out))
 
 ;; A function that synthesize so as to minimize the number of barrier
 ;; TODO Correspond when synthesizing multiple codes
@@ -246,7 +248,7 @@
   )
 
 ;; A global variable to sequential synthesis
-(define switch (make-parameter #t))
+(define switch (make-parameter #f))
 
 (define (aux-insert-barrier lst)
   (add-between 
@@ -313,9 +315,9 @@
   (define path-to-racket-exe
     "/Applications/Racket v6.6/bin//racket")
   (define path-to-rosette-code1
-    "/Users/akira/Masuhara Lab/Kani-CUDA/sketch.rkt")
+    "/Users/akira/masuhara-lab/Kani-CUDA/sketch.rkt")
   (define path-to-rosette-code2
-    "/Users/akira/Masuhara Lab/Kani-CUDA/res.rkt")
+    "/Users/akira/masuhara-lab/Kani-CUDA/res.rkt")
   
   (system*
    path-to-racket-exe

@@ -12,6 +12,7 @@
 (define switch-n #t)
 (define switch-s #t)
 (define switch 0)
+(define switch-synth #t)
 
 (define (diffusion-kernel in
                           out
@@ -42,75 +43,47 @@
   (= tc [in c])
   (= tb tc)
   
-  ;(? (barrier) (void))
+  ;(? (syncthreads) (void))
   (= [smem c2] tc)
-  (barrier)
-  ;(? (barrier) (void))
-  
-  ;  (define (w c)
-  ;    (if switch-w
-  ;        (*/LS cw (?: (&&/LS (eq?/LS tid-x (? 0 (-/LS (block-dim 0) 1))) (!/LS (eq?/LS i (? 0 (-/LS nx 1)))))
-  ;                     [in ((? +/LS -/LS) c 1)]
-  ;                     [smem (?: (eq?/LS i (? 0 (-/LS nx 1))) c2 ((? +/LS -/LS) c2 (? 1 (block-dim 0) SIZE)))]))
-  ;        (*/LS cw (?: (eq?/LS i 0)
-  ;                     [in c]
-  ;                     [in (-/LS c 1)]))))
-  ;  (define (e c)
-  ;    (if switch-e
-  ;        (*/LS ce (?: (&&/LS (eq?/LS tid-x (? 0 (-/LS (block-dim 0) 1))) (!/LS (eq?/LS i (? 0 (-/LS nx 1)))))
-  ;                     [in ((? +/LS -/LS) c 1)]
-  ;                     [smem (?: (eq?/LS i (? 0 (-/LS nx 1))) c2 ((? +/LS -/LS) c2 (? 1 (block-dim 0) SIZE)))]))
-  ;        (*/LS ce (?: (eq?/LS i (-/LS nx 1))
-  ;                     [in c]
-  ;                     [in (+/LS c 1)]))))
-  ;  
-  ;  (define (n c)
-  ;    (if switch-n
-  ;        (*/LS cn (?: (&&/LS (eq?/LS tid-y (? 0 (-/LS (block-dim 1) 1))) (!/LS (eq?/LS j (? 0 (-/LS ny 1)))))
-  ;                     [in ((? +/LS -/LS) c nx)]
-  ;                     [smem (?: (eq?/LS j (? 0 (-/LS ny 1))) c2 ((? +/LS -/LS) c2 (? 1 (block-dim 0) SIZE)))]))
-  ;        (*/LS cn (?: (eq?/LS j 0)
-  ;                     [in c]
-  ;                     [in (-/LS c nx)]))))
-  ;  
-  ;  (define (s c)
-  ;    (if switch-s
-  ;        (*/LS cs (?: (&&/LS (eq?/LS tid-y (? 0 (-/LS (block-dim 1) 1))) (!/LS (eq?/LS j (? 0 (-/LS ny 1)))))
-  ;                     [in ((? +/LS -/LS) c nx)]
-  ;                     [smem (?: (eq?/LS j (? 0 (-/LS ny 1))) c2 ((? +/LS -/LS) c2 (? 1 (block-dim 0) SIZE)))]))
-  ;        (*/LS cs (?: (eq?/LS j (-/LS ny 1))
-  ;                     [in c]
-  ;                     [in (+/LS c nx)]))))
+  (syncthreads)
+  ;(? (syncthreads) (void))
   
   (= [out c] (+/LS (*/LS cc tc)
-                   (if (eq? switch 0)
-                       (*/LS cw (?: (&&/LS (eq?/LS tid-x (? 0 (-/LS (block-dim 0) 1))) (neq?/LS (block-idx 0) (? 0 (-/LS nx 1))))
-                                    [in ((? +/LS -/LS) c 1)]
-                                    [smem (?: (eq?/LS i (? 0 (-/LS nx 1))) c2 ((? +/LS -/LS) c2 (? 1 (block-dim 0) SIZE)))]))
-                       (*/LS cw (?: (eq?/LS i 0)
-                                    [in c]
-                                    [in (-/LS c 1)])))
-                   (if (eq? switch 1)
-                       (*/LS ce (?: (&&/LS (eq?/LS tid-x (? 0 (-/LS (block-dim 0) 1))) (!/LS (eq?/LS i (? 0 (-/LS nx 1)))))
-                                    [in ((? +/LS -/LS) c 1)]
-                                    [smem (?: (eq?/LS i (? 0 (-/LS nx 1))) c2 ((? +/LS -/LS) c2 (? 1 (block-dim 0) SIZE)))]))
-                       (*/LS ce (?: (eq?/LS i (-/LS nx 1))
-                                    [in c]
-                                    [in (+/LS c 1)])))
-                   (if (eq? switch 2)
-                       (*/LS cn (?: (&&/LS (eq?/LS tid-y (? 0 (-/LS (block-dim 1) 1))) (!/LS (eq?/LS j (? 0 (-/LS ny 1)))))
-                                    [in ((? +/LS -/LS) c nx)]
-                                    [smem (?: (eq?/LS j (? 0 (-/LS ny 1))) c2 ((? +/LS -/LS) c2 (? 1 (block-dim 0) SIZE)))]))
-                       (*/LS cn (?: (eq?/LS j 0)
-                                    [in c]
-                                    [in (-/LS c nx)])))
-                   (if (eq? switch 3)
-                       (*/LS cs (?: (&&/LS (eq?/LS tid-y (? 0 (-/LS (block-dim 1) 1))) (!/LS (eq?/LS j (? 0 (-/LS ny 1)))))
-                                    [in ((? +/LS -/LS) c nx)]
-                                    [smem (?: (eq?/LS j (? 0 (-/LS ny 1))) c2 ((? +/LS -/LS) c2 (? 1 (block-dim 0) SIZE)))]))
-                       (*/LS cs (?: (eq?/LS j (-/LS ny 1))
-                                    [in c]
-                                    [in (+/LS c nx)])))
+                   
+                   (if switch-synth
+                       (+/LS
+                        (if (eq? switch 0)
+                            (*/LS cw (?: (&&/LS (eq?/LS tid-x (? 0 (-/LS (block-dim 0) 1))) (neq?/LS (block-idx 0) (? 0 (-/LS nx 1))))
+                                         [in ((? +/LS -/LS) c 1)]
+                                         [smem (?: (eq?/LS i (? 0 (-/LS nx 1))) c2 ((? +/LS -/LS) c2 (? 1 (block-dim 0) SIZE)))]))
+                            (*/LS cw (?: (eq?/LS i 0)
+                                         [in c]
+                                         [in (-/LS c 1)])))
+                        (if (eq? switch 0)
+                            (*/LS ce (?: (&&/LS (eq?/LS tid-x (? 0 (-/LS (block-dim 0) 1))) (!/LS (eq?/LS i (? 0 (-/LS nx 1)))))
+                                         [in ((? +/LS -/LS) c 1)]
+                                         [smem (?: (eq?/LS i (? 0 (-/LS nx 1))) c2 ((? +/LS -/LS) c2 (? 1 (block-dim 0) SIZE)))]))
+                            (*/LS ce (?: (eq?/LS i (-/LS nx 1))
+                                         [in c]
+                                         [in (+/LS c 1)])))
+                        (if (eq? switch 0)
+                            (*/LS cn (?: (&&/LS (eq?/LS tid-y (? 0 (-/LS (block-dim 1) 1))) (!/LS (eq?/LS j (? 0 (-/LS ny 1)))))
+                                         [in ((? +/LS -/LS) c nx)]
+                                         [smem (?: (eq?/LS j (? 0 (-/LS ny 1))) c2 ((? +/LS -/LS) c2 (? 1 (block-dim 0) SIZE)))]))
+                            (*/LS cn (?: (eq?/LS j 0)
+                                         [in c]
+                                         [in (-/LS c nx)])))
+                        (if (eq? switch 0)
+                            (*/LS cs (?: (&&/LS (eq?/LS tid-y (? 0 (-/LS (block-dim 1) 1))) (!/LS (eq?/LS j (? 0 (-/LS ny 1)))))
+                                         [in ((? +/LS -/LS) c nx)]
+                                         [smem (?: (eq?/LS j (? 0 (-/LS ny 1))) c2 ((? +/LS -/LS) c2 (? 1 (block-dim 0) SIZE)))]))
+                            (*/LS cs (?: (eq?/LS j (-/LS ny 1))
+                                         [in c]
+                                         [in (+/LS c nx)]))))
+                       (+/LS (*/LS cw (?: (&&/LS (eq?/LS tid-x 0) (!/LS (eq?/LS i 0))) [in (-/LS c 1)] [smem (?: (eq?/LS i 0) c2 (-/LS c2 1))]))
+                             (*/LS ce (?: (&&/LS (eq?/LS tid-x (-/LS (block-dim 0) 1)) (!/LS (eq?/LS i (-/LS nx 1)))) [in (+/LS c 1)] [smem (?: (eq?/LS i (-/LS nx 1)) c2 (+/LS c2 1))]))
+                             (*/LS cn (?: (&&/LS (eq?/LS tid-y 0) (!/LS (eq?/LS j 0))) [in (-/LS c nx)] [smem (?: (eq?/LS j 0) c2 (-/LS c2 (block-dim 0)))]))
+                             (*/LS cs (?: (&&/LS (eq?/LS tid-y (-/LS (block-dim 1) 1)) (!/LS (eq?/LS j (-/LS ny 1)))) [in (+/LS c nx)] [smem (?: (eq?/LS j (-/LS ny 1)) c2 (+/LS c2 (block-dim 0)))]))))
                    (*/LS cb tb)
                    (*/LS ct tt)))
   
@@ -121,12 +94,12 @@
         (= tb tc)
         (= tc tt)
         
-        ;(? (barrier) (void))
-        (barrier)
+        ;(? (syncthreads) (void))
+        (syncthreads)
         (= [smem c2] tt)
         (= tt [in (+/LS c xy)])
-        (barrier)
-        ;(? (barrier) (void))
+        (syncthreads)
+        ;(? (syncthreads) (void))
         
         (= [out c] (+/LS (*/LS cc tc)
                          (*/LS cw (?: (&&/LS (eq?/LS tid-x 0) (!/LS (eq?/LS i 0))) [in (-/LS c 1)] [smem (?: (eq?/LS i 0) c2 (-/LS c2 1))]))
@@ -135,18 +108,18 @@
                          (*/LS cs (?: (&&/LS (eq?/LS tid-y (-/LS (block-dim 1) 1)) (!/LS (eq?/LS j (-/LS ny 1)))) [in (+/LS c nx)] [smem (?: (eq?/LS j (-/LS ny 1)) c2 (+/LS c2 (block-dim 0)))]))
                          (*/LS cb tb)
                          (*/LS ct tt)))
-        (barrier)
-        ;(? (barrier) (void))
+        (syncthreads)
+        ;(? (syncthreads) (void))
         
         (+= c xy))
   
   (= tb tc)
   (= tc tt)
   
-  ;(? (barrier) (void))
+  ;(? (syncthreads) (void))
   (= [smem c2] tt)
-  (barrier)
-  ;(? (barrier) (void))
+  (syncthreads)
+  ;(? (syncthreads) (void))
   
   (= [out c] (+/LS (*/LS cc tc)
                    (*/LS cw (?: (&&/LS (eq?/LS tid-x 0) (!/LS (eq?/LS i 0))) [in (-/LS c 1)] [smem (?: (eq?/LS i 0) c2 (-/LS c2 1))]))
@@ -186,7 +159,7 @@
   (define-symbolic* r real?)
   r)
 
-(define-values (SIZEX SIZEY SIZEZ) (values 6 6 3))
+(define-values (SIZEX SIZEY SIZEZ) (values 6 6 4))
 
 (define SIZE (* SIZEX SIZEY SIZEZ))
 
@@ -251,9 +224,9 @@
 
 (define (seq-synth-stencil n)
   (time
-   (define ans (make-hash))
-   (for ([i n])
-     (set! switch i)
+   (define ans (model (synth-stencil)))
+   (for ([i (- n 1)])
+     (set! switch (+ i 1))
      (set! ans (hash-union ans (model (synth-stencil))))
      )
    (map syntax->datum (generate-forms (sat ans)))))

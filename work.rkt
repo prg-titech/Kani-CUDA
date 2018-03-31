@@ -4,7 +4,7 @@
 
 (provide  grid-dimension grid-dim grid-size block-dimension block-dim
           block-index block-idx block-size mask thread-idx vecfy to-bid
-          tid bid barrier-count mask incl-bc clear-bc get-bc)
+          tid bid barrier-count mask incl-bc clear-bc get-bc out-file)
 
 (define barrier-count (make-parameter 0))
 
@@ -74,6 +74,8 @@
 (define (tid) (for/vector ([i (block-size)]) i))
 
 (define bid (make-parameter 0))
+
+(define out-file (make-parameter 0))
 
 (define barrier-counter 0)
 
