@@ -72,7 +72,7 @@
   (define-symbolic* r real?)
   r)
 
-(define-values (SIZEX SIZEY SIZEZ) (values 6 6 3))
+(define-values (SIZEX SIZEY SIZEZ) (values 9 9 3))
 (define SIZE (* SIZEX SIZEY SIZEZ))
 
 (define CPU-in (make-array (for/vector ([i SIZE]) (make-element i)) SIZE))
@@ -84,15 +84,15 @@
 (define-values (e w n s t b c) (values 1 1 1 1 1 1 1))
 
 ;; Execute a diffusion program on CPU
-(diffusion3d-baseline 2
-                      CPU-in CPU-out
-                      SIZEX SIZEY SIZEZ
-                      e w n s t b c)
+;(diffusion3d-baseline 2
+;                      CPU-in CPU-out
+;                      SIZEX SIZEY SIZEZ
+;                      e w n s t b c)
 
 ;; Execute a diffusion program on GPU
 (define out-file (open-output-file "profile.rkt" #:exists 'truncate))
 (diffusion-run-kernel out-file
-                      '(2 2)
+                      '(3 3)
                       '(3 3)
                       3
                       GPU-in GPU-out
@@ -101,7 +101,7 @@
 (close-output-port out-file)
 
 
-(define (diffusion-verify) (time (verify (array-eq-verify CPU-in GPU-in SIZE))))
+;(define (diffusion-verify) (time (verify (array-eq-verify CPU-in GPU-in SIZE))))
 
 ;(print-matrix CPU-in 8 8)
 ;(newline)

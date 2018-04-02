@@ -15,7 +15,8 @@
 
 ;; Create a freash, empty shared memory
 (define (make-shared-memory size)
-  (make-vector size (make-memory)))
+  (for/vector ([i size])
+    (struct-copy memory (make-memory))))
 
 (define (memory-allocate! arr)
   (set-memory-contents! global-memory (cons arr (memory-contents global-memory))))
@@ -23,7 +24,11 @@
 (define (shared-memory-allocate! arr)
   (let* ([vec (shared-memory)]
          [smem (vector-ref vec (bid))])
-    (set-memory-contents! smem (cons arr (memory-contents smem)))))
+    (print (memory-contents (vector-ref vec 3)))
+    (print (memory-contents smem))
+    (set-memory-contents! smem (cons arr (memory-contents smem)))
+    (print (memory-contents smem))))
+
 
 (define global-memory (make-memory))
 
