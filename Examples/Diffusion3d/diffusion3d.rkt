@@ -30,14 +30,14 @@
     (:= int s (?: (eq?/LS j (-/LS ny 1)) c (+/LS c nx)))
     (:= int b (?: (eq?/LS k 0) c (-/LS c xy)))
     (:= int t (?: (eq?/LS k (-/LS nz 1)) c (+/LS c xy)))
-    (printf "w: ~a\n" w)
     (= [out c] (+/LS (*/LS cc [in c])
-                     (*/LS cw (profiling-access file in w i j tid-x tid-y c2 (block-dim 0) (block-dim 1) nx ny nz))
-                     ;(*/LS cw [in w])
+                     ;(*/LS cw (profiling-access file in w i j c tid-x tid-y c2 (block-dim 0) (block-dim 1) nx ny nz))
+                     (*/LS cw [in w])
+                     ;(*/LS ce (profiling-access file in e i j tid-x tid-y c2 (block-dim 0) (block-dim 1) nx ny nz))
                      (*/LS ce [in e])
                      (*/LS cs [in s])
                      (*/LS cn [in n])
-                     ;(*/LS cn (profiling-access file in n i j tid-x tid-y c2 (block-dim 0) (block-dim 1) nx ny nz))
+                     ;(*/LS cn (profiling-access file in n i j c tid-x tid-y c2 (block-dim 0) (block-dim 1) nx ny nz))
                      (*/LS cb [in b])
                      (*/LS ct [in t])))
     (+= c xy)))
@@ -74,7 +74,7 @@
   (define-symbolic* r real?)
   r)
 
-(define-values (SIZEX SIZEY SIZEZ) (values 9 9 3))
+(define-values (SIZEX SIZEY SIZEZ) (values 6 6 3))
 (define SIZE (* SIZEX SIZEY SIZEZ))
 
 (define CPU-in (make-array (for/vector ([i SIZE]) (make-element i)) SIZE))
@@ -95,8 +95,8 @@
 (define out-file (open-output-file "profile.rkt" #:exists 'truncate))
 (diffusion-run-kernel out-file
                       '(3 3)
-                      '(3 3)
-                      3
+                      '(2 2)
+                      1
                       GPU-in GPU-out
                       SIZEX SIZEY SIZEZ
                       e w n s t b c)

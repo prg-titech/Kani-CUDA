@@ -1,4 +1,4 @@
-#lang rosette
+ #lang rosette
 
 (require "array.rkt" "control.rkt" "work.rkt"
          "real.rkt" "operators.rkt" "barrier.rkt"
