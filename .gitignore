@@ -2,3 +2,4 @@
 *.zo
 *#
 Synthesizer/kani-cuda/bin/.*
+Synthesizer/Kani-cuda/.*
