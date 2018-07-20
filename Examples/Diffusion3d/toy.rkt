@@ -5,6 +5,7 @@
 
 (current-bitwidth #f)
 
+
 (define-synthax (arith-exp i j c tid-x tid-y c2 bx by nx ny nz depth)
   #:base (choose (??) i j c tid-x tid-y c2 bx by nx ny nz)
   #:else (choose
@@ -26,7 +27,7 @@
            (not (bool-exp i j c tid-x tid-y c2 bx by nx ny nz (- depth 1))))))
 
 (define (bool-exp- i j c tid-x tid-y c2 bx by nx ny nz)
-  (bool-exp i j c tid-x tid-y c2 bx by nx ny nz 3))
+  (bool-exp i j c tid-x tid-y c2 bx by nx ny nz 2))
 
 (define (arith-exp2- i j c tid-x tid-y c2 bx by nx ny nz)
   (if ;(? (eq? i 0)

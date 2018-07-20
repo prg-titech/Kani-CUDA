@@ -6,7 +6,7 @@
          make-element new-vec vec-set! array-ref! array-set! array-set-dim!
          memory-contents make-array make-shared-array
          print-matrix array-set-host! array-ref-host array-ref-test
-         profiling-access)
+         profiling-access synth-memory-access)
 
 ;; Structure of element of array 
 (struct element
@@ -209,14 +209,14 @@
                   [smix (vector-length (array-contents sm))])
               (when (&& (eq? (element-content e) cont) (eq? sm-ok #f))
                 (begin
-;                  (println "shared-memory in the block")
-;                  (map (lambda (x) (print-matrix x 9 1)) smem)
-;                  (printf "global-idx: ~a\n" i)
-;                  (printf "global-cont: ~a\n" (element-content e))
-;                  (printf "shared-memory: ")
-;                  (print-matrix sm 9 1)
-;                  (printf "shared-cont: ~a\n" cont)
-;                  (newline)
+                  ;                  (println "shared-memory in the block")
+                  ;                  (map (lambda (x) (print-matrix x 9 1)) smem)
+                  ;                  (printf "global-idx: ~a\n" i)
+                  ;                  (printf "global-cont: ~a\n" (element-content e))
+                  ;                  (printf "shared-memory: ")
+                  ;                  (print-matrix sm 9 1)
+                  ;                  (printf "shared-cont: ~a\n" cont)
+                  ;                  (newline)
                   ;; print 0:tid, 1:bid, 2:i, 3:smix, 4:arg0, ...
                   (fprintf out "~a ~a ~a ~a" tid bid i smix)
                   (for ([arg (map vecfy arg)]
@@ -257,6 +257,15 @@
     (parameterize ([mask m])
       (profiling-ref-const! file arr ixs arg)
       )))
+
+(define (synth-memory-access file arr ixs depth)
+  ;(define out-file (open-output-file "profile.rkt" #:exists 'truncate))
+  (define res
+    (apply profiling-access
+           file arr ixs (hash-values env)))
+  ;(close-output-port out-file)
+  res)
+
 
 (define (array-ref-dim! arr ixs)
   (let* ([dim (array-dimension arr)]

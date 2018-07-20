@@ -1,4 +1,4 @@
- #lang rosette
+#lang rosette
 
 (require "array.rkt" "control.rkt" "work.rkt"
          "real.rkt" "operators.rkt" "barrier.rkt"
@@ -9,6 +9,7 @@
 
 (provide
  mask
+ p
  ;; Syntax
  ;; Control statement
  if- while for-
@@ -53,6 +54,11 @@
  switch
  synth-with-kani-cuda
  profiling-access
+ env
+ add-env
+ clear-env
+ synth-memory-access
+ invoke-kernel-synth
  
  (all-from-out rosette/lib/synthax racket/hash))
 
@@ -109,7 +115,11 @@
               (make-element (t)))
             n)))]
     [(_ type x ...)
-     #'(begin (define x (new-vec type)) ...)]))
+     #'(begin
+         (begin
+           (define x (new-vec type))
+           (add-env 'x x))
+         ...)]))
 
 (define-syntax (:shared stx)
   (syntax-case stx ()
@@ -123,7 +133,8 @@
     [(_ type x val)
      #'(begin
          (define x (new-vec type))
-         (vec-set! x val))]))
+         (vec-set! x val)
+         (add-env 'x x))]))
 
 (define-syntax (+= stx)
   (syntax-case stx ()
@@ -144,7 +155,9 @@
   (syntax-case stx ()
     [(_ var exp)
      (identifier? #'var)
-     #'(vec-set! var exp)]
+     #'(begin
+         (vec-set! var exp)
+         (add-env 'var exp))]
     [(_ [arr idx ...] exp)
      #'(array-set-dim! arr exp idx ...)]))
 
@@ -159,6 +172,7 @@
          bdim  
          . arg)
   (clear-bc)
+  (clear-env)
   (parameterize* ([grid-dimension gdim]
                   [block-dimension bdim]
                   [shared-memory (make-shared-memory (grid-size))])
@@ -169,7 +183,141 @@
         (apply kernel arg)
         (barrier)
         (barrier/B)))))
-  ;(close-output-port out))
+
+(define (generate-synth-arith depth)
+  (define out-file (open-output-file "synth-arith.rkt" #:exists 'truncate))
+  (fprintf out-file "#lang rosette\n\n")
+  (fprintf out-file "(require rosette/lib/synthax \"../../lang.rkt\")\n\n")
+  (fprintf out-file "(current-bitwidth #f)\n\n")
+  (fprintf out-file "(define-synthax (arith-exp")
+  (define (write-args)
+    (for ([v (reverse (hash-keys env))])
+      (fprintf out-file " ")
+      (write v out-file)))
+  (write-args)
+  (fprintf out-file " depth)\n")
+  (fprintf out-file "  #:base (choose 0 1 2")
+  (write-args)
+  (fprintf out-file ")\n")
+  (fprintf out-file "  #:else (choose 0 1 2")
+  (write-args)
+  (fprintf out-file " ((choose + - *) (arith-exp")
+  (write-args)
+  (fprintf out-file " (- depth 1)) (arith-exp")
+  (write-args)
+  (fprintf out-file " (- depth 1)))))\n")
+  (fprintf out-file "(define (arith-exp-")
+  (write-args)
+  (fprintf out-file ") (arith-exp")
+  (write-args)
+  (fprintf out-file " ~a))\n" depth)
+  (fprintf out-file
+           "(define (spec-arith-exp file)
+  (define in (open-input-file file))
+  (define stmt 0)
+  (set! stmt (read-line in))
+  (while (not (eof-object? stmt))
+         (let ([lst (map string->number (string-split stmt \" \"))])
+           (when (list-ref lst 3)
+             (assert
+              (eq? (list-ref lst 3)
+                   (arith-exp-")
+  (for ([i (hash-count env)])
+    (fprintf out-file " (list-ref lst ~a)" (+ i 4)))
+  (fprintf out-file
+           "))))
+           (set! stmt (read-line in))))
+  (close-input-port in))\n")
+  (fprintf out-file "(list-ref (list-ref (map syntax->datum
+       (generate-forms
+        (time
+         (synthesize #:forall '()
+                     #:guarantee 
+                     (spec-arith-exp \"profile.rkt\")
+                     )))) 0) 2)")
+  (close-output-port out-file))
+
+(define (generate-synth-bool depth)
+  (define out-file (open-output-file "synth-bool.rkt" #:exists 'truncate))
+  (fprintf out-file "#lang rosette\n\n")
+  (fprintf out-file "(require rosette/lib/synthax \"../../lang.rkt\")\n\n")
+  (fprintf out-file "(current-bitwidth #f)\n\n")
+  (fprintf out-file "(define-synthax (bool-exp")
+  (define (write-args)
+    (for ([v (reverse (hash-keys env))])
+      (fprintf out-file " ")
+      (write v out-file)))
+  (write-args)
+  (fprintf out-file " depth)\n")
+  (fprintf out-file "  #:base (choose 0 1 2")
+  (write-args)
+  (fprintf out-file ")\n")
+  (fprintf out-file "  #:else (choose 0 1 2")
+  (write-args)
+  (fprintf out-file " ((choose && || eq? <) (bool-exp")
+  (write-args)
+  (fprintf out-file " (- depth 1)) (bool-exp")
+  (write-args)
+  (fprintf out-file " (- depth 1))) (not (bool-exp")
+  (write-args)
+  (fprintf out-file " (- depth 1)))))\n")
+  (fprintf out-file "(define (bool-exp-")
+  (write-args)
+  (fprintf out-file ") (bool-exp")
+  (write-args)
+  (fprintf out-file " ~a))\n" depth)
+  (fprintf out-file
+           "(define (spec-arith-exp file)
+  (define in (open-input-file file))
+  (define stmt 0)
+  (set! stmt (read-line in))
+  (while (not (eof-object? stmt))
+         (let ([lst (map string->number (string-split stmt \" \"))])
+             (assert
+                   (bool-exp-")
+  (for ([i (hash-count env)])
+    (fprintf out-file " (list-ref lst ~a)" (+ i 4)))
+  (fprintf out-file
+           ")))
+           (set! stmt (read-line in)))
+  (close-input-port in))\n")
+  (fprintf out-file "(list-ref (list-ref (map syntax->datum
+       (generate-forms
+        (time
+         (synthesize #:forall '()
+                     #:guarantee 
+                     (spec-arith-exp \"profile.rkt\")
+                     )))) 0) 2)")
+  (close-output-port out-file))
+
+
+(define (invoke-kernel-synth
+         kernel
+         gdim
+         bdim  
+         . arg)
+  (clear-bc)
+  (clear-env)
+  (parameterize* ([grid-dimension gdim]
+                  [block-dimension bdim]
+                  [shared-memory (make-shared-memory (grid-size))])
+    (for ([b (in-range (grid-size))])
+      (parameterize* ([bid b]
+                      [block-index (to-bid b)]
+                      [mask (make-vector (block-size) #t)])
+        (apply kernel arg)
+        (barrier)
+        (barrier/B))))
+  (generate-synth-arith 2)
+  (generate-synth-bool 2)
+  (define path-to-racket-exe
+    "/Applications/Racket v6.6/bin//racket")
+  (define path-to-rosette-code
+    "synth-bool.rkt")
+  (system*
+   path-to-racket-exe
+   path-to-rosette-code))
+;(close-output-port out))
 
 ;; A function that synthesize so as to minimize the number of barrier
 ;; TODO Correspond when synthesizing multiple codes
@@ -202,7 +350,7 @@
                 [(null? e) e]
                 [(member (list-ref e 0) (list 'if 'if- 'while 'for- 'begin)) (delete-null e)]
                 [else e]))))
-
+  
   (delete-null (replace-barrier (list-ref res 2)))
   )
 
@@ -240,9 +388,9 @@
   (close-input-port in-test)
   
   (pretty-write '(for-each (lambda (e)
-                        (pretty-display e))
-                      (optimize-barrier (parameterize ([switch #t])
-                                          (spec-opt res-f)))) out)
+                             (pretty-display e))
+                           (optimize-barrier (parameterize ([switch #t])
+                                               (spec-opt res-f)))) out)
   (newline out)
   (close-output-port out)
   )

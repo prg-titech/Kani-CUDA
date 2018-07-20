@@ -31,7 +31,7 @@
     (:= int b (?: (eq?/LS k 0) c (-/LS c xy)))
     (:= int t (?: (eq?/LS k (-/LS nz 1)) c (+/LS c xy)))
     (= [out c] (+/LS (*/LS cc [in c])
-                     ;(*/LS cw (profiling-access file in w i j c tid-x tid-y c2 (block-dim 0) (block-dim 1) nx ny nz))
+                     (*/LS cw (profiling-access file in w i j c tid-x tid-y c2 (block-dim 0) (block-dim 1) nx ny nz))
                      (*/LS cw [in w])
                      ;(*/LS ce (profiling-access file in e i j tid-x tid-y c2 (block-dim 0) (block-dim 1) nx ny nz))
                      (*/LS ce [in e])
@@ -94,8 +94,8 @@
 ;; Execute a diffusion program on GPU
 (define out-file (open-output-file "profile.rkt" #:exists 'truncate))
 (diffusion-run-kernel out-file
-                      '(3 3)
                       '(2 2)
+                      '(3 3)
                       1
                       GPU-in GPU-out
                       SIZEX SIZEY SIZEZ

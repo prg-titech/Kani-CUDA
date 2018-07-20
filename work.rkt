@@ -4,7 +4,8 @@
 
 (provide  grid-dimension grid-dim grid-size block-dimension block-dim
           block-index block-idx block-size mask thread-idx vecfy to-bid
-          tid bid barrier-count mask incl-bc clear-bc get-bc out-file)
+          tid bid barrier-count mask incl-bc clear-bc get-bc out-file
+          env clear-env add-env profile profiling p)
 
 (define barrier-count (make-parameter 0))
 
@@ -88,6 +89,24 @@
 (define (clear-bc)
   (set! barrier-counter 0))
 
+(define env
+  (make-hash))
+
+(define (clear-env)
+  (set! env (make-hash)))
+
+(define (add-env x v)
+  (hash-set! env x v))
+
+(define profile
+  0)
+
+(define (profiling file)
+  (set! profile file))
+
+(define (p x)
+  (println x)
+  x)
 
 
 
