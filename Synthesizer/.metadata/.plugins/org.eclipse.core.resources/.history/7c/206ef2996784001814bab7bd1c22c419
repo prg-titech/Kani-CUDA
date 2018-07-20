@@ -1,0 +1,29 @@
+package Expression;
+
+public class AExpression implements Expression{
+	@Override
+	public Expression plus(Expression exp) {
+		return new Arith("+", this, exp);
+	}
+
+	@Override
+	public String toStringExp() {
+		return null;
+	}
+	
+	@Override
+	public void print() {
+		System.out.println(this.toStringExp());
+	}
+
+	@Override
+	public Expression minus(Expression exp) {
+		return new Arith("-", this, exp);
+	}
+
+	@Override
+	public int eval(Environment env) {
+		return 0;
+	}
+	
+}

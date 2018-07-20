@@ -1,0 +1,9 @@
+package Expression;
+
+public class Bool extends AExpression{
+
+	public Bool() {
+		super(0);
+		// TODO Auto-generated constructor stub
+	}
+}

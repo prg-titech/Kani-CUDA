@@ -1,0 +1,10 @@
+
+public class AExpression implements Expression{
+
+	@Override
+	public Expression plus(Expression exp) {
+		// TODO Auto-generated method stub
+		return Arith("+",this,exp);
+	}
+
+}

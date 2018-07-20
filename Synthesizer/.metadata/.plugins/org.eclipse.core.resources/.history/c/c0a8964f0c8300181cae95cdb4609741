@@ -1,0 +1,14 @@
+package Expression;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+public class ExpressionExamples {
+
+	@Test
+	public void test() {
+		System.out.println(1);
+	}
+
+}

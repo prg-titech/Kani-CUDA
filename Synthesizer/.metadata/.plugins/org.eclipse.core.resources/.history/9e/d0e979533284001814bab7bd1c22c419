@@ -1,0 +1,8 @@
+package Expression;
+
+import java.io.*;
+
+public class Synthesizer {
+	Reader reader = new FileReader(file);
+	
+}

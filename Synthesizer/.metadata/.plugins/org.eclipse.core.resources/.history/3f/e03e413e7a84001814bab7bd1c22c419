@@ -1,0 +1,48 @@
+package Expression;
+
+import java.io.*;
+import java.util.*;
+
+public class Main {
+		public static void main(String[] args){
+			try{
+				File file = new File("/Users/akira/masuhara-lab/kani-cuda/Kani-CUDA/Examples/Matrixmultiply/profile");
+				
+				if(file.exists()){
+					FileReader fr = new FileReader(file);
+					BufferedReader br = new BufferedReader(fr);
+					String data = br.readLine();
+					List<String> vars = Arrays.asList(data.split(" "));
+					int size = vars.size();
+					Environment env = new Environment(vars);
+					
+					//desired: trow * bdimx + k
+					Expression trow = new Variable("trow");
+					Expression bdimx = new Variable("bdimx");
+					Expression k = new Variable("k");
+					Expression exp = trow.multiple(bdimx).plus(k);
+					exp.print();
+					
+					List<Expression> exps = env.generateExp(2);
+					
+					while ((data = br.readLine()) != null) {
+						env.setVal(vars, Arrays.asList(data.split(" ")));
+						int smidx = env.getSmIdx();
+						Iterator<Expression> it = exps.iterator();
+						while(it.hasNext()){
+							Expression e = it.next();
+							if(e.eval(env) != smidx){
+								it.remove();
+							}
+						}
+					}
+					for(Expression e : exps){
+						e.print();
+					}
+					fr.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}		
+		}	
+}

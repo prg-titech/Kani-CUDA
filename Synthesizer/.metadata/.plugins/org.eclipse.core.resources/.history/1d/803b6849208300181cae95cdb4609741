@@ -1,0 +1,8 @@
+package Expression;
+
+public interface Expression {
+	Expression plus(Expression exp);
+	Expression minus(Expression exp);
+	String toStringExp();
+	void print();
+}

@@ -1,0 +1,9 @@
+
+public class Constant<T> implements Expression{
+	T val;
+
+	public Constant(T val) {
+		super();
+		this.val = val;
+	}
+}

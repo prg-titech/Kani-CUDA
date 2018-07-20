@@ -1,0 +1,4 @@
+package Expression;
+
+public class Bool extends AExpression{
+}

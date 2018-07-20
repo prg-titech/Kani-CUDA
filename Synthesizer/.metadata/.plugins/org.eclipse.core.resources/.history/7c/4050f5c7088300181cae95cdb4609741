@@ -1,0 +1,9 @@
+
+public class Constant<T> AExpression AExpression{
+	T val;
+
+	public Constant(T val) {
+		super();
+		this.val = val;
+	}
+}

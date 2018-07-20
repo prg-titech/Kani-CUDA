@@ -1,0 +1,4 @@
+
+public class Constant<T> extends Expression{
+	T 
+}

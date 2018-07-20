@@ -1,0 +1,13 @@
+package Expression;
+
+public class UnOpBool extends Bool{
+	String op;
+	Expression exp;
+	
+	public UnOpBool(String op, Expression exp) {
+		super();
+		this.op = op;
+		this.exp = exp;
+	}
+
+}

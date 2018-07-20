@@ -1,0 +1,18 @@
+package Expression;
+
+public class BinOpBool extends AExpression{
+	String op;
+	Expression left;
+	Expression right;
+	
+	public BinOpBool(String op, Expression left, Expression right) {
+		super();
+		this.op = op;
+		this.left = left;
+		this.right = right;
+	}
+	
+	public String toStringExp(){
+		return "(" + this.left.toStringExp() + op + this.right.toStringExp() + ")";
+	}
+}

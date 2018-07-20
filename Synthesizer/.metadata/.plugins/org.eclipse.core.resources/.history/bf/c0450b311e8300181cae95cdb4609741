@@ -1,0 +1,20 @@
+package Expression;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+public class ExpressionExamples {
+	Expression one = new Constant<Integer>(1);
+	Expression var = new Variable("x");
+	Expression exp = var.plus(one);
+	Environment env = new Environment();
+	env.addVar("x", 1);
+	@Test
+	public void test() {
+		one.print();
+		var.print();
+		exp.print();
+	}
+
+}

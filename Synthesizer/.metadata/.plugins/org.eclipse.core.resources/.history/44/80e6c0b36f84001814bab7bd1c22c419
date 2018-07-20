@@ -1,0 +1,79 @@
+package Expression;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+public class Environment {
+	HashMap<String, Integer> head;
+	HashMap<String, Integer> env;
+
+	public Environment(){
+		this.env = new HashMap<String, Integer>();
+	}
+	
+	public Environment(String[] lst){
+		this.env = new HashMap<String, Integer>();
+		for(String name : lst){
+			this.env.put(name, 0);
+		}
+	}
+	
+	public Environment(HashMap<String, Integer> env) {
+		super();
+		this.env = env;
+	}
+	
+	public void put(String var, int val){
+		this.env.put(var, val);
+	}
+	
+	public void setVal(String[] vars, String[] vals){
+		int size = vars.length;
+		for(int i = 0; i < size; i++){
+			this.put(vars[i], Integer.parseInt(vals[i]));
+		}
+	}
+	
+	public List<String> getVarNames(){
+		return new ArrayList<String>(env.keySet());
+	}
+	
+	public List<Expression> getVars(){
+		List<String> vars = this.getVarNames();
+		Iterator<String> it = vars.iterator();
+		List<Expression> lst = new ArrayList<Expression>();
+		while(it.hasNext()){
+			Expression exp1 = new Variable(it.next());
+			lst.add(exp1);
+			}
+		return lst;
+	}
+	
+	public int getVal(Variable var){
+		return this.env.get(var.getName());
+	}
+	
+	public List<Expression> generateExp(int depth){
+		List<Expression> vars = this.getVars();
+		if(depth == 0){
+			return vars;
+		}else{
+			List<Expression> lst1 = this.generateExp(depth-1);
+			List<Expression> lst2 = this.generateExp(depth-1);
+			List<Expression> res = this.getVars();
+			int size1 = lst1.size();
+			int size2 = lst2.size();
+			for(int i = 0; i < size1; i++){
+				for(int j = 0; j < size2; j++){
+					Expression exp1 = lst1.get(i);
+					Expression exp2 = lst2.get(j);
+					res.add(exp1.plus(exp2));
+					res.add(exp1.minus(exp2));
+				}
+			}
+			return res;
+		}
+	}
+}

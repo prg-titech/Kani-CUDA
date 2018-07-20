@@ -1,0 +1,10 @@
+package Expression;
+
+public class Constant<T> extends AExpression{
+	T val;
+
+	public Constant(T val) {
+		super();
+		this.val = val;
+	}
+}

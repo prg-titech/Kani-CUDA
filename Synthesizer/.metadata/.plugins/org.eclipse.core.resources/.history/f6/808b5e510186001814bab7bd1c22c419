@@ -1,0 +1,34 @@
+package Expression;
+
+public class Arith extends AExpression{
+	String op;
+	Expression left;
+	Expression right;
+	
+	public Arith(String op, Expression left, Expression right) {
+		if (op == "*") {
+			//super(left.getOrder() + right.getOrder());
+		} else {
+			//super(Math.max(left.getOrder(), right.getOrder()));
+		}
+		this.op = op;
+		this.left = left;
+		this.right = right;
+	}
+	
+	public String toStringExp(){
+		return "(" + this.left.toStringExp() + op + this.right.toStringExp() + ")";
+	}
+	
+	public int eval(Environment env){
+		if(op == "+"){
+			return this.left.eval(env) + this.right.eval(env);
+		}else if(op == "-"){
+			return this.left.eval(env) - this.right.eval(env);
+		}else if(op == "*"){
+			return this.left.eval(env) * this.right.eval(env);
+		}else{
+			return 0;
+		}
+	}
+}

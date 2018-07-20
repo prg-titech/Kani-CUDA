@@ -1,0 +1,61 @@
+package Expression;
+
+import static org.junit.Assert.*;
+
+import java.util.List;
+
+import org.junit.Test;
+
+public class ExpressionExamples {
+	Expression one = new Constant<Integer>(1);
+	Expression varX = new Variable("x");
+	Expression varY = new Variable("y");	
+	Environment env = new Environment();
+	
+	// x + y + 1
+	Expression exp1 = varX.add(varY).add(one);
+	
+	// x - (y - 1)
+	Expression exp2 = varX.subtract(varY.subtract(one));
+	
+	// x * x * y
+	Expression exp3 = varY.multiple(varX.multiple(varX));
+
+	@Test
+	public void testExp() {
+		env.putEnv("x", 2);
+		env.putEnv("y", 3);
+		one.print();
+		varX.print();
+		exp1.print();
+		exp2.print();
+		assertEquals(1, one.eval(env));
+		assertEquals(2, varX.eval(env));
+		assertEquals(6, exp1.eval(env));
+		assertEquals(0, exp2.eval(env));
+		assertEquals(12, exp3.eval(env));
+	}
+	
+	//@Test
+	public void testEnv() {
+		env.putEnv("x", 1);
+		env.putEnv("y", 0);
+		//env.addVar("z", 0);
+		//env.addVar("w", 0);
+		
+		// Generate arbitrary expression of depth 3
+		List<Expression> lst = env.generateExp(3);
+		int size = lst.size();
+		for(int i = 0; i < size; i++){
+			lst.get(i).print();
+		}
+	}
+	
+	@Test
+	public void testOrder() {
+		assertEquals(1, exp1.getOrder());
+		assertEquals(1, exp2.getOrder());
+		assertEquals(3, exp3.getOrder());
+	}
+
+}

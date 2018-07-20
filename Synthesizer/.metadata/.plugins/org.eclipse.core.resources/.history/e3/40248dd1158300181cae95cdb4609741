@@ -1,0 +1,23 @@
+package Expression;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+public class Environment {
+	HashMap<String, Integer> env;
+
+	public Environment(HashMap<String, Integer> env) {
+		super();
+		this.env = env;
+	}
+	
+	public List<String> getVar(){
+		return new ArrayList<String>(env.keySet());
+	}
+	
+	public int getVal(Variable var){
+		return 
+	}
+	
+}

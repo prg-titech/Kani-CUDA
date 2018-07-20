@@ -1,0 +1,18 @@
+package Expression;
+
+public class Constant<T> extends AExpression{
+	T val;
+
+	public Constant(T val) {
+		super();
+		this.val = val;
+	}
+	
+	public String toStringExp(){
+		return this.val.toString();
+	}
+	
+	public int eval(Environment env){
+		return (int)this.val;
+	}
+}

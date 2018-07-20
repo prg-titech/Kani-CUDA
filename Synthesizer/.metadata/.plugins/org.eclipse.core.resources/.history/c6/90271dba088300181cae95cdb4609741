@@ -1,0 +1,13 @@
+
+public class Arith implements AExpression{
+	String op;
+	Expression exp1;
+	Expression exp2;
+	public Arith(String op, Expression exp1, Expression exp2) {
+		super();
+		this.op = op;
+		this.exp1 = exp1;
+		this.exp2 = exp2;
+	}
+
+}

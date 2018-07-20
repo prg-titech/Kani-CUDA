@@ -1,0 +1,18 @@
+package Expression;
+
+public class Arith extends AExpression{
+	String op;
+	Expression exp1;
+	Expression exp2;
+	
+	public Arith(String op, Expression exp1, Expression exp2) {
+		super();
+		this.op = op;
+		this.exp1 = exp1;
+		this.exp2 = exp2;
+	}
+	
+	public String toStringExp(){
+		return exp1.toStringExp() + op + exp2.toStringExp();
+	}
+}
