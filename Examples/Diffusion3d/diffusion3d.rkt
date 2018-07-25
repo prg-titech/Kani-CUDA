@@ -74,7 +74,7 @@
   (define-symbolic* r real?)
   r)
 
-(define-values (SIZEX SIZEY SIZEZ) (values 6 6 3))
+(define-values (SIZEX SIZEY SIZEZ) (values 9 9 3))
 (define SIZE (* SIZEX SIZEY SIZEZ))
 
 (define CPU-in (make-array (for/vector ([i SIZE]) (make-element i)) SIZE))
@@ -94,7 +94,7 @@
 ;; Execute a diffusion program on GPU
 (define out-file (open-output-file "profile.rkt" #:exists 'truncate))
 (diffusion-run-kernel out-file
-                      '(2 2)
+                      '(3 3)
                       '(3 3)
                       1
                       GPU-in GPU-out

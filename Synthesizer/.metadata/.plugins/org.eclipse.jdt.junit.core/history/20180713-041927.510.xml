@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><testrun name="ExpressionExamples" project="kani-cuda" tests="3" started="3" failures="0" errors="0" ignored="0">
-  <testsuite name="Expression.ExpressionExamples" time="0.0">
-    <testcase name="testEnv" classname="Expression.ExpressionExamples" time="0.0"/>
-    <testcase name="testExp" classname="Expression.ExpressionExamples" time="0.0"/>
-    <testcase name="testOrder" classname="Expression.ExpressionExamples" time="0.0"/>
-  </testsuite>
-</testrun>

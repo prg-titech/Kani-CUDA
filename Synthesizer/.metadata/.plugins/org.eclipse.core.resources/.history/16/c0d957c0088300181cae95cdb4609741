@@ -1,9 +1,0 @@
-
-public class Constant<T> implements AExpression{
-	T val;
-
-	public Constant(T val) {
-		super();
-		this.val = val;
-	}
-}

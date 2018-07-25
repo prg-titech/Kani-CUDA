@@ -1,12 +1,11 @@
 package Expression;
 
-public class BinOpBool extends AExpression{
+public class BinOpBool extends ABoolExpression {
 	String op;
-	Expression left;
-	Expression right;
+	BoolExpression left;
+	BoolExpression right;
 	
-	public BinOpBool(String op, Expression left, Expression right) {
-		super(0);
+	public BinOpBool(String op, BoolExpression left, BoolExpression right) {
 		this.op = op;
 		this.left = left;
 		this.right = right;
@@ -17,7 +16,6 @@ public class BinOpBool extends AExpression{
 	}
 	
 	
-	/*
 	public boolean eval(Environment env){
 		if (op.equals("&&")) {
 			return this.left.eval(env) && this.right.eval(env);
@@ -29,5 +27,4 @@ public class BinOpBool extends AExpression{
 			return false;
 		}
 	}
-	*/
 }

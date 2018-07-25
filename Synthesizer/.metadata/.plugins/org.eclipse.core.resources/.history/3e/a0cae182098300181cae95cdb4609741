@@ -1,9 +1,0 @@
-
-public class Constant<T> extends Arith{
-	T val;
-
-	public Constant(T val) {
-		super();
-		this.val = val;
-	}
-}

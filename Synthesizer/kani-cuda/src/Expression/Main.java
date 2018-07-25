@@ -6,8 +6,8 @@ import java.util.*;
 public class Main {
 		public static void main(String[] args){
 			try{
-				File file = new File("/Users/akira/masuhara-lab/kani-cuda/Kani-CUDA/Examples/convolution/profile");
-				//File file = new File("/Users/akira/masuhara-lab/kani-cuda/Kani-CUDA/Examples/Matrixmultiply/profile");
+				//File file = new File("/Users/akira/masuhara-lab/kani-cuda/Kani-CUDA/Examples/convolution/profile");
+				File file = new File("/Users/akira/masuhara-lab/kani-cuda/Kani-CUDA/Examples/Matrixmultiply/profile");
 				//File file = new File("/Users/akira/masuhara-lab/kani-cuda/Kani-CUDA/Examples/Diffusion3d/profile");
 				
 				long start = System.currentTimeMillis();
@@ -39,8 +39,8 @@ public class Main {
 					exp.print();
 */
 					
-					List<Expression> exps = env.generateArith(2);
-					
+
+
 /*
 					while ((datum = br.readLine()) != null) {
 						env.setVal(vars, Arrays.asList(datum.split(" ")));
@@ -56,7 +56,8 @@ public class Main {
 					exps.get(0).print();
 					fr.close();
 */
-
+				
+  					List<Expression> exps = env.generateArith2(3);
 					Iterator<Expression> it = exps.iterator();
 					loop : while(it.hasNext()){
 						Expression e = it.next();
@@ -70,13 +71,34 @@ public class Main {
 								break loop;
 							}
 						}
-					}			
-
+					}
+		
+/*
+					
+					List<BoolExpression> exps = env.generateBool(1);
+					
+					Iterator<BoolExpression> it = exps.iterator();
+					loop : while(it.hasNext()){
+						BoolExpression e = it.next();
+						boolean temp = false;
+						for(int i = 0; i < size; i++){
+							env.setVal(vars, Arrays.asList(data.get(i).split(" ")));
+							temp = env.exsitsSmIdx();
+							if (e.eval(env) != temp) {
+								break;
+							}
+							if (i == size-1) {
+								e.print();
+								break loop;
+							}
+						}
+					}
+*/
 					long end = System.currentTimeMillis();
 					System.out.println("time: " + (end - start) + "ms");
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
-			}		
+			}	
 		}	
 }

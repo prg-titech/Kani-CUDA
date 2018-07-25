@@ -1,16 +1,23 @@
 package Expression;
 
-public class UnOpBool extends AExpression{
+public class UnOpBool extends ABoolExpression{
 	String op;
-	Expression exp;
+	BoolExpression exp;
 	
-	public UnOpBool(String op, Expression exp) {
-		super(0);
+	public UnOpBool(String op, BoolExpression exp) {
 		this.op = op;
 		this.exp = exp;
 	}
 
 	public String toStringExp(){
 		return op + this.exp.toStringExp();
+	}
+	
+	public boolean eval(Environment env){
+		if (this.op.equals("!")) {
+			return !(this.exp.eval(env));
+		} else {
+			return false;
+		}
 	}
 }

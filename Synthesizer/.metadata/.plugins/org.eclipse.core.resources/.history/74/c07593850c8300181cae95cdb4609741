@@ -1,5 +1,0 @@
-package Expression;
-
-public interface Expression {
-	Expression plus(Expression exp);
-}

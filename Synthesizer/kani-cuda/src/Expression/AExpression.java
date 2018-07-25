@@ -17,11 +17,11 @@ public abstract class AExpression implements Expression{
 	}
 	
 	public Expression add(Expression that) {
-		return new Arith("+", this, that);
+		return new ArithExpression("+", this, that);
 	}
 
 	public Expression subtract(Expression that) {
-		return new Arith("-", this, that);
+		return new ArithExpression("-", this, that);
 	}
 	
 	public Expression multiple(Expression that) {
@@ -29,15 +29,11 @@ public abstract class AExpression implements Expression{
 		if (one.equals(this) || one.equals(that)) {
 			return 
 		}*/
-		return new Arith("*", this, that);
+		return new ArithExpression("*", this, that);
 	}
 	
-	public Expression binOp(String op, Expression that){
-		return new BinOpBool(op, this, that);
-	}
-
-	public Expression unOp(String op){
-		return new UnOpBool(op, this);
+	public BoolExpression binOp(String op, Expression that){
+		return new BinOpArith(op, this, that);
 	}
 
 	public int eval(Environment env) {

@@ -1,9 +1,0 @@
-public class Variable extends AExpression{
-	String name;
-
-	public Variable(String name) {
-		super();
-		this.name = name;
-	}
-	
-}

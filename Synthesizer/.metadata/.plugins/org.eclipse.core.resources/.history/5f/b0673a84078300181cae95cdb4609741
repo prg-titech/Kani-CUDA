@@ -1,6 +1,0 @@
-
-public class Expression {
-	Expression plus(Expression exp){
-		return 1;
-	}
-}

@@ -1,7 +1,0 @@
-package Expression;
-
-import java.util.HashMap;
-
-public class Environment {
-
-}

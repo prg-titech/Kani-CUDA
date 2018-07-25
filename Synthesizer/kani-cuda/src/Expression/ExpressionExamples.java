@@ -28,12 +28,19 @@ public class ExpressionExamples {
 	Expression arith3 = varY.multiple(varX.multiple(varX));
 	
 	// x == y - 1
-	Expression bool1 = varX.binOp("==", varY.subtract(one));
+	BoolExpression bool1 = varX.binOp("==", varY.subtract(one));
 	
 	// !(x == 1) && (x == y - 1)
-	Expression bool2 = varX.binOp("==" , one).unOp("!").binOp("&&", bool1);
+	BoolExpression bool2 = varX.binOp("==" , one).unOp("!").binOp("&&", bool1);
+	
+	// x > y
+	BoolExpression bool3 = varX.binOp(">", varY);
+	
+	// if (x > y) {x} else {y}
+	IfExpressionArith ifexp = new IfExpressionArith(bool3, varX, varY);
+	
 
-	@Test
+	//@Test
 	public void testArith() {
 		env.putEnv("x", 2);
 		env.putEnv("y", 3);
@@ -51,11 +58,25 @@ public class ExpressionExamples {
 	
 	@Test
 	public void testBool() {
-		System.out.println(bool1.toStringExp());
-		bool2.print();
+		env.putEnv("x", 2);
+		env.putEnv("y", 3);
+		
+		//System.out.println(bool1.eval(env));
+		
+		assertEquals(true, bool1.eval(env));
+		assertEquals(true, bool2.eval(env));
 	}
 	
-	//@Test
+	@Test
+	public void testIf(){
+		env.putEnv("x", 2);
+		env.putEnv("y", 3);
+		
+		ifexp.print();
+		assertEquals(3 , ifexp.eval(env)); 
+	}
+	
+	@Test
 	public void testGenerateExp() {
 		env.putEnv("x", 1);
 		env.putEnv("y", 0);
@@ -63,7 +84,8 @@ public class ExpressionExamples {
 		//env.addVar("w", 0);
 		
 		// Generate arbitrary expression of depth 3
-		List<Expression> lst = env.generateArith(3);
+		//List<BoolExpression> lst = env.generateBool(1);
+		List<Expression> lst = env.generateArith2(3);
 		int size = lst.size();
 		for(int i = 0; i < size; i++){
 			lst.get(i).print();

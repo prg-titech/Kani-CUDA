@@ -11,10 +11,7 @@ public interface Expression {
 	Expression multiple(Expression that);
 
 	// Bin expressions
-	Expression binOp(String op, Expression that);
-	
-	// unOp this expression
-	Expression unOp(String op);
+	BoolExpression binOp(String op, Expression that);
 	
 	// Boolean value as to this expression is a variable
 	boolean isVariable();
