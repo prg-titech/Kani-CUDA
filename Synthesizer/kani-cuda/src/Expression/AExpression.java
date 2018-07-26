@@ -25,11 +25,14 @@ public abstract class AExpression implements Expression{
 	}
 	
 	public Expression multiple(Expression that) {
-/*		Expression one = new Constant(1);
-		if (one.equals(this) || one.equals(that)) {
-			return 
-		}*/
-		return new ArithExpression("*", this, that);
+		Expression one = new Constant(1);
+		if (one.equals(this)) {
+			return that;
+		} else if (one.equals(that)) {
+			return this;
+		} else {
+			return new ArithExpression("*", this, that);
+		}
 	}
 	
 	public BoolExpression binOp(String op, Expression that){

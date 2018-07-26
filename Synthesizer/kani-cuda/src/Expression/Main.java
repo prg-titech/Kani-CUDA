@@ -57,7 +57,7 @@ public class Main {
 					fr.close();
 */
 				
-  					List<Expression> exps = env.generateArith2(3);
+  					List<Expression> exps = env.generateArith2(2);
 					Iterator<Expression> it = exps.iterator();
 					loop : while(it.hasNext()){
 						Expression e = it.next();

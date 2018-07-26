@@ -138,7 +138,7 @@ public class Environment {
 			for (Expression t : terms) {
 				for (Expression e : temp){
 					if (!t.equals(e)) {
-						t.add(e).print();
+						//t.add(e).print();
 						res.add(t.add(e));
 						res.add(t.subtract(e));
 					}

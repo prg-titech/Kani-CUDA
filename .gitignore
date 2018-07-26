@@ -1,5 +1,6 @@
 *.dep
 *.zo
 *#
-Synthesizer/kani-cuda/bin/.*
+Synthesizer/kani-cuda/bin/*
 Synthesizer/Kani-cuda/.*
+Synthesizer/.*
