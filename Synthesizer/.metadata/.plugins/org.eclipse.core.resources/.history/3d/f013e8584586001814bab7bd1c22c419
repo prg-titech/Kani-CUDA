@@ -1,9 +1,0 @@
-package Expression;
-
-public class Bool extends AExpression{
-
-	public Bool(int order) {
-		super(order);
-		// TODO Auto-generated constructor stub
-	}
-}
