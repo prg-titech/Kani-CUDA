@@ -25,7 +25,7 @@ public abstract class AExpression implements Expression{
 	}
 	
 	public Expression multiple(Expression that) {
-		Expression one = new Constant(1);
+		Expression one = new Constant<Integer>(1);
 		if (one.equals(this)) {
 			return that;
 		} else if (one.equals(that)) {

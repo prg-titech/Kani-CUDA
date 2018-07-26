@@ -37,7 +37,7 @@ public class ExpressionExamples {
 	BoolExpression bool3 = varX.binOp(">", varY);
 	
 	// if (x > y) {x} else {y}
-	IfExpressionArith ifexp = new IfExpressionArith(bool3, varX, varY);
+	IfExpression ifexp = new IfExpression(bool3, varX, varY);
 	
 
 	//@Test
