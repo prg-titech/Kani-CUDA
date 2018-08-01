@@ -56,7 +56,7 @@ public class ExpressionExamples {
 		assertEquals(12, arith3.eval(env));
 	}
 	
-	@Test
+	//@Test
 	public void testBool() {
 		env.putEnv("x", 2);
 		env.putEnv("y", 3);
@@ -67,7 +67,7 @@ public class ExpressionExamples {
 		assertEquals(true, bool2.eval(env));
 	}
 	
-	@Test
+	//@Test
 	public void testIf(){
 		env.putEnv("x", 2);
 		env.putEnv("y", 3);
@@ -76,7 +76,7 @@ public class ExpressionExamples {
 		assertEquals(3 , ifexp.eval(env)); 
 	}
 	
-	@Test
+	//@Test
 	public void testGenerateExp() {
 		env.putEnv("x", 1);
 		env.putEnv("y", 0);
@@ -121,11 +121,27 @@ public class ExpressionExamples {
 		}
 	}
 	
-	@Test
+	//@Test
 	public void testOrder() {
 		assertEquals(1, arith1.getOrder());
 		assertEquals(1, arith2.getOrder());
 		assertEquals(3, arith3.getOrder());
 	}
+	
+	@Test
+	public void testSynth() {
+		File file1 = new File("/Users/akira/masuhara-lab/kani-cuda/Kani-CUDA/Examples/convolution/profile");
+		File file2 = new File("/Users/akira/masuhara-lab/kani-cuda/Kani-CUDA/Examples/Matrixmultiply/profile");
+		File file3 = new File("/Users/akira/masuhara-lab/kani-cuda/Kani-CUDA/Examples/Diffusion3d/profile");
+		
+		Synthesizer kani_cuda = new Synthesizer();
+		kani_cuda.input(file3);
+		
+		long start = System.currentTimeMillis();
+		kani_cuda.synthsizeIf();
+		long end = System.currentTimeMillis();
+		System.out.println("time: " + (end - start) + "ms");
+	}
 
+	
 }
