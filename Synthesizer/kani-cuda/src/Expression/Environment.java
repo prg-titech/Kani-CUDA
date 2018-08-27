@@ -172,6 +172,7 @@ public class Environment {
 					Expression exp2 = lst2.get(j);
 					if (!(exp1.toStringExp().equals(exp2.toStringExp()))) {
 						res.add(exp1.binOp("==", exp2));
+						res.add(exp1.binOp("==", exp2).unOp("!"));
 						//res.add(exp1.binOp("<", exp2));
 						//res.add(exp1.binOp(">", exp2));
 					}
@@ -198,8 +199,8 @@ public class Environment {
 					if (!(exp1.toStringExp().equals(exp2.toStringExp()))) {
 						res.add(exp1.binOp("&&", exp2));
 						res.add(exp1.binOp("||", exp2));
-						res.add(exp1.binOp("&&", exp2.unOp("!")));
-						res.add(exp1.unOp("!").binOp("||", exp2));
+						//res.add(exp1.binOp("&&", exp2.unOp("!")));
+						//res.add(exp1.unOp("!").binOp("||", exp2));
 					}
 				}
 			}

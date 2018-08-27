@@ -138,10 +138,15 @@ public class ExpressionExamples {
 		kani_cuda.input(file3);
 		
 		long start = System.currentTimeMillis();
-		kani_cuda.synthsizeIf();
+		kani_cuda.synthesizeBool();
 		long end = System.currentTimeMillis();
+		
+		System.out.println("time: " + (end - start) + "ms");
+		
+		start = System.currentTimeMillis();
+		kani_cuda.synthsizeIf();
+		end = System.currentTimeMillis();
+		
 		System.out.println("time: " + (end - start) + "ms");
 	}
-
-	
 }

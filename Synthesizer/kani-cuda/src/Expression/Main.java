@@ -59,7 +59,7 @@ public class Main {
 					List<String> elss = new ArrayList<String>();
 					List<Expression> exps = env.generateArith2(2);
 					Iterator<Expression> it = exps.iterator();
-					int score = 0;
+					// int score = 0;
 					int temp = 0;
 					Expression thn = new Constant<Integer>(0);
 					Expression els = new Constant<Integer>(0);

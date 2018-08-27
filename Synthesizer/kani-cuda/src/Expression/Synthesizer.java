@@ -61,8 +61,8 @@ public class Synthesizer {
 					break;
 				}
 				if (i == size-1) {
-					System.out.printf("The number of variables: %d%n", this.vars.size()-2);
-					System.out.printf("The number of datum: %d%n", size);
+					//System.out.printf("The number of variables: %d%n", this.vars.size()-2);
+					//System.out.printf("The number of datum: %d%n", size);
 					System.out.println("Synthesized expression:");
 					e.print();
 					break loop;
@@ -72,10 +72,10 @@ public class Synthesizer {
 	}
 	
 	public void synthesizeBool(){
-		List<BoolExpression> exps = env.generateBool(1);
+		List<BoolExpression> exps = env.generateBoolAux(1);
 		Iterator<BoolExpression> it = exps.iterator();
 		int size = this.data.size();
-		loop : while(it.hasNext()){
+		while(it.hasNext()){
 			BoolExpression e = it.next();
 			boolean temp = false;
 			for(int i = 0; i < size; i++){
@@ -85,11 +85,31 @@ public class Synthesizer {
 					break;
 				}
 				if (i == size-1) {
-					System.out.printf("The number of variables: %d%n", this.vars.size()-2);
-					System.out.printf("The number of datum: %d%n", size);
+					//System.out.printf("The number of variables: %d%n", this.vars.size()-2);
+					//System.out.printf("The number of datum: %d%n", size);
 					System.out.println("Synthesized expression:");
 					e.print();
-					break loop;
+					return;
+				}
+			}
+		}		
+		exps = env.generateBool(1);
+		it = exps.iterator();
+		while(it.hasNext()){
+			BoolExpression e = it.next();
+			boolean temp = false;
+			for(int i = 0; i < size; i++){
+				env.setVal(vars, Arrays.asList(data.get(i).split(" ")));
+				temp = env.exsitsSmIdx();
+				if (e.eval(env) != temp) {
+					break;
+				}
+				if (i == size-1) {
+					//System.out.printf("The number of variables: %d%n", this.vars.size()-2);
+					//System.out.printf("The number of datum: %d%n", size);
+					System.out.println("Synthesized expression:");
+					e.print();
+					return;
 				}
 			}
 		}	
@@ -167,10 +187,11 @@ public class Synthesizer {
 		}
 		
 		
-		List<BoolExpression> boolExps = env.generateBool(1);
+		List<BoolExpression> boolExps = env.generateBoolAux(1);
 		
 		Iterator<BoolExpression> it3 = boolExps.iterator();
-		loop : while(it3.hasNext()){
+		
+		while(it3.hasNext()){
 			BoolExpression e = it3.next();
 			for (int i = 0; i < sizet; i++){
 				env.setVal(vars, Arrays.asList(thns.get(i).split(" ")));
@@ -184,11 +205,11 @@ public class Synthesizer {
 							break;
 						}
 						if (j == sizee - 1) {
-							System.out.printf("The number of variables: %d%n", this.vars.size()-2);
-							System.out.printf("The number of datum: %d%n", size);
+							//System.out.printf("The number of variables: %d%n", this.vars.size()-2);
+							//System.out.printf("The number of datum: %d%n", size);
 							System.out.println("Synthesized expression:");
 							new IfExpression(e, thn, els).print();
-							break loop;
+							return;
 						}
 						if (j == sizee - 1) {
 							System.out.println("Unsat");
@@ -197,5 +218,37 @@ public class Synthesizer {
 				}
 			}
 		}
+		
+		boolExps = env.generateBool(1);
+		
+		it3 = boolExps.iterator();
+		while(it3.hasNext()){
+			BoolExpression e = it3.next();
+			for (int i = 0; i < sizet; i++){
+				env.setVal(vars, Arrays.asList(thns.get(i).split(" ")));
+				if (!e.eval(env)) {
+					break;
+				}
+				if (i == sizet - 1) {
+					for (int j = 0; j < sizee; j++) {
+						env.setVal(vars, Arrays.asList(elss.get(j).split(" ")));
+						if (e.eval(env)) {
+							break;
+						}
+						if (j == sizee - 1) {
+							//System.out.printf("The number of variables: %d%n", this.vars.size()-2);
+							//System.out.printf("The number of datum: %d%n", size);
+							System.out.println("Synthesized expression:");
+							new IfExpression(e, thn, els).print();
+							return;
+						}
+						if (j == sizee - 1) {
+							System.out.println("Unsat");
+						}
+					}
+				}
+			}
+		}
+		
 	}
 }
