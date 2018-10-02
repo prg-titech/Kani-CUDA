@@ -1,37 +1,50 @@
 #lang racket
 
-(require c/parse)
+(require c c/parse)
 
-(parse-program "void diffusion_kernel(int *f1,
-                                 int *f2,
-                                 int nx, int ny, int nz,
-                                 int ce, int cw, int cn, int cs,
-                                 int ct, int cb, int cc) {
-  int i = blockDim.x * blockIdx.x + threadIdx.x;  
-  int j = blockDim.y * blockIdx.y + threadIdx.y;
-  int c = i + j * nx;
-  int xy = nx * ny;
-  for (int k = 0; k < nz; ++k) {
-    int w = (i == 0)        ? c : c - 1;
-    int e = (i == nx-1)     ? c : c + 1;
-    int n = (j == 0)        ? c : c - nx;
-    int s = (j == ny-1)     ? c : c + nx;
-    int b = (k == 0)        ? c : c - xy;
-    int t = (k == nz-1)     ? c : c + xy;
-//#if 1
-    f2[c] = cc * f1[c] + cw * f1[w] + ce * f1[e] + cs * f1[s]
-        + cn * f1[n] + cb * f1[b] + ct * f1[t];
-//#else
-    // simulating the ordering of shared memory version
-    int v = cc * f1[c];
-    v += cw * f1[w];
-    v += ce * f1[e];
-    v += cs * f1[s];
-    v += cn * f1[n];
-    v += cb * f1[b] + ct * f1[t];
-    f2[c] = v;
-//#endif    
-    c += xy;
-  }
-  return;
-}")
+(define (convert src)
+  (cond
+    [(type:primitive? src) (quasiquote (unquote (type:primitive-name src)))]
+    [(id? src) (cond
+                 [(id:var? src) (id:var-name src)]
+                 [(id:op? src) (string->symbol
+                                (string-append
+                                 (symbol->string
+                                  (id:op-name src))
+                                 "/LS"))]
+                 [(id:label? src) (cond [(eq? (id:label-name src) 'x) 0]
+                                        [(eq? (id:label-name src) 'y) 1]
+                                        [(eq? (id:label-name src) 'z) 2])])]
+    [(expr? src) (cond
+                   [(expr:int? src) (expr:int-value src)]
+                   [(expr:binop? src) (quasiquote
+                                       ((unquote (convert (expr:binop-op src)))
+                                        (unquote (convert (expr:binop-left src)))
+                                        (unquote (convert (expr:binop-right src)))))]
+                   [(expr:assign? src) (quasiquote
+                                       ((unquote (convert (expr:assign-op src)))
+                                        (unquote (convert (expr:assign-left src)))
+                                        (unquote (convert (expr:assign-right src)))))]
+                   [(expr:member? src) (quasiquote
+                                        ((unquote (convert (expr:member-expr src)))
+                                         (unquote (convert (expr:member-label src)))))]
+                   [(expr:ref? src) (convert (expr:ref-id src))]
+                   [(expr:array-ref? src) (quasiquote
+                                           [(unquote (convert (expr:array-ref-expr src)))
+                                            (unquote (convert (expr:array-ref-offset src)))])]
+                   [(expr:call? src) (quasiquote
+                                      ((unquote (list*
+                                                 (convert (expr:call-function src))
+                                                 (for/list
+                                                     ([arg (expr:call-arguments src)])
+                                                   (convert arg))))))])]
+    [(decl:vars? src) (begin
+                        (define dec (list-ref (decl:vars-declarators src) 0))
+                        (quasiquote (:=
+                                     (unquote (convert (decl:vars-type src)))
+                                     (unquote (convert (decl:declarator-id dec)))
+                                     (unquote (convert (init:expr-expr (decl:declarator-initializer dec)))))))]
+    ))
+
+(convert (list-ref (parse-program "int i = threadIdx.x + blockDim.x * blockIdx.x;") 0))
+(parse-program "int i = threadIdx.x + blockDim.x * blockIdx.x;")
