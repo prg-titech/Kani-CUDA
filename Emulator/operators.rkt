@@ -6,7 +6,7 @@
 (provide +/LS -/LS */LS //LS
          eq?/LS　!/LS &&/LS ||/LS </LS >/LS
          sin/LS cos/LS neq?/LS
-         quotient/LS modulo/LS
+         quotient/LS modulo/LS %/LS
          ?:/LS min/LS max/LS)
 
 ;; map, zipWith
@@ -125,6 +125,7 @@
 (define >/LS (LSop2 >))
 (define </LS (LSop2 <))
 (define quotient/LS (LSop2 quotient))
+(define %/LS (LSop2 quotient))
 (define modulo/LS (LSop2 modulo))
 (define min/LS (LSop2 min))
 (define max/LS (LSop2 max))

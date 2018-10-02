@@ -28,7 +28,7 @@
  +/LS -/LS */LS //LS
  eq?/LS !/LS &&/LS ||/LS </LS >/LS
  sin/LS cos/LS neq?/LS
- quotient/LS modulo/LS
+ quotient/LS modulo/LS %/LS
  max/LS min/LS
  ;; Ternary operator
  ?:
@@ -46,7 +46,7 @@
  print-matrix
  ;; Function/procedure for host
  array-ref-host array-set-host! array-ref-test
- make-element make-array
+ make-element make-array shared-memory
  
  optimize-barrier
  ?
@@ -54,6 +54,7 @@
  switch
  synth-with-kani-cuda
  profiling-access
+ profiling-access2
  env
  add-env
  clear-env
