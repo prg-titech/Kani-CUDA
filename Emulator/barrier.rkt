@@ -34,7 +34,7 @@
   (memory-synchronize! global-memory)
   (memory-synchronize! (vector-ref (shared-memory) (bid)))
   (let ([m (mask)])
-    (assert (barrier-ok m))))
+    (assert (barrier-ok m) "Caused the barrier divergence.")))
 
 (define (syncthreads)
   (barrier)
@@ -44,4 +44,4 @@
   (memory-synchronize/B! global-memory)
   (memory-synchronize/B! (vector-ref (shared-memory) (bid)))
   (let ([m (mask)])
-    (assert (barrier-ok m))))
+    (assert (barrier-ok m) "Caused the barrier divergence.")))
