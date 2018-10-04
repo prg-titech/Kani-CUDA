@@ -90,41 +90,60 @@
 (define-syntax (for- stx)
   (syntax-case stx (:)
     [(_ [init : cond : change] body ...)
-     #'(let ()
+     #'(begin
          init
          (while/LS
           (lambda () cond)
           (lambda () body ... change)))]
     [(_ [: cond : change] body ...)
      #'(while/LS
-         (lambda () cond)
-         (lambda () body ... change))]))
+        (lambda () cond)
+        (lambda () body ... change))]
+    [(_ [init : cond :] body ...)
+     #'(begin
+         init
+         (while/LS
+          (lambda () cond)
+          (lambda () body ...)))]
+    [(_ [: cond :] body ...)
+     #'(while/LS
+        (lambda () cond)
+        (lambda () body ...))]))
 
 
 (define-syntax (: stx)
   (syntax-case stx ()
-    [(_ type arr[n])
+    [(_ type [arr n] ...)
      #'(begin
-         (define (t)
-           (define-symbolic* t type)
-           t)
-         (define arr
-           (make-array
-            (for/vector ([i n])
-              (make-element (t)))
-            n)))]
+         (begin
+           (define (t)
+             (define-symbolic* t type)
+             t)
+           (define arr
+             (make-array
+              (for/vector ([i n])
+                (make-element (t)))
+              n)))
+         ...)]
     [(_ type x ...)
      #'(begin
          (begin
            (define x (new-vec type))
            (add-env 'x x))
+         ...)]
+    [(_ type [x val] ...)
+     #'(begin
+         (begin
+           (define x (new-vec type))
+           (vec-set! x val)
+           (add-env 'x x))
          ...)]))
 
 (define-syntax (:shared stx)
   (syntax-case stx ()
-    [(_ type arr[n])
+    [(_ type [arr n])
      #'(define arr (make-shared-array type n))]
-    [(_ type arr[n][m])
+    [(_ type [arr n m])
      #'(define arr (make-shared-array type n m))]))
 
 (define-syntax (:= stx)

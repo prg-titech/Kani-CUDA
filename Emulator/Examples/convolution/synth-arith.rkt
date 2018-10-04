@@ -6,8 +6,7 @@
 
 (define-synthax (arith-exp bidx j bdimx i g-loc BLOCKSIZE gdimy bidy tidy value b-loc tidx sum bdimy gdimx KERNEL-RADIUS depth)
   #:base (choose 0 1 2 bidx j bdimx i g-loc BLOCKSIZE gdimy bidy tidy value b-loc tidx sum bdimy gdimx KERNEL-RADIUS)
-  #:else (choose 0 1 2 bidx j bdimx i g-loc BLOCKSIZE gdimy bidy tidy value b-loc tidx sum bdimy gdimx KERNEL-RADIUS
-                 ((choose + - *) (arith-exp bidx j bdimx i g-loc BLOCKSIZE gdimy bidy tidy value b-loc tidx sum bdimy gdimx KERNEL-RADIUS (- depth 1)) (arith-exp bidx j bdimx i g-loc BLOCKSIZE gdimy bidy tidy value b-loc tidx sum bdimy gdimx KERNEL-RADIUS (- depth 1)))))
+  #:else (choose 0 1 2 bidx j bdimx i g-loc BLOCKSIZE gdimy bidy tidy value b-loc tidx sum bdimy gdimx KERNEL-RADIUS ((choose + - *) (arith-exp bidx j bdimx i g-loc BLOCKSIZE gdimy bidy tidy value b-loc tidx sum bdimy gdimx KERNEL-RADIUS (- depth 1)) (arith-exp bidx j bdimx i g-loc BLOCKSIZE gdimy bidy tidy value b-loc tidx sum bdimy gdimx KERNEL-RADIUS (- depth 1)))))
 (define (arith-exp- bidx j bdimx i g-loc BLOCKSIZE gdimy bidy tidy value b-loc tidx sum bdimy gdimx KERNEL-RADIUS) (arith-exp bidx j bdimx i g-loc BLOCKSIZE gdimy bidy tidy value b-loc tidx sum bdimy gdimx KERNEL-RADIUS 2))
 (define (spec-arith-exp file)
   (define in (open-input-file file))

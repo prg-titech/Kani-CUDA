@@ -130,9 +130,9 @@ public class ExpressionExamples {
 	
 	@Test
 	public void testSynth() {
-		File file1 = new File("/Users/akira/masuhara-lab/kani-cuda/Kani-CUDA/Examples/convolution/profile");
-		File file2 = new File("/Users/akira/masuhara-lab/kani-cuda/Kani-CUDA/Examples/Matrixmultiply/profile");
-		File file3 = new File("/Users/akira/masuhara-lab/kani-cuda/Kani-CUDA/Examples/Diffusion3d/profile");
+		File file1 = new File("/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/convolution/profile");
+		File file2 = new File("/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/Matrixmultiply/profile");
+		File file3 = new File("/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/Diffusion3d/profile");
 		
 		Synthesizer kani_cuda = new Synthesizer();
 		kani_cuda.input(file3);

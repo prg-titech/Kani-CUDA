@@ -13,6 +13,6 @@
  "Simple ?:-statement")
 
 (check-equal?
- (?: b 1 2)
+ (?: #t 1 2)
  (make-vector 16 1)
  "Simple ?:-statement")

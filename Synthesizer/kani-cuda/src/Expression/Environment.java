@@ -54,6 +54,18 @@ public class Environment {
 		return head.get("smix");
 	}
 	
+	public Integer getGmIdx(){
+		return head.get("gmix");
+	}
+	
+	public Integer getBid(){
+		return this.head.get("bid");
+	}	
+	
+	public Integer getTid(){
+		return this.head.get("tid");
+	}
+	
 	public void setVal(List<String> vars, List<String> vals){
 		int size = vars.size();
 		for(int i = 0; i < N; i++){
@@ -139,8 +151,8 @@ public class Environment {
 				for (Expression e : temp){
 					if (!t.equals(e)) {
 						//t.add(e).print();
-						res.add(t.add(e));
-						res.add(t.subtract(e));
+						res.add(e.add(t));
+						res.add(e.subtract(t));
 					}
 				}
 			}
@@ -157,12 +169,12 @@ public class Environment {
 		} else {
 			List<Expression> lst1 = this.generateArith(0);
 			List<Expression> lst2 = this.generateArith(0);
+			lst1.add(zero);
+			lst2.add(zero);
 			for(Expression e : vars){
 				lst1.add(e.subtract(one));
 				lst2.add(e.subtract(one));
 			}
-			lst1.add(zero);
-			lst2.add(zero);
 			List<BoolExpression> res = new ArrayList<BoolExpression>();
 			int size1 = lst1.size();
 			int size2 = lst2.size();
@@ -173,7 +185,7 @@ public class Environment {
 					if (!(exp1.toStringExp().equals(exp2.toStringExp()))) {
 						res.add(exp1.binOp("==", exp2));
 						res.add(exp1.binOp("==", exp2).unOp("!"));
-						//res.add(exp1.binOp("<", exp2));
+						res.add(exp1.binOp("<", exp2));
 						//res.add(exp1.binOp(">", exp2));
 					}
 				}
