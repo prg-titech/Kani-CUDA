@@ -28,7 +28,7 @@
  +/LS -/LS */LS //LS
  eq?/LS !/LS &&/LS ||/LS </LS >/LS
  sin/LS cos/LS neq?/LS
- quotient/LS modulo/LS %/LS
+ quotient/LS modulo/LS
  max/LS min/LS
  ;; Ternary operator
  ?:
@@ -90,17 +90,15 @@
 (define-syntax (for- stx)
   (syntax-case stx (:)
     [(_ [init : cond : change] body ...)
-     #'(for/LS
-           (lambda () init)
-         (lambda () cond)
-         (lambda () change)
-         (lambda () body ...))]
+     #'(let ()
+         init
+         (while/LS
+          (lambda () cond)
+          (lambda () body ... change)))]
     [(_ [: cond : change] body ...)
-     #'(for/LS
-           void
+     #'(while/LS
          (lambda () cond)
-         (lambda () change)
-         (lambda () body ...))]))
+         (lambda () body ... change))]))
 
 
 (define-syntax (: stx)
