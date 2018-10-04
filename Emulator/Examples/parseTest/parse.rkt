@@ -44,13 +44,11 @@
                                                (if init
                                                    (list (convert init) ':)
                                                    (list ':))
-                                               (if test
-                                                   (list (convert test) ':)
-                                                   (list ':))
+                                               (list (convert test))
                                                (if update
-                                                   (list (convert update) ':)
-                                                   (list ':))
-                                               (convert (stmt:for-body src)))))))]
+                                                   (list ': (convert update))
+                                                   (list ':))))
+                                             (unquote (convert (stmt:for-body src))))))]
                    [(stmt:return? src) (let ([res (stmt:return-result src)])
                                          (if res
                                              (convert res)
@@ -73,11 +71,14 @@
                                            [(unquote (convert (expr:array-ref-expr src)))
                                             (unquote (convert (expr:array-ref-offset src)))])]
                    [(expr:call? src) (quasiquote
-                                      ((unquote (list*
-                                                 (convert (expr:call-function src))
-                                                 (for/list
-                                                     ([arg (expr:call-arguments src)])
-                                                   (convert arg))))))])]
+                                      (unquote (list*
+                                                (convert (expr:call-function src))
+                                                (for/list
+                                                    ([arg (expr:call-arguments src)])
+                                                  (convert arg)))))]
+                   [(expr:postfix? src) (list
+                                         (convert (expr:postfix-op src))
+                                         (convert (expr:postfix-expr src)))])]
     [(decl? src) (cond [(decl:vars? src) (let ([decls (decl:vars-declarators src)])
                                            (list*
                                             'begin
@@ -120,8 +121,8 @@
   for(i=0; i<mrows; i++)
     for(j=0; j<mcols; j++)
       for(k=0; k<mdeps; k++)
-        MR(Mat,0,i,j,k)= (float)(i*i)
-          /(float)((mrows - 1)*(mrows - 1));
+        MR(Mat,0,i,j,k)= i*i
+          /(mrows - 1)*(mrows - 1);
 
 }")])
   (pretty-print (convert src)))
