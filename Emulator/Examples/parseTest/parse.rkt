@@ -7,7 +7,8 @@
     [(type? src) (cond
                    [(type:primitive? src) (type:primitive-name src)]
                    [(type:function? src) (type:function-formals src)]
-                   [(type:array? src) (convert (type:array-length src))])]
+                   [(type:array? src) (convert (type:array-length src))]
+                   [(type:qualified? src) (convert (type:qualified-type src))])]
     [(id? src) (cond
                  [(id:var? src) (let ([name (id:var-name src)])
                                   (cond [(eq? (id:var-name src) 'threadIdx) 'thread-idx]
@@ -126,13 +127,7 @@
 
 }")])
   (pretty-print (convert src)))
-(parse-program "void mat_set_init(int* Mat){
-  int  i,j,k,l;
-  float tt;
-  for(i=0; i<Mat->mrows; i++)
-    for(j=0; j<Mat->mcols; j++)
-      for(k=0; k<Mat->mdeps; k++)
-        MR(Mat,0,i,j,k)= (float)(i*i)
-          /(float)((Mat->mrows - 1)*(Mat->mrows - 1));
-
-}")
+(for ([src (parse-program
+            "const float a[MIMAX][MJMAX][MKMAX][4];")])
+  (pretty-print (convert src)))
+(parse-program "const float a[MIMAX][MJMAX][MKMAX][4];")
