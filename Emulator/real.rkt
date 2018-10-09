@@ -1,9 +1,9 @@
 #lang rosette
 
-(provide int real bool)
+(provide int float bool)
 
 (define int integer?)
 
-(define real real?)
+(define float real?)
 
 (define bool boolean?)

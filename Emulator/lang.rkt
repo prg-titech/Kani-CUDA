@@ -39,7 +39,7 @@
  ;; Synthesis library
  choose generate-forms
  ;; Real type
- int real bool
+ int float bool
  ;; Memory
  global-memory
  ;; Option
@@ -112,7 +112,7 @@
 
 
 (define-syntax (: stx)
-  (syntax-case stx ()
+  (syntax-case stx (*)
     [(_ type [arr n] ...)
      #'(begin
          (begin
@@ -137,7 +137,14 @@
            (define x (new-vec type))
            (vec-set! x val)
            (add-env 'x x))
-         ...)]))
+         ...)]
+    [(_ type * x ...)
+     #'(begin
+         (begin
+           (define x (new-vec type))
+           (add-env 'x x))
+         ...)]
+    ))
 
 (define-syntax (:shared stx)
   (syntax-case stx ()
