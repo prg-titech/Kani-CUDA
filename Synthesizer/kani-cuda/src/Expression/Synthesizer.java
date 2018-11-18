@@ -49,8 +49,11 @@ public class Synthesizer {
 	}
 
 
-	public void synthesizeArith(){
-		List<Expression> exps = env.generateArith2(2);
+	public void synthesizeArith(int num){
+		List<Expression> exps = env.generateArith2(num);
+//		for(Expression ex : exps){
+//			ex.print();
+//		}
 		Iterator<Expression> it = exps.iterator();
 		int size = this.data.size();
 		loop : while(it.hasNext()){

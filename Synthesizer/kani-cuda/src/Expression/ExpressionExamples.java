@@ -78,14 +78,20 @@ public class ExpressionExamples {
 	
 	//@Test
 	public void testGenerateExp() {
-		env.putEnv("x", 1);
-		env.putEnv("y", 0);
+		env.putEnv("a", 1);
+		env.putEnv("b", 0);
+		env.putEnv("c", 0);
+		env.putEnv("d", 0);
+		env.putEnv("e", 0);
+		env.putEnv("f", 0);
+		env.putEnv("g", 0);
+		env.putEnv("h", 0);
 		//env.addVar("z", 0);
 		//env.addVar("w", 0);
 		
 		// Generate arbitrary expression of depth 3
 		//List<BoolExpression> lst = env.generateBool(1);
-		List<Expression> lst = env.generateArith2(3);
+		List<Expression> lst = env.generateArith2(4);
 		int size = lst.size();
 		for(int i = 0; i < size; i++){
 			lst.get(i).print();
@@ -129,6 +135,13 @@ public class ExpressionExamples {
 	}
 	
 	@Test
+	public void testContain() {
+		assertEquals(1, arith1.contain(1, varX));
+		assertEquals(-1, arith2.contain(1, varY));
+		assertEquals(-1, arith2.contain(-1, one));;
+	}
+	
+	//@Test
 	public void testSynth() {
 		File file1 = new File("/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/himenoBMT/profile");
 		File file2 = new File("/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/Matrixmultiply/profile");
@@ -145,7 +158,7 @@ public class ExpressionExamples {
 		
 		start = System.currentTimeMillis();
 		//kani_cuda.synthsizeIf();
-		kani_cuda.synthesizeArith();
+		kani_cuda.synthesizeArith(3);
 		end = System.currentTimeMillis();
 		
 		System.out.println("time: " + (end - start) + "ms");

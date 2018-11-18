@@ -19,6 +19,7 @@ public class Constant<T> extends AExpression{
 	public boolean isConstant(){
 		return true;
 	}
+	
 
 	@Override
 	public int hashCode() {
@@ -43,6 +44,14 @@ public class Constant<T> extends AExpression{
 		} else if (!val.equals(other.val))
 			return false;
 		return true;
+	}
+
+	public int contain(int num, Expression that) {
+		if(this.equals(that)) {
+			return num;
+		} else {
+			return 0;
+		}
 	}
 	
 }

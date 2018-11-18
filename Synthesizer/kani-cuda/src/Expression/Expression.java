@@ -30,4 +30,6 @@ public interface Expression {
 	
 	// Get order of this expression
 	int getOrder();	
+	
+	int contain(int num, Expression that);
 }

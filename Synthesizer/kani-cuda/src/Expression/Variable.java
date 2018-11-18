@@ -47,4 +47,12 @@ public class Variable extends AExpression{
 			return false;
 		return true;
 	}
+	
+	public int contain(int num, Expression that) {
+		if(this.equals(that)) {
+			return num;
+		} else {
+			return 0;
+		}
+	}
 }

@@ -47,15 +47,15 @@ public class Environment {
 	}
 	
 	public boolean exsitsSmIdx(){
-		return head.get("smix") != -1;
+		return head.get("smid") != -1;
 	}
 	
 	public Integer getSmIdx(){
-		return head.get("smix");
+		return head.get("smid");
 	}
 	
 	public Integer getGmIdx(){
-		return head.get("gmix");
+		return head.get("gmid");
 	}
 	
 	public Integer getBid(){
@@ -136,23 +136,35 @@ public class Environment {
 	}
 	
 	public List<Expression> generateArith2(int num){
-		List<Expression> vars = this.getVars();
-		List<Expression> terms = this.getVars();
-		int size = vars.size();
-		for ( int i = 0; i < size; i++ ) {
-			for ( int j = 0; j < i; j++) {
-				terms.add(vars.get(i).multiple(vars.get(j)));
+		if(num > 0){
+			List<Expression> vars = this.getVars();
+			List<Expression> terms = this.getVars();
+			Expression two = new Constant<Integer>(2);
+			vars.add(two);
+			int size = vars.size();
+			for (int i = 0; i < size; i++) {
+				for (int j = 0; j < i; j++) {
+					terms.add(vars.get(i).multiple(vars.get(j)));
+				}
 			}
-		}
-		Expression one = new Constant<Integer>(1);
-		terms.add(one);
-		List<Expression> res = new ArrayList<Expression>();
-		if (num == 0) {
-			return terms;
+			Expression one = new Constant<Integer>(1);
+			terms.add(one);
+			
+			return this.generateArith2Aux(num-1, terms, terms);
 		} else {
-			List<Expression> temp = this.generateArith2(num-1);
+			return new ArrayList<Expression>();
+		}
+	}
+	
+	public List<Expression> generateArith2Aux(int num, List<Expression> lst, List<Expression> terms){
+		List<Expression> res = new ArrayList<Expression>(lst);
+
+		if (num == 0) {
+			return res;
+		} else {
+			List<Expression> temp = terms;
 			for (Expression t : terms) {
-				for (Expression e : temp){
+				for (Expression e : lst){
 					if (!t.equals(e)) {
 						//t.add(e).print();
 						res.add(e.add(t));
@@ -160,7 +172,7 @@ public class Environment {
 					}
 				}
 			}
-			return res;
+			return this.generateArith2Aux(num-1, res, terms);
 		}
 	}
 		

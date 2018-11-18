@@ -29,6 +29,20 @@ public class ArithExpression extends AExpression{
 			return 0;
 		}
 	}
+	
+	public int contain(int num, Expression that){
+		if (this.op == "+") {
+			return this.left.contain(num, that) + this.right.contain(num, that);
+		} else if (this.op == "-") {
+			return this.left.contain(num, that) + this.right.contain(-num, that);
+		} else {
+			if(this.equals(that)) {
+				return num;
+			} else {
+				return 0;
+			}
+		}
+	}
 
 	@Override
 	public int hashCode() {
