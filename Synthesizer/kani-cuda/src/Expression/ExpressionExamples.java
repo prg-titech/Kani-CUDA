@@ -130,12 +130,12 @@ public class ExpressionExamples {
 	
 	@Test
 	public void testSynth() {
-		File file1 = new File("/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/convolution/profile");
+		File file1 = new File("/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/himenoBMT/profile");
 		File file2 = new File("/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/Matrixmultiply/profile");
 		File file3 = new File("/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/Diffusion3d/profile");
 		
 		Synthesizer kani_cuda = new Synthesizer();
-		kani_cuda.input(file3);
+		kani_cuda.input(file1);
 		
 		long start = System.currentTimeMillis();
 		kani_cuda.synthesizeBool();
@@ -144,7 +144,8 @@ public class ExpressionExamples {
 		System.out.println("time: " + (end - start) + "ms");
 		
 		start = System.currentTimeMillis();
-		kani_cuda.synthsizeIf();
+		//kani_cuda.synthsizeIf();
+		kani_cuda.synthesizeArith();
 		end = System.currentTimeMillis();
 		
 		System.out.println("time: " + (end - start) + "ms");

@@ -7,7 +7,7 @@
          eq?/LS　!/LS &&/LS ||/LS </LS >/LS
          sin/LS cos/LS neq?/LS
          quotient/LS modulo/LS %/LS
-         ?:/LS min/LS max/LS)
+         ?:/LS min/LS max/LS &/LS)
 
 ;; map, zipWith
 ;; 'masked-value は mask されたスレッドが返す値を表し,map, zipWith は 'masked-value を無視する
@@ -130,6 +130,7 @@
 (define min/LS (LSop2 min))
 (define max/LS (LSop2 max))
 (define (neq?/LS a b) (!/LS (eq?/LS a b)))
+(define (&/LS x) x)
 
 (define b (choose (vecfy 1) (vecfy 2)))
 (define a (choose 1 2))

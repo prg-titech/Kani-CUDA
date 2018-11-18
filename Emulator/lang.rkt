@@ -9,14 +9,14 @@
 
 (provide
  mask
- p
+ puts
  ;; Syntax
  ;; Control statement
  if- while for-
  ;; Variable declaration
- : := :shared
+ : :* := :shared
  ;; Assignment operators
- += = -- ++
+ +=/LS = -- ++/LS
  ;; Thread ID
  thread-idx
  ;; Function on the block
@@ -25,11 +25,11 @@
  grid-size grid-dim
  ;; Arithmetic/Boolean operators
  ;; /LS is for avoiding naming conflicts
- +/LS -/LS */LS //LS
+ +/LS -/LS */LS //LS ++ +=
  eq?/LS !/LS &&/LS ||/LS </LS >/LS
- sin/LS cos/LS neq?/LS
+ sin/LS cos/LS neq?/LS &/LS
  quotient/LS modulo/LS
- max/LS min/LS
+ max/LS min/LS &
  ;; Ternary operator
  ?:
  ;; Barrier
@@ -39,7 +39,7 @@
  ;; Synthesis library
  choose generate-forms
  ;; Real type
- int float bool
+ int float bool double
  ;; Memory
  global-memory
  ;; Option
@@ -55,11 +55,14 @@
  synth-with-kani-cuda
  profiling-access
  profiling-access2
+ profiling-access3
  env
  add-env
  clear-env
  synth-memory-access
  invoke-kernel-synth
+ 
+ cudaMalloc malloc cudaFree free cudaMemcpy
  
  (all-from-out rosette/lib/synthax racket/hash))
 
@@ -112,7 +115,7 @@
 
 
 (define-syntax (: stx)
-  (syntax-case stx (*)
+  (syntax-case stx ()
     [(_ type [arr n] ...)
      #'(begin
          (begin
@@ -131,20 +134,21 @@
            (define x (new-vec type))
            (add-env 'x x))
          ...)]
-    [(_ type [x val] ...)
-     #'(begin
-         (begin
-           (define x (new-vec type))
-           (vec-set! x val)
-           (add-env 'x x))
-         ...)]
-    [(_ type * x ...)
-     #'(begin
-         (begin
-           (define x (new-vec type))
-           (add-env 'x x))
-         ...)]
+    ;    [(_ type [x val] ...)
+    ;     #'(begin
+    ;         (begin
+    ;           (define x (new-vec type))
+    ;           (vec-set! x val)
+    ;           (add-env 'x x))
+    ;         ...)]
     ))
+
+(define-syntax (:* stx)
+  (syntax-case stx ()
+    [(_ type x ...)
+     #'(begin
+         (define x (make-array #() 0))
+         ...)]))
 
 (define-syntax (:shared stx)
   (syntax-case stx ()
@@ -161,20 +165,54 @@
          (vec-set! x val)
          (add-env 'x x))]))
 
-(define-syntax (+= stx)
+(define-syntax (+=/LS stx)
   (syntax-case stx ()
     [(_ var exp)
      #'(vec-set! var (+/LS var exp))]))
 
-(define-syntax (++ stx)
+(define-syntax (+= stx)
+  (syntax-case stx ()
+    [(_ var exp)
+     #'(set! var (+ var exp))]))
+
+(define-syntax (++/LS stx)
   (syntax-case stx ()
     [(_ var)
      #'(vec-set! var (+/LS var 1))]))
+
+(define-syntax (++ stx)
+  (syntax-case stx ()
+    [(_ var)
+     #'(set! var (+ var 1))]))
 
 (define-syntax (-- stx)
   (syntax-case stx ()
     [(_ var)
      #'(vec-set! var (-/LS var 1))]))
+
+(define-syntax (& stx)
+  (syntax-case stx ()
+    [(_ var)
+     #'(var)]))
+
+;; TODO array for +=
+;(define-syntax (= stx)
+;  (syntax-case stx ()
+;    [(_ var exp)
+;     #'(cond [(identifier? var)
+;              (begin
+;                (println "check0")
+;                (vec-set! var exp)
+;                (add-env 'var exp))])]
+;             [(and (array? var) (array? exp))
+;              (begin
+;                (assign var exp)
+;                ;(add-env 'var exp)
+;                )])]
+;    [(_ [arr idx ...] exp)
+;     #'(begin
+;         (println "check1")
+;         (array-set-dim! arr exp idx ...))]))
 
 (define-syntax (= stx)
   (syntax-case stx ()

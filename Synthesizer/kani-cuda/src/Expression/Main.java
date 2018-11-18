@@ -21,7 +21,7 @@ public class Main {
 			return res;
 		}
 		
-		public static boolean isSleeveThreadAux(int smid, int bid, List<String> lst){
+		public static boolean isReadableThreadAux(int smid, int bid, List<String> lst){
 			List<String> datum = new ArrayList<String>();
 			for(String e : lst){
 				datum = Arrays.asList(e.split(" "));
@@ -33,25 +33,27 @@ public class Main {
 			return true;
 		}
 		
-		public static boolean isSleeveThread(int tid, int bid, List<String> data1, List<String> data2){
+		public static boolean isReadableThread(int tid, int bid, List<String> data1, List<String> data2){
 			boolean res = false;
 			List<String> datum = new ArrayList<String>();
 			for(String e : data2){
 				datum = Arrays.asList(e.split(" "));
 				if (tid == Integer.parseInt(datum.get(0)) 
 						&& bid == Integer.parseInt(datum.get(1))){
-					res = isSleeveThreadAux(Integer.parseInt(datum.get(3)), bid, data1);
+					res = isReadableThreadAux(Integer.parseInt(datum.get(4)), bid, data1);
 				}
 			}
 			return res;
 		}
+				
 	
 		public static void main(String[] args){
 			try{
 				//File file = new File("/Users/akira/masuhara-lab/kani-cuda/Kani-CUDA/Examples/convolution/profile");
 				//File file = new File("/Users/akira/masuhara-lab/kani-cuda/Kani-CUDA/Examples/Matrixmultiply/profile");
-				File file1 = new File("/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/Diffusion3d/profile1");
+				File file1 = new File("/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/Diffusion3d/profile3");
 				File file2 = new File("/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/Diffusion3d/profile2");
+				
 
 				long start = System.currentTimeMillis();
 				if(file1.exists() && file2.exists()){
@@ -323,6 +325,25 @@ public class Main {
 //					}
 					
 					// Synthesize boolean expression(sleeve ver.)
+//					List<BoolExpression> exps = env.generateBool(1);
+//					
+//					Iterator<BoolExpression> it = exps.iterator();
+//					loop : while(it.hasNext()){
+//						BoolExpression e = it.next();
+//						boolean temp = false;
+//						for(int i = 0; i < size; i++){
+//							env.setVal(vars, Arrays.asList(data.get(i).split(" ")));
+//							temp = isReadableThread(env.getTid(), env.getBid(), data, data2);
+//							if (e.eval(env) != temp) {
+//								break;
+//							}
+//							if (i == size-1) {
+//								e.print();
+//								break loop;
+//							}
+//						}
+//					}
+					
 					List<BoolExpression> exps = env.generateBool(1);
 					
 					Iterator<BoolExpression> it = exps.iterator();
@@ -331,7 +352,7 @@ public class Main {
 						boolean temp = false;
 						for(int i = 0; i < size; i++){
 							env.setVal(vars, Arrays.asList(data.get(i).split(" ")));
-							temp = isSleeveThread(env.getTid(), env.getBid(), data, data2);
+							temp = (env.getSmIdx() == 0);
 							if (e.eval(env) != temp) {
 								break;
 							}

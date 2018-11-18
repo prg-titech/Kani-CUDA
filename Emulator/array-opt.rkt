@@ -6,7 +6,8 @@
          make-element new-vec vec-set! array-ref! array-set! array-set-dim!
          memory-contents make-array make-shared-array
          print-matrix array-set-host! array-ref-host array-ref-test
-         profiling-access profiling-access2 synth-memory-access)
+         profiling-access profiling-access2 profiling-access3 synth-memory-access
+         cudaMalloc malloc cudaFree free cudaMemcpy array? assign)
 
 ;; Structure of element of array 
 (struct element
@@ -178,7 +179,7 @@
                    (begin
                      (set-element-read! elem -1)
                      cont)]))
-              (assert false)))
+              (assert false "read conflict")))
         'masked-value)))
 
 (define (array-ref! arr ixs)
@@ -254,7 +255,7 @@
                    (begin
                      (set-element-read! elem -1)
                      cont)]))
-              (assert false)))
+              (assert false "read conflict")))
         'masked-value)))
 
 (define (profiling-access file arr ixs . arg)
@@ -318,7 +319,7 @@
                    (begin
                      (set-element-read! elem -1)
                      cont)]))
-              (assert false)))
+              (assert false "read conflict")))
         'masked-value)))
 
 (define (profiling-access2 file arr ixs . arg)
@@ -327,6 +328,80 @@
              [arr arr])
     (parameterize ([mask m])
       (profiling-ref-const2! file arr ixs arg)
+      )))
+
+(define (profiling-ref-const3! out arr ix sb six arg)
+  ;  (when (switch)
+  ;    (fprintf out "tid bid gmix smix" )
+  ;    (for ([arg (map vecfy arg)]
+  ;          [k (length arg)])
+  ;      (fprintf out " ~a" (vector-ref arg tid)))
+  ;    (fprintf out "\n"))
+  (for/vector ([tid (tid)] 
+               [i (vecfy ix)]
+               [m (mask)]
+               [si (vecfy six)])
+    (if m
+        (let* ([bid (bid)]
+               [smem (memory-contents (vector-ref (shared-memory) bid))]
+               [vec (array-contents arr)]
+               [elem (vector-ref vec i)]
+               [cont (element-content elem)]
+               [read (element-read elem)]
+               [write (element-write elem)]
+               [read/B (element-read/B elem)]
+               [write/B (element-write/B elem)]
+               [sm-ok (element-smem elem)])
+          ;(println (element-content e))
+          (if (eq? (array-ref-host arr i) (array-ref-host sb si))
+              (begin
+                ;                  (println "shared-memory in the block")
+                ;                  (map (lambda (x) (print-matrix x 9 1)) smem)
+                ;                  (printf "global-idx: ~a\n" i)
+                ;                  (printf "global-cont: ~a\n" (element-content e))
+                ;                  (printf "shared-memory: ")
+                ;                  (print-matrix sm 9 1)
+                ;                  (printf "shared-cont: ~a\n" cont)
+                ;                  (newline)
+                ;; print 0:tid, 1:bid, 2:i, 3:smix, 4:arg0, ...
+                (fprintf out "~a ~a ~a T" tid bid i)
+                (for ([arg (map vecfy arg)]
+                      [k (length arg)])
+                  (fprintf out " ~a" (vector-ref arg tid)))
+                (fprintf out "\n")
+                (set-element-smem! elem #t))
+              (begin
+                (fprintf out "~a ~a ~a F" tid bid i)
+                (for ([arg (map vecfy arg)]
+                      [k (length arg)])
+                  (fprintf out " ~a" (vector-ref arg tid)))
+                (fprintf out "\n")))
+          (if (and (or (eq? write tid) (eq? write #f)) (or (eq? write/B bid) (eq? write/B #f)))
+              (begin
+                (set-element-read/B! elem bid)
+                (cond
+                  [(eq? read #f)
+                   ;; If this element is not read, its read set is rewritten to tid
+                   (begin
+                     (set-element-read! elem tid)
+                     cont)]
+                  [(eq? read tid)
+                   ;; If this element is read in this thread, its read set is through
+                   cont]
+                  [else
+                   ;; If this element is read in a other thread, its read is rewritten to -1
+                   (begin
+                     (set-element-read! elem -1)
+                     cont)]))
+              (assert false "read conflict")))
+        'masked-value)))
+
+(define (profiling-access3 file arr ixs sb six . arg)
+  (for*/all ([ixs ixs]
+             [m (mask)]
+             [arr arr])
+    (parameterize ([mask m])
+      (profiling-ref-const3! file arr ixs sb six arg)
       )))
 
 (define (synth-memory-access file arr ixs depth)
@@ -401,7 +476,7 @@
                  (begin
                    (set-element-write! elem -1)
                    (set-element-content! elem v))]))
-            (assert false))))))
+            (assert false "write conflict"))))))
 
 (define (array-set! arr ixs vs)
   (for*/all ([ixs ixs]
@@ -417,7 +492,9 @@
          [size (length dim)])
     (cond
       [(not (eq? size (length ixs))) (assert false)]
-      [(eq? size 1) (let ([id (list-ref ixs 0)]) (array-set! arr id vs))]
+      [(eq? size 1) (let ([id (list-ref ixs 0)])
+                      
+                      (array-set! arr id vs))]
       [(eq? size 2) (let ([ixs0 (vecfy (list-ref ixs 0))]
                           [ixs1 (vecfy (list-ref ixs 1))])
                       (define id
@@ -432,3 +509,40 @@
 (define (array-set-host! arr ix v)
   (let ([cont (array-contents arr)])
     (set-element-content! (vector-ref cont ix) v)))
+
+(define (cudaMalloc address n)
+  (define (t)
+    (define-symbolic* t integer?)
+    t)
+  (let ([n (vector-ref (vecfy n) 0)])
+    (set-array-contents! address (for/vector ([i n]) (make-element (t))))
+    (set-array-dimension! address (list n)))
+  0)
+
+(define (malloc n)
+  (define (t)
+    (define-symbolic* t integer?)
+    t)
+  (let ([n (vector-ref (vecfy n) 0)])
+    (define arr
+      (make-array
+       (for/vector ([i n])
+         (make-element (t)))
+       n))
+    arr))
+
+(define (cudaFree address)
+  0)
+
+(define (free address)
+  0)
+
+(define (cudaMemcpy dev-mem mem size mode)
+  (for ([i size])
+    (array-set-host! dev-mem i (array-ref-host mem i))))
+
+(define (assign arr0 arr1)
+  (set-array-contents! arr0 (array-contents arr1))
+  (set-array-dimension! arr0 (array-dimension arr1)))
+  
+

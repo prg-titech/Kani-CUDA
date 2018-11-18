@@ -71,6 +71,10 @@ public class Environment {
 		for(int i = 0; i < N; i++){
 			if (vals.get(i).equals("N")) {
 				this.putHead(vars.get(i), -1);
+			} else if (vals.get(i).equals("T")) {
+				this.putHead(vars.get(i), 1);
+			} else if (vals.get(i).equals("F")) {
+				this.putHead(vars.get(i), 0);
 			} else {
 				this.putHead(vars.get(i), Integer.parseInt(vals.get(i)));
 			}
