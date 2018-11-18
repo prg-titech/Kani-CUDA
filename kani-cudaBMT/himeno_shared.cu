@@ -100,8 +100,10 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 	for(n=0;n<nn;++n){
 		c = j * kmax + k;
 		temp = 0.0;
+		sb[csb] = p[c-xy];
+		sb[csb + BLOCKSIZE] = p[c];
+		sb[csb + 2*BLOCKSIZE] = p[c+xy];
 		for(i=1 ; i<imax-1 ; ++i){
-			sb[csb + BLOCKSIZE] = p[c];
 			//printf("shared: %f\n", sb[csb]);
 			syncthreads();
 			s0 = 
@@ -127,7 +129,11 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 			temp = temp + ss * ss;
 
 			wrk2[i*jmax*kmax+j*kmax+k] = p[i*jmax*kmax+j*kmax+k] + omega * ss;
+
 			c += xy;
+			sb[csb] = sb[csb + BLOCKSIZE];
+			sb[csb + BLOCKSIZE] = sb[csb + 2*BLOCKSIZE];
+			sb[csb + 2*BLOCKSIZE] = p[c+xy];
     	}
 	  	for(i=1 ; i<imax-1 ; i++){
 			p[i*jmax*kmax+j*kmax+k] = wrk2[i*jmax*kmax+j*kmax+k];
