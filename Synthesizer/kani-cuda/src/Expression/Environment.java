@@ -167,8 +167,14 @@ public class Environment {
 				for (Expression e : lst){
 					if (!t.equals(e)) {
 						//t.add(e).print();
-						res.add(e.add(t));
-						res.add(e.subtract(t));
+						if(e.contain(1, t)==1){
+							res.add(e.add(t));
+						}else if(e.contain(-1, t)==1){
+							res.add(e.subtract(t));
+						}else{
+							res.add(e.add(t));
+							res.add(e.subtract(t));
+						}
 					}
 				}
 			}

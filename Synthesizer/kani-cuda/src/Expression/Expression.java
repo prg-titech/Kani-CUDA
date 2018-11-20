@@ -32,4 +32,6 @@ public interface Expression {
 	int getOrder();	
 	
 	int contain(int num, Expression that);
+	
+	boolean isReverse(Expression that);
 }

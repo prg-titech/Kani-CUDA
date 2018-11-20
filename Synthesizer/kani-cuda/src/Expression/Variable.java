@@ -55,4 +55,9 @@ public class Variable extends AExpression{
 			return 0;
 		}
 	}
+
+	@Override
+	public boolean isReverse(Expression that) {
+		return false;
+	}
 }

@@ -53,5 +53,10 @@ public class Constant<T> extends AExpression{
 			return 0;
 		}
 	}
+
+	@Override
+	public boolean isReverse(Expression that) {
+		return false;
+	}
 	
 }

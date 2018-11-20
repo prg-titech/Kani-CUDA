@@ -36,7 +36,7 @@ public class ArithExpression extends AExpression{
 		} else if (this.op == "-") {
 			return this.left.contain(num, that) + this.right.contain(-num, that);
 		} else {
-			if(this.equals(that)) {
+			if(this.equals(that) || this.isReverse(that)) {
 				return num;
 			} else {
 				return 0;
@@ -65,7 +65,7 @@ public class ArithExpression extends AExpression{
 		ArithExpression other = (ArithExpression) obj;
 		if (left == null) {
 			if (other.left != null)
-				return false;
+			return false;
 		} else if (!left.equals(other.left))
 			return false;
 		if (op == null) {
@@ -79,5 +79,17 @@ public class ArithExpression extends AExpression{
 		} else if (!right.equals(other.right))
 			return false;
 		return true;
+	}
+
+	@Override
+	public boolean isReverse(Expression that) {
+		if(this.op == "+" || this.op == "-"){
+			return false;
+		} else if(this.op == "*") {
+			Expression rev = new ArithExpression("*", this.right, this.left);
+			return rev.equals(that);
+		} else {
+			return false;
+		}
 	}
 }

@@ -139,47 +139,62 @@
 (pretty-print
  (for/list ([src (parse-program
                   "void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, float *b1, float *b2, float *c0, float *c1, float *c2, float *p, float *wrk1, float *wrk2, float *bnd, int nn, int imax, int jmax, int kmax, float omega, float *gosa){
-        static int imax, jmax, kmax;
-        static float omega;
-        int i, j, k, n;
+	int i, j, k, n, xy, c, csb;
 	float s0, ss, temp;
-	const int tid = threadIdx.x;
-	const int size = (imax-1)/(imax-1);
-
+	//const int size = (imax-1)/(imax-1);
+	k = threadIdx.x + blockDim.x * blockIdx.x + 1;
+	j = threadIdx.y + blockDim.y * blockIdx.y + 1;
+	const int tid = (k-1) + (j-1) * (kmax-2);
+	xy = kmax * jmax;
+	float sb[3*BLOCKSIZE];
+	csb = threadIdx.x + threadIdx.y * blockDim.x;
 	for(n=0;n<nn;++n){
+		c = j * kmax + k;
+		temp = 0.0;
+		sb[csb] = p[c-xy];
+		sb[csb + BLOCKSIZE] = p[c];
+		sb[csb + 2*BLOCKSIZE] = p[c+xy];
+		for(i=1 ; i<imax-1 ; ++i){
+			syncthreads();
+			s0 = 
+				a0[i*jmax*kmax+j*kmax+k] * p[(i+1)*jmax*kmax+j*kmax+k]
+				+ a1[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+(j+1)*kmax+k]
+				+ a2[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+j*kmax+(k+1)]
+				+ b0[i*jmax*kmax+j*kmax+k] * 
+				( p[(i+1)*jmax*kmax+(j+1)*kmax+k] 
+				- p[(i+1)*jmax*kmax+(j-1)*kmax+k]
+				- p[(i-1)*jmax*kmax+(j+1)*kmax+k] 
+				+ p[(i-1)*jmax*kmax+(j-1)*kmax+k] )
+				+ b1[i*jmax*kmax+j*kmax+k] * 
+				( p[i*jmax*kmax+(j+1)*kmax+(k+1)]
+				- p[i*jmax*kmax+(j-1)*kmax+(k+1)]
+				- p[i*jmax*kmax+(j-1)*kmax+(k-1)]
+				+ p[i*jmax*kmax+(j+1)*kmax+(k-1)] )
+				+ b2[i*jmax*kmax+j*kmax+k] * 
+				( p[(i+1)*jmax*kmax+j*kmax+(k+1)] 
+				- p[(i-1)*jmax*kmax+j*kmax+(k+1)]
+				- p[(i+1)*jmax*kmax+j*kmax+(k-1)] 
+				+ p[(i-1)*jmax*kmax+j*kmax+(k-1)] )
+				+ c0[i*jmax*kmax+j*kmax+k] * p[(i-1)*jmax*kmax+j*kmax+k]
+				+ c1[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+(j-1)*kmax+k]
+				+ c2[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+j*kmax+(k-1)]
+				+ wrk1[i*jmax*kmax+j*kmax+k];
 
-	temp=0.0;
+			ss = ( s0 * a3[i*jmax*kmax+j*kmax+k] - p[i*jmax*kmax+j*kmax+k] ) * bnd[i*jmax*kmax+j*kmax+k];
 
-		for(i=tid*size ; i<(tid+1)*size ; ++i)
-			for(j=1 ; j<jmax-1 ; ++j)
-				for(k=1 ; k<kmax-1 ; ++k){
-					s0 = a0[i*jmax*kmax+j*kmax+k] * p[(i+1)*jmax*kmax+j*kmax+k]
-					   + a1[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+(j+1)*kmax+k]
-					   + a2[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+j*kmax+(k+1)]
-					   + b0[i*jmax*kmax+j*kmax+k] * ( p[(i+1)*jmax*kmax+(j+1)*kmax+k] - p[(i+1)*jmax*kmax+(j-1)*kmax+k]
-						       - p[(i-1)*jmax*kmax+(j+1)*kmax+k] + p[(i-1)*jmax*kmax+(j-1)*kmax+k] )
-					   + b1[i*jmax*kmax+j*kmax+k] * ( p[i*jmax*kmax+(j+1)*kmax+(k+1)] - p[i*jmax*kmax+(j-1)*kmax+(k+1)]
-						       - p[i*jmax*kmax+(j+1)*kmax+(k-1)] + p[i*jmax*kmax+(j-1)*kmax+(k-1)] )
-					   + b2[i*jmax*kmax+j*kmax+k] * ( p[(i+1)*jmax*kmax+j*kmax+(k+1)] - p[(i-1)*jmax*kmax+j*kmax+(k+1)]
-						       - p[(i+1)*jmax*kmax+j*kmax+(k-1)] + p[(i-1)*jmax*kmax+j*kmax+(k-1)] )
-					   + c0[i*jmax*kmax+j*kmax+k] * p[(i-1)*jmax*kmax+j*kmax+k]
-					   + c1[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+(j-1)*kmax+k]
-					   + c2[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+j*kmax+(k-1)]
-					   + wrk1[i*jmax*kmax+j*kmax+k];
+			temp = temp + ss * ss;
 
-					ss = ( s0 * a3[i*jmax*kmax+j*kmax+k] - p[i*jmax*kmax+j*kmax+k] ) * bnd[i*jmax*kmax+j*kmax+k];
+			wrk2[i*jmax*kmax+j*kmax+k] = p[i*jmax*kmax+j*kmax+k] + omega * ss;
 
-					temp = temp + ss*ss;
-
-					wrk2[i*jmax*kmax+j*kmax+k] = p[i*jmax*kmax+j*kmax+k] + omega * ss;
-		}
-
-	for(i=tid*size ; i<(tid+1)*size ; ++i)
-		for(j=1 ; j<jmax-1 ; ++j)
-			for(k=1 ; k<kmax-1 ; ++k)
-				p[i*jmax*kmax+j*kmax+k] = wrk2[i*jmax*kmax+j*kmax+k];
-	}
-
+			c += xy;
+			sb[csb] = sb[csb + BLOCKSIZE];
+			sb[csb + BLOCKSIZE] = sb[csb + 2*BLOCKSIZE];
+			sb[csb + 2*BLOCKSIZE] = p[c+xy];
+    	}
+	  	for(i=1 ; i<imax-1 ; i++){
+			p[i*jmax*kmax+j*kmax+k] = wrk2[i*jmax*kmax+j*kmax+k];
+    	}
+  	}
 	gosa[tid] = temp;
 }
 ")])

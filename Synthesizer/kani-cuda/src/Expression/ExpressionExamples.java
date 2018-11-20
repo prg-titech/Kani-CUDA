@@ -27,6 +27,12 @@ public class ExpressionExamples {
 	// x * x * y
 	Expression arith3 = varY.multiple(varX.multiple(varX));
 	
+	// x * y * x
+	Expression arith4 = varX.multiple(varY.multiple(varX));
+	
+	// x * x * y
+	Expression arith5 = varY.multiple(varX.multiple(varX));
+	
 	// x == y - 1
 	BoolExpression bool1 = varX.binOp("==", varY.subtract(one));
 	
@@ -76,26 +82,31 @@ public class ExpressionExamples {
 		assertEquals(3 , ifexp.eval(env)); 
 	}
 	
-	//@Test
+	@Test
 	public void testGenerateExp() {
 		env.putEnv("a", 1);
 		env.putEnv("b", 0);
 		env.putEnv("c", 0);
 		env.putEnv("d", 0);
 		env.putEnv("e", 0);
-		env.putEnv("f", 0);
-		env.putEnv("g", 0);
-		env.putEnv("h", 0);
+//		env.putEnv("f", 0);
 		//env.addVar("z", 0);
 		//env.addVar("w", 0);
 		
 		// Generate arbitrary expression of depth 3
 		//List<BoolExpression> lst = env.generateBool(1);
-		List<Expression> lst = env.generateArith2(4);
+		List<Expression> lst = env.generateArith2(5);
 		int size = lst.size();
-		for(int i = 0; i < size; i++){
-			lst.get(i).print();
-		}
+		// the number of variable = 5
+		// not optimized 71794821
+		// optimized     55717221		
+		// not optimized 5185404
+		// optimized 4582900
+		
+		System.out.println(size);
+//		for(int i = 0; i < size; i++){
+//			lst.get(i).print();
+//		}
 	}
 	
 	//@Test
@@ -134,8 +145,9 @@ public class ExpressionExamples {
 		assertEquals(3, arith3.getOrder());
 	}
 	
-	@Test
+	//@Test
 	public void testContain() {
+		assertEquals(true, arith3.equals(arith5));
 		assertEquals(1, arith1.contain(1, varX));
 		assertEquals(-1, arith2.contain(1, varY));
 		assertEquals(-1, arith2.contain(-1, one));;
@@ -158,7 +170,7 @@ public class ExpressionExamples {
 		
 		start = System.currentTimeMillis();
 		//kani_cuda.synthsizeIf();
-		kani_cuda.synthesizeArith(3);
+		kani_cuda.synthesizeArith(4);
 		end = System.currentTimeMillis();
 		
 		System.out.println("time: " + (end - start) + "ms");
