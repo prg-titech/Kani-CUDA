@@ -9,6 +9,8 @@
          profiling-access profiling-access2 profiling-access3 synth-memory-access
          cudaMalloc malloc cudaFree free cudaMemcpy array? assign)
 
+(define race-check? #f)
+
 ;; Structure of element of array 
 (struct element
   ([content #:mutable] ;int or boolean
@@ -162,24 +164,26 @@
           ;(newline)
           ;(print write)
           ;(newline)
-          (if (and (or (eq? write tid) (eq? write #f)) (or (eq? write/B bid) (eq? write/B #f)))
-              (begin
-                (set-element-read/B! elem bid)
-                (cond
-                  [(eq? read #f)
-                   ;; If this element is not read, its read set is rewritten to tid
-                   (begin
-                     (set-element-read! elem tid)
-                     cont)]
-                  [(eq? read tid)
-                   ;; If this element is read in this thread, its read set is through
-                   cont]
-                  [else
-                   ;; If this element is read in a other thread, its read is rewritten to -1
-                   (begin
-                     (set-element-read! elem -1)
-                     cont)]))
-              (assert false "read conflict")))
+          (if race-check?
+              (if (and (or (eq? write tid) (eq? write #f)) (or (eq? write/B bid) (eq? write/B #f)))
+                  (begin
+                    (set-element-read/B! elem bid)
+                    (cond
+                      [(eq? read #f)
+                       ;; If this element is not read, its read set is rewritten to tid
+                       (begin
+                         (set-element-read! elem tid)
+                         cont)]
+                      [(eq? read tid)
+                       ;; If this element is read in this thread, its read set is through
+                       cont]
+                      [else
+                       ;; If this element is read in a other thread, its read is rewritten to -1
+                       (begin
+                         (set-element-read! elem -1)
+                         cont)]))
+                  (assert false "read conflict"))
+              cont))
         'masked-value)))
 
 (define (array-ref! arr ixs)
@@ -238,24 +242,26 @@
                   [k (length arg)])
               (fprintf out " ~a" (vector-ref arg tid)))
             (fprintf out "\n"))
-          (if (and (or (eq? write tid) (eq? write #f)) (or (eq? write/B bid) (eq? write/B #f)))
-              (begin
-                (set-element-read/B! elem bid)
-                (cond
-                  [(eq? read #f)
-                   ;; If this element is not read, its read set is rewritten to tid
-                   (begin
-                     (set-element-read! elem tid)
-                     cont)]
-                  [(eq? read tid)
-                   ;; If this element is read in this thread, its read set is through
-                   cont]
-                  [else
-                   ;; If this element is read in a other thread, its read is rewritten to -1
-                   (begin
-                     (set-element-read! elem -1)
-                     cont)]))
-              (assert false "read conflict")))
+          (if race-check? 
+              (if (and (or (eq? write tid) (eq? write #f)) (or (eq? write/B bid) (eq? write/B #f)))
+                  (begin
+                    (set-element-read/B! elem bid)
+                    (cond
+                      [(eq? read #f)
+                       ;; If this element is not read, its read set is rewritten to tid
+                       (begin
+                         (set-element-read! elem tid)
+                         cont)]
+                      [(eq? read tid)
+                       ;; If this element is read in this thread, its read set is through
+                       cont]
+                      [else
+                       ;; If this element is read in a other thread, its read is rewritten to -1
+                       (begin
+                         (set-element-read! elem -1)
+                         cont)]))
+                  (assert false "read conflict"))
+              cont))
         'masked-value)))
 
 (define (profiling-access file arr ixs . arg)
@@ -302,24 +308,26 @@
                   [k (length arg)])
               (fprintf out " ~a" (vector-ref arg tid)))
             (fprintf out "\n"))
-          (if (and (or (eq? write tid) (eq? write #f)) (or (eq? write/B bid) (eq? write/B #f)))
-              (begin
-                (set-element-read/B! elem bid)
-                (cond
-                  [(eq? read #f)
-                   ;; If this element is not read, its read set is rewritten to tid
-                   (begin
-                     (set-element-read! elem tid)
-                     cont)]
-                  [(eq? read tid)
-                   ;; If this element is read in this thread, its read set is through
-                   cont]
-                  [else
-                   ;; If this element is read in a other thread, its read is rewritten to -1
-                   (begin
-                     (set-element-read! elem -1)
-                     cont)]))
-              (assert false "read conflict")))
+          (if race-check?
+              (if (and (or (eq? write tid) (eq? write #f)) (or (eq? write/B bid) (eq? write/B #f)))
+                  (begin
+                    (set-element-read/B! elem bid)
+                    (cond
+                      [(eq? read #f)
+                       ;; If this element is not read, its read set is rewritten to tid
+                       (begin
+                         (set-element-read! elem tid)
+                         cont)]
+                      [(eq? read tid)
+                       ;; If this element is read in this thread, its read set is through
+                       cont]
+                      [else
+                       ;; If this element is read in a other thread, its read is rewritten to -1
+                       (begin
+                         (set-element-read! elem -1)
+                         cont)]))
+                  (assert false "read conflict"))
+              cont))
         'masked-value)))
 
 (define (profiling-access2 file arr ixs . arg)
@@ -376,24 +384,26 @@
                       [k (length arg)])
                   (fprintf out " ~a" (vector-ref arg tid)))
                 (fprintf out "\n")))
-          (if (and (or (eq? write tid) (eq? write #f)) (or (eq? write/B bid) (eq? write/B #f)))
-              (begin
-                (set-element-read/B! elem bid)
-                (cond
-                  [(eq? read #f)
-                   ;; If this element is not read, its read set is rewritten to tid
-                   (begin
-                     (set-element-read! elem tid)
-                     cont)]
-                  [(eq? read tid)
-                   ;; If this element is read in this thread, its read set is through
-                   cont]
-                  [else
-                   ;; If this element is read in a other thread, its read is rewritten to -1
-                   (begin
-                     (set-element-read! elem -1)
-                     cont)]))
-              (assert false "read conflict")))
+          (if race-check?
+              (if (and (or (eq? write tid) (eq? write #f)) (or (eq? write/B bid) (eq? write/B #f)))
+                  (begin
+                    (set-element-read/B! elem bid)
+                    (cond
+                      [(eq? read #f)
+                       ;; If this element is not read, its read set is rewritten to tid
+                       (begin
+                         (set-element-read! elem tid)
+                         cont)]
+                      [(eq? read tid)
+                       ;; If this element is read in this thread, its read set is through
+                       cont]
+                      [else
+                       ;; If this element is read in a other thread, its read is rewritten to -1
+                       (begin
+                         (set-element-read! elem -1)
+                         cont)]))
+                  (assert false "read conflict"))
+              cont))
         'masked-value)))
 
 (define (profiling-access3 file arr ixs sb six . arg)
@@ -459,24 +469,26 @@
              [write (element-write elem)]
              [read/B (element-read/B elem)]
              [write/B (element-write/B elem)])
-        (if (and (or (eq? read tid) (eq? read #f)) (or (eq? read/B bid) (eq? read/B #f)))
-            (begin
-              (set-element-write/B! elem bid)
-              (cond
-                [(eq? write #f)
-                 ;; If this element is not written, its write set is rewritten to tid
-                 (begin
-                   (set-element-write! elem tid)
-                   (set-element-content! elem v))]
-                [(eq? write tid)
-                 ;; If this element is written in this thread, its write set is through
-                 (set-element-content! elem v)]
-                [else
-                 ;; If this element is written in a other thread, its write set is rewritten to -1
-                 (begin
-                   (set-element-write! elem -1)
-                   (set-element-content! elem v))]))
-            (assert false "write conflict"))))))
+        (if race-check?
+            (if (and (or (eq? read tid) (eq? read #f)) (or (eq? read/B bid) (eq? read/B #f)))
+                (begin
+                  (set-element-write/B! elem bid)
+                  (cond
+                    [(eq? write #f)
+                     ;; If this element is not written, its write set is rewritten to tid
+                     (begin
+                       (set-element-write! elem tid)
+                       (set-element-content! elem v))]
+                    [(eq? write tid)
+                     ;; If this element is written in this thread, its write set is through
+                     (set-element-content! elem v)]
+                    [else
+                     ;; If this element is written in a other thread, its write set is rewritten to -1
+                     (begin
+                       (set-element-write! elem -1)
+                       (set-element-content! elem v))]))
+                (assert false "write conflict"))
+            (set-element-content! elem v))))))
 
 (define (array-set! arr ixs vs)
   (for*/all ([ixs ixs]
@@ -491,7 +503,7 @@
   (let* ([dim (array-dimension arr)]
          [size (length dim)])
     (cond
-      [(not (eq? size (length ixs))) (assert false)]
+      [(not (eq? size (length ixs))) (assert false "arity mismatch")]
       [(eq? size 1) (let ([id (list-ref ixs 0)])
                       
                       (array-set! arr id vs))]
@@ -503,7 +515,7 @@
                                 [ix1 (vector-ref ixs1 i)])
                             (if (and (< ix0 (list-ref dim 0)) (< ix1 (list-ref dim 1)))
                                 (+ (* ix0 (list-ref dim 1)) ix1)
-                                (assert false)))))
+                                (assert false "arity mismatch")))))
                       (array-set! arr id vs))])))
 
 (define (array-set-host! arr ix v)

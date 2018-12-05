@@ -82,14 +82,14 @@ public class ExpressionExamples {
 		assertEquals(3 , ifexp.eval(env)); 
 	}
 	
-	@Test
+	//@Test
 	public void testGenerateExp() {
 		env.putEnv("a", 1);
 		env.putEnv("b", 0);
 		env.putEnv("c", 0);
 		env.putEnv("d", 0);
 		env.putEnv("e", 0);
-//		env.putEnv("f", 0);
+		//env.putEnv("f", 0);
 		//env.addVar("z", 0);
 		//env.addVar("w", 0);
 		
@@ -153,7 +153,7 @@ public class ExpressionExamples {
 		assertEquals(-1, arith2.contain(-1, one));;
 	}
 	
-	//@Test
+	@Test
 	public void testSynth() {
 		File file1 = new File("/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/himenoBMT/profile");
 		File file2 = new File("/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/Matrixmultiply/profile");

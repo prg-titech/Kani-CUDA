@@ -5,7 +5,7 @@
 (provide  grid-dimension grid-dim grid-size block-dimension block-dim
           block-index block-idx block-size mask thread-idx vecfy to-bid
           tid bid barrier-count mask incl-bc clear-bc get-bc out-file
-          env clear-env add-env profile profiling puts)
+          env clear-env add-env profile profiling puts cudaDeviceSynchronize)
 
 (define barrier-count (make-parameter 0))
 
@@ -107,6 +107,8 @@
   (println x)
   x)
 
+(define (cudaDeviceSynchronize)
+  0)
 
 
 
