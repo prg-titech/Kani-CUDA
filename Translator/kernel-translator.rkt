@@ -1,6 +1,13 @@
 #lang racket
 
-(require c c/parse)
+(provide (all-defined-out))
+
+(require c)
+
+(define (get-name src)
+  (if (decl:function? src)
+      (kernel-translator (decl:declarator-id (decl:function-declarator src)))
+      'xxx))
 
 (define (kernel-translator src)
   (cond
@@ -14,8 +21,8 @@
                                   (cond [(eq? (id:var-name src) 'threadIdx) 'thread-idx]
                                         [(eq? (id:var-name src) 'blockIdx) 'block-idx]
                                         [(eq? (id:var-name src) 'blockDim) 'block-dim]
-                                        [(eq? (id:var-name src) 'cudaMemcpyDeviceToHost) (quote "cudaMemcpyDeviceToHost")]
-                                        [(eq? (id:var-name src) 'cudaMemcpyHostToDevice) (quote "cudaMemcpyHosttoDevice")]
+                                        [(eq? (id:var-name src) 'cudaMemcpyDeviceToHost) 0]
+                                        [(eq? (id:var-name src) 'cudaMemcpyHostToDevice) 1]
                                         [else name]))]                     
                  [(id:op? src) (if (eq? '= (id:op-name src))
                                    (id:op-name src)
@@ -31,29 +38,33 @@
                    [(stmt:expr? src) (kernel-translator (stmt:expr-expr src))]
                    [(stmt:block? src) (for/list ([src (stmt:block-items src)])
                                         (kernel-translator src))]
-                   [(stmt:if? src) (if (not (stmt:if-alt src)) (quasiquote
-                                                                (if-
-                                                                 (unquote (kernel-translator (stmt:if-test src)))
-                                                                 (unquote (kernel-translator (stmt:if-cons src)))))
+                   [(stmt:if? src) (if (not (stmt:if-alt src))
                                        (quasiquote
                                         (if-
                                          (unquote (kernel-translator (stmt:if-test src)))
-                                         (unquote (kernel-translator (stmt:if-cons src)))
-                                         (unquote (kernel-translator (stmt:if-alt src))))))]
+                                         (begin (unquote (kernel-translator (stmt:if-cons src))))))
+                                       (quasiquote
+                                        (if-
+                                         (unquote (kernel-translator (stmt:if-test src)))
+                                         (begin
+                                           (unquote (kernel-translator (stmt:if-cons src))))
+                                         (begin
+                                           (unquote (kernel-translator (stmt:if-alt src)))))))]
                    [(stmt:for? src) (let ([init (stmt:for-init src)]
                                           [test (stmt:for-test src)]
                                           [update (stmt:for-update src)])
-                                      (quasiquote
-                                       (for- (unquote
-                                              (append
-                                               (if init
-                                                   (list (kernel-translator init) ':)
-                                                   (list ':))
-                                               (list (kernel-translator test))
-                                               (if update
-                                                   (list ': (kernel-translator update))
-                                                   (list ':))))
-                                             (unquote (kernel-translator (stmt:for-body src))))))]
+                                      (append
+                                       (list 'for-)
+                                       (list
+                                        (append
+                                         (if init
+                                             (list (kernel-translator init) ':)
+                                             (list ':))
+                                         (list (kernel-translator test))
+                                         (if update
+                                             (list ': (kernel-translator update))
+                                             (list ':))))
+                                       (kernel-translator (stmt:for-body src))))]
                    [(stmt:return? src) (let ([res (stmt:return-result src)])
                                          (if res
                                              (kernel-translator res)
@@ -117,7 +128,7 @@
                                                                  (unquote (kernel-translator (init:expr-expr init)))))
                                                             (quasiquote
                                                              (:* (unquote (kernel-translator (decl:vars-type src)))
-                                                                (unquote (kernel-translator (decl:declarator-id decl))))))
+                                                                 (unquote (kernel-translator (decl:declarator-id decl))))))
                                                         (if init
                                                             (quasiquote
                                                              (:= (unquote (kernel-translator (decl:vars-type src)))
@@ -135,71 +146,3 @@
                                               (kernel-translator (decl:function-body src)))]
                        [(decl:formal? src) (kernel-translator (decl:declarator-id (decl:formal-declarator src)))])]
     ))
-
-(pretty-print
- (for/list ([src (parse-program
-                  "void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, float *b1, float *b2, float *c0, float *c1, float *c2, float *p, float *wrk1, float *wrk2, float *bnd, int nn, int imax, int jmax, int kmax, float omega, float *gosa){
-	int i, j, k, n, xy, c, csb;
-	float s0, ss, temp;
-	//const int size = (imax-1)/(imax-1);
-	k = threadIdx.x + blockDim.x * blockIdx.x + 1;
-	j = threadIdx.y + blockDim.y * blockIdx.y + 1;
-	const int tid = (k-1) + (j-1) * (kmax-2);
-	xy = kmax * jmax;
-	float sb[3*BLOCKSIZE];
-	csb = threadIdx.x + threadIdx.y * blockDim.x;
-	for(n=0;n<nn;++n){
-		c = j * kmax + k;
-		temp = 0.0;
-		sb[csb] = p[c-xy];
-		sb[csb + BLOCKSIZE] = p[c];
-		sb[csb + 2*BLOCKSIZE] = p[c+xy];
-		for(i=1 ; i<imax-1 ; ++i){
-			syncthreads();
-			s0 = 
-				a0[i*jmax*kmax+j*kmax+k] * p[(i+1)*jmax*kmax+j*kmax+k]
-				+ a1[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+(j+1)*kmax+k]
-				+ a2[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+j*kmax+(k+1)]
-				+ b0[i*jmax*kmax+j*kmax+k] * 
-				( p[(i+1)*jmax*kmax+(j+1)*kmax+k] 
-				- p[(i+1)*jmax*kmax+(j-1)*kmax+k]
-				- p[(i-1)*jmax*kmax+(j+1)*kmax+k] 
-				+ p[(i-1)*jmax*kmax+(j-1)*kmax+k] )
-				+ b1[i*jmax*kmax+j*kmax+k] * 
-				( p[i*jmax*kmax+(j+1)*kmax+(k+1)]
-				- p[i*jmax*kmax+(j-1)*kmax+(k+1)]
-				- p[i*jmax*kmax+(j-1)*kmax+(k-1)]
-				+ p[i*jmax*kmax+(j+1)*kmax+(k-1)] )
-				+ b2[i*jmax*kmax+j*kmax+k] * 
-				( p[(i+1)*jmax*kmax+j*kmax+(k+1)] 
-				- p[(i-1)*jmax*kmax+j*kmax+(k+1)]
-				- p[(i+1)*jmax*kmax+j*kmax+(k-1)] 
-				+ p[(i-1)*jmax*kmax+j*kmax+(k-1)] )
-				+ c0[i*jmax*kmax+j*kmax+k] * p[(i-1)*jmax*kmax+j*kmax+k]
-				+ c1[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+(j-1)*kmax+k]
-				+ c2[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+j*kmax+(k-1)]
-				+ wrk1[i*jmax*kmax+j*kmax+k];
-
-			ss = ( s0 * a3[i*jmax*kmax+j*kmax+k] - p[i*jmax*kmax+j*kmax+k] ) * bnd[i*jmax*kmax+j*kmax+k];
-
-			temp = temp + ss * ss;
-
-			wrk2[i*jmax*kmax+j*kmax+k] = p[i*jmax*kmax+j*kmax+k] + omega * ss;
-
-			c += xy;
-			sb[csb] = sb[csb + BLOCKSIZE];
-			sb[csb + BLOCKSIZE] = sb[csb + 2*BLOCKSIZE];
-			sb[csb + 2*BLOCKSIZE] = p[c+xy];
-    	}
-	  	for(i=1 ; i<imax-1 ; i++){
-			p[i*jmax*kmax+j*kmax+k] = wrk2[i*jmax*kmax+j*kmax+k];
-    	}
-  	}
-	gosa[tid] = temp;
-}
-")])
-   (kernel-translator src)))
-(parse-program "int main(){
-cudaMalloc((void**)&dev_wrk2, N_IJK*sizeof(float));
-float i = 0.0;
-cudaMemcpy(dev_p, p, N_IJK*sizeof(float), cudaMemcpyHostToDevice);}")

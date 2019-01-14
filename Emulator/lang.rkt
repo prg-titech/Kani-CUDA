@@ -61,6 +61,7 @@
  clear-env
  synth-memory-access
  invoke-kernel-synth
+ cudaDeviceSynchronize
  
  cudaMalloc malloc cudaFree free cudaMemcpy
  

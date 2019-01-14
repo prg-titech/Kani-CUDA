@@ -1,49 +1,34 @@
-#include<stdio.h>
-#include<sys/time.h>
-<<<<<<< HEAD
+# 1 "__cp.cu"
+# 1 "<built-in>" 1
+# 1 "<built-in>" 3
+# 330 "<built-in>" 3
+# 1 "<command line>" 1
+# 1 "<built-in>" 2
+# 1 "__cp.cu" 2
+# 15 "__cp.cu"
 
-=======
-/*
->>>>>>> b134838f3a58c4117af74290d6fb85e20a9def9b
-#define BLOCKSIZEX 64
-#define BLOCKSIZEY 16
-#define BLOCKSIZE BLOCKSIZEX * BLOCKSIZEY
-#define GRIDSIZEX 8
-#define GRIDSIZEY 16
-#define GRIDSIZE GRIDSIZEX * GRIDSIZEY
-#define THREAD_NUM BLOCKSIZE * GRIDSIZE
 
-#define MIMAX	256
-#define MJMAX	GRIDSIZEY * (BLOCKSIZEY - 2) + 2
-#define MKMAX	GRIDSIZEX * (BLOCKSIZEX - 2) + 2
 
-#define NN 750
-<<<<<<< HEAD
-=======
-*/
 
-#define BLOCKSIZEX 6
-#define BLOCKSIZEY 4
-#define BLOCKSIZE BLOCKSIZEX * BLOCKSIZEY
-#define GRIDSIZEX 3
-#define GRIDSIZEY 6
-#define GRIDSIZE GRIDSIZEX * GRIDSIZEY
-#define THREAD_NUM BLOCKSIZE * GRIDSIZE
 
-#define MIMAX	4
-#define MJMAX	GRIDSIZEY * (BLOCKSIZEY - 2) + 2
-#define MKMAX	GRIDSIZEX * (BLOCKSIZEX - 2) + 2
 
-#define NN 3
->>>>>>> b134838f3a58c4117af74290d6fb85e20a9def9b
 
-/*static float p[MIMAX][MJMAX][MKMAX];
-static float a[MIMAX][MJMAX][MKMAX][4];
-static float b[MIMAX][MJMAX][MKMAX][3];
-static float c[MIMAX][MJMAX][MKMAX][3];
-static float bnd[MIMAX][MJMAX][MKMAX];
-static float work1[MIMAX][MJMAX][MKMAX];
-static float work2[MIMAX][MJMAX][MKMAX];*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 static int imax, jmax, kmax, mimax, mjmax, mkmax;
 static float omega;
@@ -79,20 +64,14 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 	j2 = threadIdx.y + blockDim.y * blockIdx.y;
 	const int tid = (k-1) + (j-1) * (kmax-2);
 	xy = kmax * jmax;
-	__shared__ float sb[BLOCKSIZE];
+	__shared__ float sb[6 * 4];
 	csb = threadIdx.x + threadIdx.y * blockDim.x;
 	for(n=0;n<nn;++n){
 		c = j * kmax + k;
 		temp=0.0;
-<<<<<<< HEAD
-		if(0 < threadIdx.x && k < kmax-1 && 0 < j && j < jmax-1){
-			for(i=1 ; i<imax-1 ; ++i){
-				syncthreads();
-=======
 		for(i=1 ; i<imax-1 ; ++i){
 				syncthreads();
 			if(0 < threadIdx.x && k < kmax-1 && 0 < j && j < jmax-1){
->>>>>>> b134838f3a58c4117af74290d6fb85e20a9def9b
 				s0 = a0[i*jmax*kmax+j*kmax+k] * p[(i+1)*jmax*kmax+j*kmax+k]
 				+ a1[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+(j+1)*kmax+k]
 				+ a2[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+j*kmax+(k+1)]
@@ -120,45 +99,45 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 
 				temp = temp + ss*ss;
 
-				wrk2[i*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+k2] = p[i*jmax*kmax+j*kmax+k] + omega * ss;
+				wrk2[i*6 * 4 * 3 * 6 +j2*6*3 +k2] = p[i*jmax*kmax+j*kmax+k] + omega * ss;
 				c += xy;
 			}
 		}
 		syncthreads();
 		if(0 < threadIdx.x && threadIdx.x < blockDim.x-1 && 0 < threadIdx.y && threadIdx.y < blockDim.y-1){
 			for(i=1; i<imax-1; i++){
-				s0 = a0[i*jmax*kmax+j*kmax+k] * wrk2[(i+1)*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+k2]
-				+ a1[i*jmax*kmax+j*kmax+k] * wrk2[i*THREAD_NUM+(j2+1)*BLOCKSIZEX*GRIDSIZEX+k2]
-				+ a2[i*jmax*kmax+j*kmax+k] * wrk2[i*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+(k2+1)]
+				s0 = a0[i*jmax*kmax+j*kmax+k] * wrk2[(i+1)*6 * 4 * 3 * 6 +j2*6*3 +k2]
+				+ a1[i*jmax*kmax+j*kmax+k] * wrk2[i*6 * 4 * 3 * 6 +(j2+1)*6*3 +k2]
+				+ a2[i*jmax*kmax+j*kmax+k] * wrk2[i*6 * 4 * 3 * 6 +j2*6*3 +(k2+1)]
 				+ b0[i*jmax*kmax+j*kmax+k] 
-					*(wrk2[(i+1)*THREAD_NUM+(j2+1)*BLOCKSIZEX*GRIDSIZEX+k2] 
-					- wrk2[(i+1)*THREAD_NUM+(j2-1)*BLOCKSIZEX*GRIDSIZEX+k2]
-					- wrk2[(i-1)*THREAD_NUM+(j2+1)*BLOCKSIZEX*GRIDSIZEX+k2] 
-					+ wrk2[(i-1)*THREAD_NUM+(j2-1)*BLOCKSIZEX*GRIDSIZEX+k2] )
+					*(wrk2[(i+1)*6 * 4 * 3 * 6 +(j2+1)*6*3 +k2] 
+					- wrk2[(i+1)*6 * 4 * 3 * 6 +(j2-1)*6*3 +k2]
+					- wrk2[(i-1)*6 * 4 * 3 * 6 +(j2+1)*6*3 +k2] 
+					+ wrk2[(i-1)*6 * 4 * 3 * 6 +(j2-1)*6*3 +k2] )
 				+ b1[i*jmax*kmax+j*kmax+k] 
-					*(wrk2[i*THREAD_NUM+(j2+1)*BLOCKSIZEX*GRIDSIZEX+(k2+1)] 
-					- wrk2[i*THREAD_NUM+(j2-1)*BLOCKSIZEX*GRIDSIZEX+(k2+1)]
-					- wrk2[i*THREAD_NUM+(j2-1)*BLOCKSIZEX*GRIDSIZEX+(k2-1)]
-					+ wrk2[i*THREAD_NUM+(j2+1)*BLOCKSIZEX*GRIDSIZEX+(k2-1)])
+					*(wrk2[i*6 * 4 * 3 * 6 +(j2+1)*6*3 +(k2+1)] 
+					- wrk2[i*6 * 4 * 3 * 6 +(j2-1)*6*3 +(k2+1)]
+					- wrk2[i*6 * 4 * 3 * 6 +(j2-1)*6*3 +(k2-1)]
+					+ wrk2[i*6 * 4 * 3 * 6 +(j2+1)*6*3 +(k2-1)])
 				+ b2[i*jmax*kmax+j*kmax+k] 
-					*(wrk2[(i+1)*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+(k2+1)] 
-					- wrk2[(i-1)*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+(k2+1)]
-					- wrk2[(i+1)*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+(k2-1)] 
-					+ wrk2[(i-1)*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+(k2-1)] )
-				+ c0[i*jmax*kmax+j*kmax+k] * wrk2[(i-1)*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+k2]
-				+ c1[i*jmax*kmax+j*kmax+k] * wrk2[i*THREAD_NUM+(j2-1)*BLOCKSIZEX*GRIDSIZEX+k2]
-				+ c2[i*jmax*kmax+j*kmax+k] * wrk2[i*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+(k2-1)]
+					*(wrk2[(i+1)*6 * 4 * 3 * 6 +j2*6*3 +(k2+1)] 
+					- wrk2[(i-1)*6 * 4 * 3 * 6 +j2*6*3 +(k2+1)]
+					- wrk2[(i+1)*6 * 4 * 3 * 6 +j2*6*3 +(k2-1)] 
+					+ wrk2[(i-1)*6 * 4 * 3 * 6 +j2*6*3 +(k2-1)] )
+				+ c0[i*jmax*kmax+j*kmax+k] * wrk2[(i-1)*6 * 4 * 3 * 6 +j2*6*3 +k2]
+				+ c1[i*jmax*kmax+j*kmax+k] * wrk2[i*6 * 4 * 3 * 6 +(j2-1)*6*3 +k2]
+				+ c2[i*jmax*kmax+j*kmax+k] * wrk2[i*6 * 4 * 3 * 6 +j2*6*3 +(k2-1)]
 				+ wrk1[i*jmax*kmax+j*kmax+k];
 
-				ss = ( s0 * a3[i*jmax*kmax+j*kmax+k] - wrk2[i*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+k2] ) * bnd[i*jmax*kmax+j*kmax+k];
+				ss = ( s0 * a3[i*jmax*kmax+j*kmax+k] - wrk2[i*6 * 4 * 3 * 6 +j2*6*3 +k2] ) * bnd[i*jmax*kmax+j*kmax+k];
 
 				temp = temp + ss*ss;
 
-				p[i*jmax*kmax+j*kmax+k] = wrk2[i*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+k2] + omega * ss;
+				p[i*jmax*kmax+j*kmax+k] = wrk2[i*6 * 4 * 3 * 6 +j2*6*3 +k2] + omega * ss;
 				c += xy;
 			}
 		}	
-	} /* end n loop */
+	} 
 	syncthreads();
 	gosa[tid] = temp;
 }
@@ -168,9 +147,9 @@ int main(){
 	float final_gosa;
 	double cpu0, cpu1, nflop, xmflops2, score;
 
-	float gosa[THREAD_NUM];
+	float gosa[6 * 4 * 3 * 6];
 
-	/************************************/
+	
 	float *p;
 	float *a0, *a1, *a2, *a3;
 	float *b0, *b1, *b2;
@@ -178,17 +157,17 @@ int main(){
 
 	float *bnd;
 	float *wrk1, *wrk2;
-	/************************************/
-	mimax = MIMAX;
-	mjmax = MJMAX;
-	mkmax = MKMAX;
-	imax = MIMAX-1;
-	jmax = MJMAX-1;
-	kmax = MKMAX-1;
-	//int N_IJK = MIMAX*MJMAX*MKMAX;
+	
+	mimax = 4;
+	mjmax = 6 * (4 - 2) + 2;
+	mkmax = 3 * (6 - 2) + 2;
+	imax = 4 -1;
+	jmax = 6 * (4 - 2) + 2 -1;
+	kmax = 3 * (6 - 2) + 2 -1;
+	//int N_IJK = 4*6 * (4 - 2) + 2*3 * (6 - 2) + 2;
 	int N_IJK = mimax*mjmax*mkmax;
-	int WORKSIZE = THREAD_NUM*mimax;
-	/************************************/
+	int WORKSIZE = 6 * 4 * 3 * 6*mimax;
+	
 	float *dev_p;
 	float *dev_a0, *dev_a1, *dev_a2, *dev_a3;
 	float *dev_b0, *dev_b1, *dev_b2;
@@ -198,14 +177,14 @@ int main(){
 	float *dev_wrk1, *dev_wrk2;
 
 	float *dev_gosa;
-	/************************************/
+	
 
 
 	omega = 0.8;
 
 	//initial_maxtrix();
 
-	/******allocate mem on CPU***********/
+	
 	a0 = (float*)malloc(sizeof(float)*N_IJK);
 	a1 = (float*)malloc(sizeof(float)*N_IJK);
 	a2 = (float*)malloc(sizeof(float)*N_IJK);
@@ -226,9 +205,9 @@ int main(){
 	bnd = (float*)malloc(sizeof(float)*N_IJK);
 
 	//gosa = (float*)malloc(sizeof(float));
-	/************************************/
+	
 
-	/******allocate mem on GPU***********/
+	
 	cudaMalloc((void**)&dev_a0, N_IJK*sizeof(float));
 	cudaMalloc((void**)&dev_a1, N_IJK*sizeof(float));
 	cudaMalloc((void**)&dev_a2, N_IJK*sizeof(float));
@@ -248,30 +227,14 @@ int main(){
 	cudaMalloc((void**)&dev_wrk1, N_IJK*sizeof(float));
 	cudaMalloc((void**)&dev_wrk2, WORKSIZE*sizeof(float));
 
-	cudaMalloc((void**)&dev_gosa, sizeof(float)*THREAD_NUM);
-	/************************************/
+	cudaMalloc((void**)&dev_gosa, sizeof(float)*6 * 4 * 3 * 6);
+	
 
-	/*****Initialize*********************/
+	
 	//int i,j,k;
-	/*
-	for(i=0 ; i<mimax ; ++i)
-		for(j=0 ; j<mjmax ; ++j)
-			for(k=0 ; k<mkmax ; ++k){
-				a0[i*mjmax*mkmax+j*mkmax+k]=0.0;
-				a1[i*mjmax*mkmax+j*mkmax+k]=0.0;
-				a2[i*mjmax*mkmax+j*mkmax+k]=0.0;
-				a3[i*mjmax*mkmax+j*mkmax+k]=0.0;
-				b0[i*mjmax*mkmax+j*mkmax+k]=0.0;
-				b1[i*mjmax*mkmax+j*mkmax+k]=0.0;
-				b2[i*mjmax*mkmax+j*mkmax+k]=0.0;
-				c0[i*mjmax*mkmax+j*mkmax+k]=0.0;
-				c1[i*mjmax*mkmax+j*mkmax+k]=0.0;
-				c2[i*mjmax*mkmax+j*mkmax+k]=0.0;
-				p[i*mjmax*mkmax+j*mkmax+k]=0.0;
-				wrk1[i*mjmax*mkmax+j*mkmax+k]=0.0;
-				bnd[i*mjmax*mkmax+j*mkmax+k]=0.0;
-	      		}
-	*/
+	
+# 259 "__cp.cu"
+
 	for(i=0 ; i<mimax ; ++i){
 		for(j=0 ; j<mjmax ; ++j){
 			for(k=0 ; k<mkmax ; ++k){
@@ -286,19 +249,14 @@ int main(){
 				c1[i*mjmax*mkmax+j*mkmax+k]=1.0;
 				c2[i*mjmax*mkmax+j*mkmax+k]=1.0;
 				p[i*mjmax*mkmax+j*mkmax+k]=(float)(i*i)/(float)(imax*imax);
-<<<<<<< HEAD
-				wrk1[i*mjmax*mkmax+j*kmax+k]=0.0;
-				bnd[i*mjmax*mkmax+j*kmax+k]=1.0;
-=======
 				wrk1[i*mjmax*mkmax+j*mkmax+k]=0.0;
 				bnd[i*mjmax*mkmax+j*mkmax+k]=1.0;
->>>>>>> b134838f3a58c4117af74290d6fb85e20a9def9b
 			}
 		}
 	}
-	/************************************/
+	
 
-	/*****copy array to device mem*******/
+	
 	cudaMemcpy(dev_a0, a0, N_IJK*sizeof(float), cudaMemcpyHostToDevice);
 	cudaMemcpy(dev_a1, a1, N_IJK*sizeof(float), cudaMemcpyHostToDevice);
 	cudaMemcpy(dev_a2, a2, N_IJK*sizeof(float), cudaMemcpyHostToDevice);
@@ -315,25 +273,25 @@ int main(){
 	cudaMemcpy(dev_p, p, N_IJK*sizeof(float), cudaMemcpyHostToDevice);
 
 	//cudaMemcpy(dev_gosa, gosa, sizeof(float), cudaMemcpyHostToDevice);
-	/************************************/
+	
 
-	printf("mimax = %d mjmax = %d mkmax = %d\n", MIMAX, MJMAX, MKMAX);
+	printf("mimax = %d mjmax = %d mkmax = %d\n", 4, 6 * (4 - 2) + 2, 3 * (6 - 2) + 2);
 	printf("imax = %d jmax = %d kmax = %d\n", imax, jmax, kmax);
 
-	cpu0 = second(); /**measuring**/
+	cpu0 = second(); 
 
-	dim3 block(BLOCKSIZEX, BLOCKSIZEY, 1);
-	dim3 grid(GRIDSIZEX, GRIDSIZEY, 1);
+	dim3 block(6, 4, 1);
+	dim3 grid(3, 6, 1);
 
-	jacobi<<<grid, block>>>(dev_a0, dev_a1, dev_a2, dev_a3, dev_b0, dev_b1, dev_b2, dev_c0, dev_c1, dev_c2, dev_p, dev_wrk1, dev_wrk2, dev_bnd, NN, mimax, mjmax, mkmax, omega, dev_gosa);
+	jacobi<<<grid, block>>>(dev_a0, dev_a1, dev_a2, dev_a3, dev_b0, dev_b1, dev_b2, dev_c0, dev_c1, dev_c2, dev_p, dev_wrk1, dev_wrk2, dev_bnd, 3, mimax, mjmax, mkmax, omega, dev_gosa);
 
 	cudaDeviceSynchronize();
 
 	cpu1 = second();
 
-	cudaMemcpy(&gosa, dev_gosa, sizeof(float)*THREAD_NUM, cudaMemcpyDeviceToHost);
+	cudaMemcpy(&gosa, dev_gosa, sizeof(float)*6 * 4 * 3 * 6, cudaMemcpyDeviceToHost);
 
-	/******Free mem on the GPU**********/
+	
 	cudaFree(dev_a0);
 	cudaFree(dev_a1);
 	cudaFree(dev_a2);
@@ -350,29 +308,30 @@ int main(){
 	cudaFree(dev_bnd);
 
 	cudaFree(dev_gosa);
-	/************************************/
+	
 
-	/********Final sum of gosa***********/
-	for(int gosa_index=0; gosa_index<THREAD_NUM; gosa_index++){
+	
+	for(int gosa_index=0; gosa_index<6 * 4 * 3 * 6; gosa_index++){
 		//printf("%f\n", gosa[gosa_index]);
 		final_gosa += gosa[gosa_index];
 		//printf("Gosa%d: %e \n", gosa_index, gosa[gosa_index]);
 	}
-	/************************************/
+	
 
 	nflop = (kmax-2)*(jmax-2)*(imax-2)*34;
 
 	if(cpu1 != 0.0){
-		xmflops2 = nflop/cpu1*1.0e-6*(float)NN;
+		xmflops2 = nflop/cpu1*1.0e-6*(float)3;
 	}
 
 	score = xmflops2/32.27;
 
 	printf("gpu: %f sec.\n", cpu1);
-	printf("Loop executed for %d times\n", NN);
+	printf("Loop executed for %d times\n", 3);
 	printf("Gosa: %e \n", final_gosa);
 	//printf("MFLOPS measured: %f\n", xmflops2);
 	//printf("Score: %f\n", score);
 
 	return(0);
 }
+
