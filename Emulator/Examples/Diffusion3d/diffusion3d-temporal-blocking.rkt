@@ -2,6 +2,8 @@
 
 (require "../../lang.rkt" "diffusion3d-baseline.rkt")
 
+(current-bitwidth #f)
+
 (define (diffusion-kernel-temporal-blocking in
                                             out
                                             nx ny nz
@@ -13,7 +15,7 @@
   (: int i2 j2 c2 sc2)
   
   (:= int NUM_SMEM 3) 
-  (:shared real sb[NUM_SMEM][(*/LS (block-dim 0) (block-dim 1))])
+  (:shared float [sb NUM_SMEM (*/LS (block-dim 0) (block-dim 1))])
   (:= int sb1 0)
   (:= int sb2 1)
   (:= int sb3 2)
@@ -28,23 +30,16 @@
   ;; Index of 
   (= c (+/LS i (*/LS j nx)))
   (= sc (+/LS (thread-idx 0) (*/LS (thread-idx 1) (block-dim 0))))
-  ;(printf "i = ~a\n" i)
-  ;(printf "j = ~a\n" j)
-  ;(printf "c = ~a\n" c)
-  ;(printf "sc = ~a\n" sc)
   
   (= i2 (+/LS (*/LS (-/LS (block-dim 0) 2) (block-idx 0)) (min/LS (thread-idx 0) (-/LS (block-dim 0) 3))))
   (= i2 (min/LS i2 (-/LS nx 1)))
   (= j2 (+/LS (*/LS (-/LS (block-dim 1) 2) (block-idx 1)) (min/LS (thread-idx 1) (-/LS (block-dim 1) 3))))
   (= j2 (min/LS j2 (-/LS ny 1)))
-  (printf "i2 = ~a\n" i2)
-  (printf "j2 = ~a\n" j2)
+
   (= c2 (+/LS i2 (*/LS j2 nx)))
   (= sc2 (+/LS (modulo/LS i2 (-/LS (block-dim 0) 2))
                (*/LS (block-dim 0) (+/LS (modulo/LS j2 (-/LS (block-dim 1) 2)) 1))
                1))
-  ;(printf "sc = ~a\n" sc)
-  ;(printf "c2 = ~a\n" c2)
   
   (:= int w (?: (eq?/LS i 0) c (-/LS c 1)))
   (:= int e (?: (eq?/LS i (-/LS nx 1)) c (+/LS c 1)))
@@ -53,27 +48,27 @@
   (:= int b c)
   (:= int t (?: (eq?/LS nz 1) c (+/LS c xy)))
   
-  (:= real v (+/LS (*/LS cc [in c]) (*/LS cw [in w]) (*/LS ce [in e]) (*/LS cs [in s])
-                   (*/LS cn [in n]) (*/LS cb [in b]) (*/LS ct [in t])))
+  (:= float v (+/LS (*/LS cc [in c]) (*/LS cw [in w]) (*/LS ce [in e]) (*/LS cs [in s])
+                    (*/LS cn [in n]) (*/LS cb [in b]) (*/LS ct [in t])))
   (= [sb sb2 sc] v)
-  (+= c xy)
+  (+=/LS c xy)
   
   (:= int k 1)
-  (for- [: (</LS k nz) : (++ k)]
+  (for- [: (</LS k nz) : (++/LS k)]
         (:= int w (?: (eq?/LS i 0) c (-/LS c 1)))
         (:= int e (?: (eq?/LS i (-/LS nx 1)) c (+/LS c 1)))
         (:= int n (?: (eq?/LS j 0) c (-/LS c nx)))
         (:= int s (?: (eq?/LS j (-/LS ny 1)) c (+/LS c nx)))
         (:= int b (?: (eq?/LS k 0) c (-/LS c xy)))
         (:= int t (?: (eq?/LS k (-/LS nz 1)) c (+/LS c xy)))
-        (:= real v (+/LS (*/LS cc [in c]) (*/LS cw [in w]) (*/LS ce [in e]) (*/LS cs [in s])
-                         (*/LS cn [in n]) (*/LS cb [in b]) (*/LS ct [in t])))
+        (:= float v (+/LS (*/LS cc [in c]) (*/LS cw [in w]) (*/LS ce [in e]) (*/LS cs [in s])
+                          (*/LS cn [in n]) (*/LS cb [in b]) (*/LS ct [in t])))
         (= [sb sb3 sc] v)
-        (+= c xy)
+        (+=/LS c xy)
         
         (syncthreads)
         
-        (= w (?: (eq?/LS i2 0) sc2 (-/LS sc2 1)))
+        (= w (?: (eq?/LS i2 (? 0 1)) sc2 (-/LS sc2 1)))
         (= e (?: (eq?/LS i2 (-/LS nx 1)) sc2 (+/LS sc2 1)))
         (= n (?: (eq?/LS j2 0) sc2 (-/LS sc2 (block-dim 0))))
         (= s (?: (eq?/LS j2 (-/LS ny 1)) sc2 (+/LS sc2 (block-dim 0))))
@@ -90,7 +85,7 @@
              (= [out c2] (+/LS (*/LS cc [sb sb2 sc2]) (*/LS cw [sb sb2 w]) (*/LS ce [sb sb2 e]) (*/LS cs [sb sb2 s])
                                (*/LS cn [sb sb2 n]) (*/LS cb [sb bv sc2]) (*/LS ct [sb tv sc2]))))
         ;(printf "Pass!\n")
-        (+= c2 xy)
+        (+=/LS c2 xy)
         (syncthreads)
         
         (:= int sb-temp sb1)
@@ -105,9 +100,9 @@
   (:= int bv sb1)
   (:= int tv sb2)
   ;(printf "sb2 = ~a\n" sb2)
-  (printf "c2 = ~a\n" c2)
+  ;(printf "c2 = ~a\n" c2)
   (if- (&&/LS (</LS (thread-idx 0) (-/LS (block-dim 0) 2)) (</LS (thread-idx 1) (-/LS (block-dim 1) 2)))
-       (= [out c2] (+/LS (*/LS cc [sb sb2 sc2]) (*/LS cw [sb sb2 w]) (*/LS ce [sb sb2 e]) (*/LS cs [sb sb2 s])
+       (= [out c2] (+/LS (*/LS cc [sb sb2 sc2]) (*/LS cw [sb sb2 w]) (*/LS ce [sb sb2 e]) (*/LS cs  [sb sb2 s])
                          (*/LS cn [sb sb2 n]) (*/LS cb [sb bv sc2]) (*/LS ct [sb tv sc2])))))
 
 
@@ -141,7 +136,7 @@
   (define-symbolic* r real?)
   r)
 
-(define-values (SIZEX SIZEY SIZEZ) (values 6 6 3))
+(define-values (SIZEX SIZEY SIZEZ) (values 9 9 3))
 (define SIZE (* SIZEX SIZEY SIZEZ))
 
 (define-values (BLOCKSIZEX BLOCKSIZEY) (values 5 5))
@@ -153,20 +148,42 @@
 
 (define-symbolic e w n s t b c real?)
 
+;(define (diffusion-verify) (time (verify (begin ;; Execute a diffusion program on CPU
+;                                           (diffusion3d-baseline 2
+;                                                                 CPU-in CPU-out
+;                                                                 SIZEX SIZEY SIZEZ
+;                                                                 e w n s t b c)
+;                                           ;; Execute a diffusion program on GPU
+;                                           (diffusion-run-kernel (list (quotient SIZEX (- BLOCKSIZEX 2)) (quotient SIZEY (- BLOCKSIZEY 2)))
+;                                                                 (list BLOCKSIZEX BLOCKSIZEY)
+;                                                                 1
+;                                                                 GPU-in GPU-out
+;                                                                 SIZEX SIZEY SIZEZ
+;                                                                 e w n s t b c)
+;                                           (array-eq-verify CPU-in GPU-out SIZE)))))
 
-(define (diffusion-verify) (time (verify (begin ;; Execute a diffusion program on CPU
-                                           (diffusion3d-baseline 2
-                                                                 CPU-in CPU-out
-                                                                 SIZEX SIZEY SIZEZ
-                                                                 e w n s t b c)
-                                           ;; Execute a diffusion program on GPU
-                                           (diffusion-run-kernel (list (quotient SIZEX (- BLOCKSIZEX 2)) (quotient SIZEY (- BLOCKSIZEY 2)))
-                                                                 (list BLOCKSIZEX BLOCKSIZEY)
-                                                                 1
-                                                                 GPU-in GPU-out
-                                                                 SIZEX SIZEY SIZEZ
-                                                                 e w n s t b c)
-                                           (array-eq-verify CPU-in GPU-out SIZE)))))
+(define lst
+  (for/list ([i SIZE])
+    (array-ref-host CPU-in i)))
+
+(time
+ (begin
+   (diffusion3d-baseline 2
+                         CPU-in CPU-out
+                         SIZEX SIZEY SIZEZ
+                         e w n s t b c)
+   (diffusion-run-kernel (list (quotient SIZEX (- BLOCKSIZEX 2)) (quotient SIZEY (- BLOCKSIZEY 2)))
+                         (list BLOCKSIZEX BLOCKSIZEY)
+                         1
+                         GPU-in GPU-out
+                         SIZEX SIZEY SIZEZ
+                         e w n s t b c)))
+
+
+
+ (synthesize #:forall (append lst (list e w n s t b c))
+             #:guarantee (array-eq-verify
+                          CPU-in GPU-out SIZE))
 
 ;(print-matrix CPU-out 1 64)
 ;(print-matrix GPU-out 1 64)

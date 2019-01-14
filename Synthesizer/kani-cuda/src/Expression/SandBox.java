@@ -3,7 +3,7 @@ package Expression;
 import java.io.*;
 import java.util.*;
 
-public class Main {
+public class SandBox {
 		public static boolean convert(int bid, int c, int smid, List<String> lst){
 			boolean res = true;
 			List<String> datum = new ArrayList<String>();
@@ -49,10 +49,10 @@ public class Main {
 	
 		public static void main(String[] args){
 			try{
-				//File file = new File("/Users/akira/masuhara-lab/kani-cuda/Kani-CUDA/Examples/convolution/profile");
+				//File file1 = new File("/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/Diffusion3d/profile3");
 				//File file = new File("/Users/akira/masuhara-lab/kani-cuda/Kani-CUDA/Examples/Matrixmultiply/profile");
 				File file1 = new File("/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/himenoBMT/profile");
-				File file2 = new File("/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/Diffusion3d/profile2");
+				File file2 = new File("/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/Diffusion3d/profile3");
 				
 
 				long start = System.currentTimeMillis();

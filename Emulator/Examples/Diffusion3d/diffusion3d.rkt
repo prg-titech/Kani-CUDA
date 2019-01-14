@@ -19,11 +19,11 @@
   (:= int c (+/LS (*/LS j nx) i))
   (:= int xy (*/LS nx ny))
   
-  ;(:shared real smem[BLOCKSIZE])
-  ;(syncthreads)
+  (:shared float [smem BLOCKSIZE])
   
   (for ([k (in-range nz)])
-    ;(= [smem c2] [in c])
+    (= [smem c2] [in c])
+    (syncthreads)
     (:= int w (?: (eq?/LS i 0) c (-/LS c 1)))
     (:= int e (?: (eq?/LS i (-/LS nx 1)) c (+/LS c 1)))
     (:= int n (?: (eq?/LS j 0) c (-/LS c nx)))
@@ -31,6 +31,7 @@
     (:= int b (?: (eq?/LS k 0) c (-/LS c xy)))
     (:= int t (?: (eq?/LS k (-/LS nz 1)) c (+/LS c xy)))
     (= [out c] (+/LS (*/LS cc [in c])
+                     ; tid bid id smid i j c threadIdx.x threadIdx.y c2 blockDim.x blockDim.y nx ny nz
                      (*/LS cw (profiling-access file in w i j c tid-x tid-y c2 (block-dim 0) (block-dim 1) nx ny nz))
                      (*/LS cw [in w])
                      (*/LS ce [in e])
@@ -38,7 +39,7 @@
                      (*/LS cn [in n])
                      (*/LS cb [in b])
                      (*/LS ct [in t])))
-    (+= c xy)))
+    (+=/LS c xy)))
 
 (define (diffusion-run-kernel file
                               grid
@@ -72,7 +73,7 @@
   (define-symbolic* r real?)
   r)
 
-(define-values (SIZEX SIZEY SIZEZ) (values 9 9 3))
+(define-values (SIZEX SIZEY SIZEZ) (values 9 6 3))
 (define SIZE (* SIZEX SIZEY SIZEZ))
 
 (define CPU-in (make-array (for/vector ([i SIZE]) (make-element i)) SIZE))
@@ -90,14 +91,26 @@
 ;                      e w n s t b c)
 
 ;; Execute a diffusion program on GPU
-(define out-file (open-output-file "profile.rkt" #:exists 'truncate))
-(diffusion-run-kernel out-file
-                      '(3 3)
-                      '(3 3)
-                      1
-                      GPU-in GPU-out
-                      SIZEX SIZEY SIZEZ
-                      e w n s t b c)
+(make-directory* "profiles")
+
+(define (new-counter)
+  (let ([n 0])
+    (lambda ()
+      (set! n (+ n 1))
+      n)))
+
+(define counter (new-counter))
+
+;(define out-file (open-output-file (string-append "profiles/profile" (number->string (counter))) #:exists 'truncate))
+(define out-file (open-output-file "profile" #:exists 'truncate))
+(fprintf out-file "tid bid id smid i j c tid-x tid-y c2 blockDim.x blockDim.y\n")
+(time (diffusion-run-kernel out-file
+                            '(3 3)
+                            '(3 2)
+                            1
+                            GPU-in GPU-out
+                            SIZEX SIZEY SIZEZ
+                            e w n s t b c))
 (close-output-port out-file)
 
 

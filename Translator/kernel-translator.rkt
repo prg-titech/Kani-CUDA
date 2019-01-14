@@ -4,6 +4,8 @@
 
 (require c)
 
+;; TODO: Implement ternary op
+
 (define (get-name src)
   (if (decl:function? src)
       (kernel-translator (decl:declarator-id (decl:function-declarator src)))

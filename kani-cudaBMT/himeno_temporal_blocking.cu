@@ -80,7 +80,7 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 		for(i=1 ; i<imax-1 ; ++i){
 				syncthreads();
 			if(0 < threadIdx.x && k < kmax-1 && 0 < j && j < jmax-1){
-				s0 = a0[i*jmax*kmax+j*kmax+k] * p[(i+1)*jmax*kmax+j*kmax+k]
+				s0 = a0[i*jmax*kmax+j*kmax+k] * __profile__.p[(i+1)*jmax*kmax+j*kmax+k]
 				+ a1[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+(j+1)*kmax+k]
 				+ a2[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+j*kmax+(k+1)]
 				+ b0[i*jmax*kmax+j*kmax+k] 

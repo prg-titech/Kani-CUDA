@@ -9,7 +9,7 @@
          profiling-access profiling-access2 profiling-access3 synth-memory-access
          cudaMalloc malloc cudaFree free cudaMemcpy array? assign)
 
-(define race-check? #f)
+(define race-check? #t)
 
 ;; Structure of element of array 
 (struct element
@@ -182,7 +182,7 @@
                        (begin
                          (set-element-read! elem -1)
                          cont)]))
-                  (assert false "read conflict"))
+                  (assert false)); "read conflict"))
               cont))
         'masked-value)))
 

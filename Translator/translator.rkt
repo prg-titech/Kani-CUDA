@@ -17,11 +17,12 @@
     [(string-contains? line "__global__") (begin
                                             (set! device-name-space (list* (list-ref (string-split line #rx"[ |(]") 2) device-name-space))
                                             (string-replace line "__global__" ""))]
+    ;; TODO : diffusion2d_temporal_blocking.cuでおかしなことが起こってる
     [(string-contains? line "__shared__") (let ([name (list-ref (string-split line #rx"[ |[]") 2)])
+                                            ;(println (string-split line #rx"[ |[]"))
                                             (string-replace (string-replace line "__shared__" "") name (string-append "__shared__" name)))]
     [(string-contains? line "dim3 ") (string-replace line "dim3 " "")]
-    [(and (string-contains? line "<<<") (string-contains? line ">>>("))
-     (string-replace (string-replace line "<<<" "(") ">>>(" ",")]
+    [(and (string-contains? line "<<<") (string-contains? line ">>>(")) (string-replace (string-replace line "<<<" "(") ">>>(" ",")]
     [(desired-line? line) line]
     [else ""]))
 
@@ -63,7 +64,8 @@
         (pretty-display (kernel-translator src))
         (pretty-display (host-translator src)))))
 
-(translate "/Users/akira/masuhara-lab/Kani-CUDA/kani-cudaBMT/himeno_temporal_blocking.cu")
+;(translate "/Users/akira/masuhara-lab/Kani-CUDA/kani-cudaBMT/himeno_temporal_blocking.cu")
+(translate "/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/Diffusion2d/diffusion2d_temporal_blocking.cu")
 
 ;(pretty-print (kernel-translator (list-ref (parse-program "void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, float *b1, float *b2, float *c0, float *c1, float *c2, float *p, float *wrk1, float *wrk2, float *bnd, int nn, int imax, int jmax, int kmax, float omega, float *gosa){
 ;	int i, j, k, j2, k2, n, xy, c, csb;

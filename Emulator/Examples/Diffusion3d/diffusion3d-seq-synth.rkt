@@ -22,7 +22,7 @@
   (:= int tid-y (thread-idx 1))
   
   ; Shared memory
-  (:shared real smem[BLOCKSIZE])
+  (:shared float [smem BLOCKSIZE])
   
   (:= int i (+/LS (*/LS (block-dim 0) (block-idx 0)) tid-x))
   (:= int j (+/LS (*/LS (block-dim 1) (block-idx 1)) tid-y))

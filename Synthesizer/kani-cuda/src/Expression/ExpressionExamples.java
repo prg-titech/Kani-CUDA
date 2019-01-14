@@ -165,12 +165,11 @@ public class ExpressionExamples {
 		long start = System.currentTimeMillis();
 		kani_cuda.synthesizeBool();
 		long end = System.currentTimeMillis();
-		
 		System.out.println("time: " + (end - start) + "ms");
 		
 		start = System.currentTimeMillis();
-		//kani_cuda.synthsizeIf();
-		kani_cuda.synthesizeArith(4);
+		kani_cuda.synthesizeArith(3);
+		kani_cuda.synthsizeIf();
 		end = System.currentTimeMillis();
 		
 		System.out.println("time: " + (end - start) + "ms");

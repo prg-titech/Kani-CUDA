@@ -15,7 +15,7 @@
                              (+ (* KERNEL-RADIUS 2) 1)))
 
 (define out-file (open-output-file "profile.rkt" #:exists 'truncate))
-(invoke-kernel-synth convo '(2 2) '(3 3) out-data in-data d-kernel SIZEX SIZEX out-file)
+(invoke-kernel convo '(2 2) '(3 3) out-data in-data d-kernel SIZEX SIZEX out-file)
 (print-matrix in-data SIZEX SIZEX)
 (print-matrix out-data SIZEX SIZEX)
 (close-output-port out-file)

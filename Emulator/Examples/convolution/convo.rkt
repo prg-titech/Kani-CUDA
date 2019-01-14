@@ -24,15 +24,15 @@
   
   (:= int sum 0)
   (:= int value 0)
-  (:shared int sm[BLOCKSIZE])
+  (:shared int [sm BLOCKSIZE])
   (= [sm b-loc] [i-data g-loc])
 
   (syncthreads)
   
   (:= int i (*/LS -1 KERNEL-RADIUS))
-  (for- [:(</LS i (+/LS KERNEL-RADIUS 1)):(+= i 1)]
+  (for- [:(</LS i (+/LS KERNEL-RADIUS 1)):(+=/LS i 1)]
         (:= int j (*/LS -1 KERNEL-RADIUS))
-        (for- [:(</LS j (+/LS KERNEL-RADIUS 1)):(+= j 1)]
+        (for- [:(</LS j (+/LS KERNEL-RADIUS 1)):(+=/LS j 1)]
               (if- (&&/LS (eq?/LS bidx 0) (</LS (+/LS tidx i) 0))
                    (= value 0)
                    (if- (&&/LS (eq?/LS bidx (-/LS gdimx 1))
@@ -43,8 +43,8 @@
                              (if- (&&/LS (eq?/LS bidy (-/LS gdimy 1))
                                          (>/LS (+/LS tidy j) (-/LS bdimy 1)))
                                   (= value 0)
-                                  (= value (synth-memory-access file i-data (+/LS g-loc i (*/LS j dataw)) 3))))))
-              (+= sum (*/LS value
+                                  (= value (profiling-access3 file i-data (+/LS g-loc i (*/LS j dataw)) sm b-loc i j tidx tidy bdimx bdimy BLOCKSIZE))))))
+              (+=/LS sum (*/LS value
                             [d-kernel (+/LS KERNEL-RADIUS i)]
                             [d-kernel (+/LS KERNEL-RADIUS j)]))))
   (= [o-data g-loc] sum))
