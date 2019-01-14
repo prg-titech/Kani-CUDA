@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<sys/time.h>
 
-#define BLOCKSIZEX 96
+#define BLOCKSIZEX 128
 #define BLOCKSIZEY 4
 #define BLOCKSIZE BLOCKSIZEX * BLOCKSIZEY
 #define GRIDSIZEX 4
@@ -65,6 +65,7 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 		temp = 0.0;
 		sb_m[csb] = p[c];
 		sb_b[csb] = p[c+xy];
+    __syncthreads();
 		for(i=1 ; i<imax-1 ; ++i){
 			c += xy;
       float *sb_tmp = sb_t;
@@ -72,7 +73,6 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 			sb_m = sb_b;
       sb_b = sb_tmp;
 			sb_b[csb] = p[c+xy];
-			//printf("shared: %f\n", sb_b[csb]);
 			__syncthreads();
 			s0 =
 				a0[i*jmax*kmax+j*kmax+k] * sb_b[csb]
@@ -237,8 +237,8 @@ int main(){
 				c1[i*mjmax*mkmax+j*mkmax+k]=1.0;
 				c2[i*mjmax*mkmax+j*mkmax+k]=1.0;
 				p[i*mjmax*mkmax+j*mkmax+k]=(float)(i*i)/(float)(imax*imax);
-				wrk1[i*mjmax*mkmax+j*kmax+k]=0.0;
-				bnd[i*mjmax*mkmax+j*kmax+k]=1.0;
+				wrk1[i*mjmax*mkmax+j*mkmax+k]=0.0;
+				bnd[i*mjmax*mkmax+j*mkmax+k]=1.0;
 			}
 		}
 	}

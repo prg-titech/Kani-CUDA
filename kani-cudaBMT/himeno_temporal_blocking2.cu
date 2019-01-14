@@ -91,20 +91,20 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 		s0 = a0[i*jmax*kmax+j*kmax+k] * p[(i+1)*jmax*kmax+j*kmax+k]
 		+ a1[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+(j+1)*kmax+k]
 		+ a2[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+j*kmax+(k+1)]
-		+ b0[i*jmax*kmax+j*kmax+k] 
-			*(p[(i+1)*jmax*kmax+(j+1)*kmax+k] 
+		+ b0[i*jmax*kmax+j*kmax+k]
+			*(p[(i+1)*jmax*kmax+(j+1)*kmax+k]
 			- p[(i+1)*jmax*kmax+(j-1)*kmax+k]
-			- p[(i-1)*jmax*kmax+(j+1)*kmax+k] 
+			- p[(i-1)*jmax*kmax+(j+1)*kmax+k]
 			+ p[(i-1)*jmax*kmax+(j-1)*kmax+k] )
-		+ b1[i*jmax*kmax+j*kmax+k] 
-			*(p[i*jmax*kmax+(j+1)*kmax+(k+1)] 
+		+ b1[i*jmax*kmax+j*kmax+k]
+			*(p[i*jmax*kmax+(j+1)*kmax+(k+1)]
 			- p[i*jmax*kmax+(j-1)*kmax+(k+1)]
 			- p[i*jmax*kmax+(j-1)*kmax+(k-1)]
 			+ p[i*jmax*kmax+(j+1)*kmax+(k-1)])
-		+ b2[i*jmax*kmax+j*kmax+k] 
-			*(p[(i+1)*jmax*kmax+j*kmax+(k+1)] 
+		+ b2[i*jmax*kmax+j*kmax+k]
+			*(p[(i+1)*jmax*kmax+j*kmax+(k+1)]
 			- p[(i-1)*jmax*kmax+j*kmax+(k+1)]
-			- p[(i+1)*jmax*kmax+j*kmax+(k-1)] 
+			- p[(i+1)*jmax*kmax+j*kmax+(k-1)]
 			+ p[(i-1)*jmax*kmax+j*kmax+(k-1)] )
 		+ c0[i*jmax*kmax+j*kmax+k] * p[(i-1)*jmax*kmax+j*kmax+k]
 		+ c1[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+(j-1)*kmax+k]
@@ -125,20 +125,20 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 				s0 = a0[i*jmax*kmax+j*kmax+k] * p[(i+1)*jmax*kmax+j*kmax+k]
 				+ a1[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+(j+1)*kmax+k]
 				+ a2[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+j*kmax+(k+1)]
-				+ b0[i*jmax*kmax+j*kmax+k] 
-					*(p[(i+1)*jmax*kmax+(j+1)*kmax+k] 
+				+ b0[i*jmax*kmax+j*kmax+k]
+					*(p[(i+1)*jmax*kmax+(j+1)*kmax+k]
 					- p[(i+1)*jmax*kmax+(j-1)*kmax+k]
-					- p[(i-1)*jmax*kmax+(j+1)*kmax+k] 
+					- p[(i-1)*jmax*kmax+(j+1)*kmax+k]
 					+ p[(i-1)*jmax*kmax+(j-1)*kmax+k] )
-				+ b1[i*jmax*kmax+j*kmax+k] 
-					*(p[i*jmax*kmax+(j+1)*kmax+(k+1)] 
+				+ b1[i*jmax*kmax+j*kmax+k]
+					*(p[i*jmax*kmax+(j+1)*kmax+(k+1)]
 					- p[i*jmax*kmax+(j-1)*kmax+(k+1)]
 					- p[i*jmax*kmax+(j-1)*kmax+(k-1)]
 					+ p[i*jmax*kmax+(j+1)*kmax+(k-1)])
-				+ b2[i*jmax*kmax+j*kmax+k] 
-					*(p[(i+1)*jmax*kmax+j*kmax+(k+1)] 
+				+ b2[i*jmax*kmax+j*kmax+k]
+					*(p[(i+1)*jmax*kmax+j*kmax+(k+1)]
 					- p[(i-1)*jmax*kmax+j*kmax+(k+1)]
-					- p[(i+1)*jmax*kmax+j*kmax+(k-1)] 
+					- p[(i+1)*jmax*kmax+j*kmax+(k-1)]
 					+ p[(i-1)*jmax*kmax+j*kmax+(k-1)] )
 				+ c0[i*jmax*kmax+j*kmax+k] * p[(i-1)*jmax*kmax+j*kmax+k]
 				+ c1[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+(j-1)*kmax+k]
@@ -153,25 +153,25 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 			}
 			sb2_m[csb] = wrk2[i*jmax*kmax+j*kmax+k];
 			printf("%f\n", sb2_m[csb]);
-			syncthreads();
+			__syncthreads();
 			if(0 < threadIdx.x && threadIdx.x < blockDim.x-1 && 0 < threadIdx.y && threadIdx.y < blockDim.y-1){
 				s0 = a0[i2*jmax*kmax+j*kmax+k] * wrk2[(i2+1)*jmax*kmax+j*kmax+k]
 				+ a1[i2*jmax*kmax+j*kmax+k] * wrk2[i2*jmax*kmax+(j+1)*kmax+k]
 				+ a2[i2*jmax*kmax+j*kmax+k] * wrk2[i2*jmax*kmax+j*kmax+(k+1)]
-				+ b0[i2*jmax*kmax+j*kmax+k] 
-					*(wrk2[(i2+1)*jmax*kmax+(j+1)*kmax+k] 
+				+ b0[i2*jmax*kmax+j*kmax+k]
+					*(wrk2[(i2+1)*jmax*kmax+(j+1)*kmax+k]
 					- wrk2[(i2+1)*jmax*kmax+(j-1)*kmax+k]
-					- wrk2[(i2-1)*jmax*kmax+(j+1)*kmax+k] 
+					- wrk2[(i2-1)*jmax*kmax+(j+1)*kmax+k]
 					+ wrk2[(i2-1)*jmax*kmax+(j-1)*kmax+k] )
-				+ b1[i2*jmax*kmax+j*kmax+k] 
-					*(wrk2[i2*jmax*kmax+(j+1)*kmax+(k+1)] 
+				+ b1[i2*jmax*kmax+j*kmax+k]
+					*(wrk2[i2*jmax*kmax+(j+1)*kmax+(k+1)]
 					- wrk2[i2*jmax*kmax+(j-1)*kmax+(k+1)]
 					- wrk2[i2*jmax*kmax+(j-1)*kmax+(k-1)]
 					+ wrk2[i2*jmax*kmax+(j+1)*kmax+(k-1)])
-				+ b2[i2*jmax*kmax+j*kmax+k] 
-					*(wrk2[(i2+1)*jmax*kmax+j*kmax+(k+1)] 
+				+ b2[i2*jmax*kmax+j*kmax+k]
+					*(wrk2[(i2+1)*jmax*kmax+j*kmax+(k+1)]
 					- wrk2[(i2-1)*jmax*kmax+j*kmax+(k+1)]
-					- wrk2[(i2+1)*jmax*kmax+j*kmax+(k-1)] 
+					- wrk2[(i2+1)*jmax*kmax+j*kmax+(k-1)]
 					+ wrk2[(i2-1)*jmax*kmax+j*kmax+(k-1)] )
 				+ c0[i2*jmax*kmax+j*kmax+k] * wrk2[(i2-1)*jmax*kmax+j*kmax+k]
 				+ c1[i2*jmax*kmax+j*kmax+k] * wrk2[i2*jmax*kmax+(j-1)*kmax+k]
@@ -183,7 +183,7 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 				temp = temp + ss*ss;
 
 				p[i2*jmax*kmax+j*kmax+k] = wrk2[i2*jmax*kmax+j*kmax+k] + omega * ss;
-				c += xy;		
+				c += xy;
 			}
 		}
 		i2 = imax-1;
@@ -191,20 +191,20 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 			s0 = a0[i2*jmax*kmax+j*kmax+k] * wrk2[(i2+1)*jmax*kmax+j*kmax+k]
 			+ a1[i2*jmax*kmax+j*kmax+k] * wrk2[i2*jmax*kmax+(j+1)*kmax+k]
 			+ a2[i2*jmax*kmax+j*kmax+k] * wrk2[i2*jmax*kmax+j*kmax+(k+1)]
-			+ b0[i2*jmax*kmax+j*kmax+k] 
-				*(wrk2[(i2+1)*jmax*kmax+(j+1)*kmax+k] 
+			+ b0[i2*jmax*kmax+j*kmax+k]
+				*(wrk2[(i2+1)*jmax*kmax+(j+1)*kmax+k]
 				- wrk2[(i2+1)*jmax*kmax+(j-1)*kmax+k]
-				- wrk2[(i2-1)*jmax*kmax+(j+1)*kmax+k] 
+				- wrk2[(i2-1)*jmax*kmax+(j+1)*kmax+k]
 				+ wrk2[(i2-1)*jmax*kmax+(j-1)*kmax+k] )
-			+ b1[i2*jmax*kmax+j*kmax+k] 
-				*(wrk2[i2*jmax*kmax+(j+1)*kmax+(k+1)] 
+			+ b1[i2*jmax*kmax+j*kmax+k]
+				*(wrk2[i2*jmax*kmax+(j+1)*kmax+(k+1)]
 				- wrk2[i2*jmax*kmax+(j-1)*kmax+(k+1)]
 				- wrk2[i2*jmax*kmax+(j-1)*kmax+(k-1)]
 				+ wrk2[i2*jmax*kmax+(j+1)*kmax+(k-1)])
-			+ b2[i2*jmax*kmax+j*kmax+k] 
-				*(wrk2[(i2+1)*jmax*kmax+j*kmax+(k+1)] 
+			+ b2[i2*jmax*kmax+j*kmax+k]
+				*(wrk2[(i2+1)*jmax*kmax+j*kmax+(k+1)]
 				- wrk2[(i2-1)*jmax*kmax+j*kmax+(k+1)]
-				- wrk2[(i2+1)*jmax*kmax+j*kmax+(k-1)] 
+				- wrk2[(i2+1)*jmax*kmax+j*kmax+(k-1)]
 				+ wrk2[(i2-1)*jmax*kmax+j*kmax+(k-1)] )
 			+ c0[i2*jmax*kmax+j*kmax+k] * wrk2[(i2-1)*jmax*kmax+j*kmax+k]
 			+ c1[i2*jmax*kmax+j*kmax+k] * wrk2[i2*jmax*kmax+(j-1)*kmax+k]
@@ -218,7 +218,7 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 			p[i2*jmax*kmax+j*kmax+k] = wrk2[i2*jmax*kmax+j*kmax+k] + omega * ss;
 		}
 	} /* end n loop */
-	syncthreads();
+	__syncthreads();
 	gosa[tid] = temp;
 }
 

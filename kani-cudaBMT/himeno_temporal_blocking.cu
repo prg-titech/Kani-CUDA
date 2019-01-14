@@ -1,26 +1,5 @@
 #include<stdio.h>
 #include<sys/time.h>
-<<<<<<< HEAD
-
-=======
-/*
->>>>>>> b134838f3a58c4117af74290d6fb85e20a9def9b
-#define BLOCKSIZEX 64
-#define BLOCKSIZEY 16
-#define BLOCKSIZE BLOCKSIZEX * BLOCKSIZEY
-#define GRIDSIZEX 8
-#define GRIDSIZEY 16
-#define GRIDSIZE GRIDSIZEX * GRIDSIZEY
-#define THREAD_NUM BLOCKSIZE * GRIDSIZE
-
-#define MIMAX	256
-#define MJMAX	GRIDSIZEY * (BLOCKSIZEY - 2) + 2
-#define MKMAX	GRIDSIZEX * (BLOCKSIZEX - 2) + 2
-
-#define NN 750
-<<<<<<< HEAD
-=======
-*/
 
 #define BLOCKSIZEX 6
 #define BLOCKSIZEY 4
@@ -35,7 +14,6 @@
 #define MKMAX	GRIDSIZEX * (BLOCKSIZEX - 2) + 2
 
 #define NN 3
->>>>>>> b134838f3a58c4117af74290d6fb85e20a9def9b
 
 /*static float p[MIMAX][MJMAX][MKMAX];
 static float a[MIMAX][MJMAX][MKMAX][4];
@@ -84,36 +62,25 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 	for(n=0;n<nn;++n){
 		c = j * kmax + k;
 		temp=0.0;
-<<<<<<< HEAD
 		if(0 < threadIdx.x && k < kmax-1 && 0 < j && j < jmax-1){
 			for(i=1 ; i<imax-1 ; ++i){
-				syncthreads();
-=======
-		for(i=1 ; i<imax-1 ; ++i){
-				syncthreads();
-			if(0 < threadIdx.x && k < kmax-1 && 0 < j && j < jmax-1){
-<<<<<<< HEAD
-				s0 = a0[i*jmax*kmax+j*kmax+k] * __profile__.p[(i+1)*jmax*kmax+j*kmax+k]
-=======
->>>>>>> b134838f3a58c4117af74290d6fb85e20a9def9b
 				s0 = a0[i*jmax*kmax+j*kmax+k] * p[(i+1)*jmax*kmax+j*kmax+k]
->>>>>>> 39e2e2001769bb0a365dc94f1e8eb09189c31796
 				+ a1[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+(j+1)*kmax+k]
 				+ a2[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+j*kmax+(k+1)]
-				+ b0[i*jmax*kmax+j*kmax+k] 
-					*(p[(i+1)*jmax*kmax+(j+1)*kmax+k] 
+				+ b0[i*jmax*kmax+j*kmax+k]
+					*(p[(i+1)*jmax*kmax+(j+1)*kmax+k]
 					- p[(i+1)*jmax*kmax+(j-1)*kmax+k]
-					- p[(i-1)*jmax*kmax+(j+1)*kmax+k] 
+					- p[(i-1)*jmax*kmax+(j+1)*kmax+k]
 					+ p[(i-1)*jmax*kmax+(j-1)*kmax+k] )
-				+ b1[i*jmax*kmax+j*kmax+k] 
-					*(p[i*jmax*kmax+(j+1)*kmax+(k+1)] 
+				+ b1[i*jmax*kmax+j*kmax+k]
+					*(p[i*jmax*kmax+(j+1)*kmax+(k+1)]
 					- p[i*jmax*kmax+(j-1)*kmax+(k+1)]
 					- p[i*jmax*kmax+(j-1)*kmax+(k-1)]
 					+ p[i*jmax*kmax+(j+1)*kmax+(k-1)])
-				+ b2[i*jmax*kmax+j*kmax+k] 
-					*(p[(i+1)*jmax*kmax+j*kmax+(k+1)] 
+				+ b2[i*jmax*kmax+j*kmax+k]
+					*(p[(i+1)*jmax*kmax+j*kmax+(k+1)]
 					- p[(i-1)*jmax*kmax+j*kmax+(k+1)]
-					- p[(i+1)*jmax*kmax+j*kmax+(k-1)] 
+					- p[(i+1)*jmax*kmax+j*kmax+(k-1)]
 					+ p[(i-1)*jmax*kmax+j*kmax+(k-1)] )
 				+ c0[i*jmax*kmax+j*kmax+k] * p[(i-1)*jmax*kmax+j*kmax+k]
 				+ c1[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+(j-1)*kmax+k]
@@ -128,26 +95,26 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 				c += xy;
 			}
 		}
-		syncthreads();
+		__syncthreads();
 		if(0 < threadIdx.x && threadIdx.x < blockDim.x-1 && 0 < threadIdx.y && threadIdx.y < blockDim.y-1){
 			for(i=1; i<imax-1; i++){
 				s0 = a0[i*jmax*kmax+j*kmax+k] * wrk2[(i+1)*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+k2]
 				+ a1[i*jmax*kmax+j*kmax+k] * wrk2[i*THREAD_NUM+(j2+1)*BLOCKSIZEX*GRIDSIZEX+k2]
 				+ a2[i*jmax*kmax+j*kmax+k] * wrk2[i*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+(k2+1)]
-				+ b0[i*jmax*kmax+j*kmax+k] 
-					*(wrk2[(i+1)*THREAD_NUM+(j2+1)*BLOCKSIZEX*GRIDSIZEX+k2] 
+				+ b0[i*jmax*kmax+j*kmax+k]
+					*(wrk2[(i+1)*THREAD_NUM+(j2+1)*BLOCKSIZEX*GRIDSIZEX+k2]
 					- wrk2[(i+1)*THREAD_NUM+(j2-1)*BLOCKSIZEX*GRIDSIZEX+k2]
-					- wrk2[(i-1)*THREAD_NUM+(j2+1)*BLOCKSIZEX*GRIDSIZEX+k2] 
+					- wrk2[(i-1)*THREAD_NUM+(j2+1)*BLOCKSIZEX*GRIDSIZEX+k2]
 					+ wrk2[(i-1)*THREAD_NUM+(j2-1)*BLOCKSIZEX*GRIDSIZEX+k2] )
-				+ b1[i*jmax*kmax+j*kmax+k] 
-					*(wrk2[i*THREAD_NUM+(j2+1)*BLOCKSIZEX*GRIDSIZEX+(k2+1)] 
+				+ b1[i*jmax*kmax+j*kmax+k]
+					*(wrk2[i*THREAD_NUM+(j2+1)*BLOCKSIZEX*GRIDSIZEX+(k2+1)]
 					- wrk2[i*THREAD_NUM+(j2-1)*BLOCKSIZEX*GRIDSIZEX+(k2+1)]
 					- wrk2[i*THREAD_NUM+(j2-1)*BLOCKSIZEX*GRIDSIZEX+(k2-1)]
 					+ wrk2[i*THREAD_NUM+(j2+1)*BLOCKSIZEX*GRIDSIZEX+(k2-1)])
-				+ b2[i*jmax*kmax+j*kmax+k] 
-					*(wrk2[(i+1)*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+(k2+1)] 
+				+ b2[i*jmax*kmax+j*kmax+k]
+					*(wrk2[(i+1)*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+(k2+1)]
 					- wrk2[(i-1)*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+(k2+1)]
-					- wrk2[(i+1)*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+(k2-1)] 
+					- wrk2[(i+1)*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+(k2-1)]
 					+ wrk2[(i-1)*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+(k2-1)] )
 				+ c0[i*jmax*kmax+j*kmax+k] * wrk2[(i-1)*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+k2]
 				+ c1[i*jmax*kmax+j*kmax+k] * wrk2[i*THREAD_NUM+(j2-1)*BLOCKSIZEX*GRIDSIZEX+k2]
@@ -161,9 +128,9 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 				p[i*jmax*kmax+j*kmax+k] = wrk2[i*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+k2] + omega * ss;
 				c += xy;
 			}
-		}	
+		}
 	} /* end n loop */
-	syncthreads();
+	__syncthreads();
 	gosa[tid] = temp;
 }
 
@@ -290,13 +257,8 @@ int main(){
 				c1[i*mjmax*mkmax+j*mkmax+k]=1.0;
 				c2[i*mjmax*mkmax+j*mkmax+k]=1.0;
 				p[i*mjmax*mkmax+j*mkmax+k]=(float)(i*i)/(float)(imax*imax);
-<<<<<<< HEAD
-				wrk1[i*mjmax*mkmax+j*kmax+k]=0.0;
-				bnd[i*mjmax*mkmax+j*kmax+k]=1.0;
-=======
 				wrk1[i*mjmax*mkmax+j*mkmax+k]=0.0;
 				bnd[i*mjmax*mkmax+j*mkmax+k]=1.0;
->>>>>>> b134838f3a58c4117af74290d6fb85e20a9def9b
 			}
 		}
 	}
