@@ -1,15 +1,15 @@
 #include<stdio.h>
 #include<sys/time.h>
 
-#define BLOCKSIZEX 32
-#define BLOCKSIZEY 16
+#define BLOCKSIZEX 96
+#define BLOCKSIZEY 4
 #define BLOCKSIZE BLOCKSIZEX * BLOCKSIZEY
-#define GRIDSIZEX 8
-#define GRIDSIZEY 8
+#define GRIDSIZEX 4
+#define GRIDSIZEY 64
 #define GRIDSIZE GRIDSIZEX * GRIDSIZEY
 #define THREAD_NUM BLOCKSIZE * GRIDSIZE
 
-#define MIMAX	128
+#define MIMAX	256
 #define MJMAX	GRIDSIZEY * BLOCKSIZEY + 2
 #define MKMAX	GRIDSIZEX * BLOCKSIZEX + 2
 
@@ -69,27 +69,27 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 			sb[csb + 2*BLOCKSIZE] = p[c+xy];
 			//printf("shared: %f\n", sb[csb]);
 			syncthreads();
-			s0 = 
+			s0 =
 				a0[i*jmax*kmax+j*kmax+k] * sb[csb + 2*BLOCKSIZE]
-				+ a1[i*jmax*kmax+j*kmax+k] * (!(threadIdx.y==blockDim.y-1) ? sb[csb + BLOCKSIZE - blockDim.x : p[i*jmax*kmax+(j+1)*kmax+k])
-				+ a2[i*jmax*kmax+j*kmax+k] * (!(threadIdx.x==blockDim.x-1) ? sb[csb + BLOCKSIZE + 1 : p[i*jmax*kmax+j*kmax+(k+1)])
-				+ b0[i*jmax*kmax+j*kmax+k] * 
-				( (!(threadIdx.y==blockDim.y) ? sb[(csb + blockDim.x)+2*BLOCKSIZE] : p[(i+1)*jmax*kmax+(j+1)*kmax+k])
-				- (!(threadIdx.x==csb) ? sb[(csb - blockDim.x)+2*BLOCKSIZE] : p[(i+1)*jmax*kmax+(j-1)*kmax+k])
-				- (!(threadIdx.y==blockDim.y) ? sb[(csb + blockDim.x)] : p[(i-1)*jmax*kmax+(j+1)*kmax+k])
-				+ (!(threadIdx.x==csb) ? sb[(csb - blockDim.x)] : p[(i-1)*jmax*kmax+(j-1)*kmax+k]) )
-				+ b1[i*jmax*kmax+j*kmax+k] * 
-				((!(threadIdx.x==(blockDim.x - 1))&&!(threadIdx.y==(blockDim.y - 1))) ? sb[(csb + blockDim.x - 1)  + BLOCKSIZE] : p[i*jmax*kmax+(j+1)*kmax+(k+1)])
+				+ a1[i*jmax*kmax+j*kmax+k] * (!(threadIdx.y==blockDim.y-1) ? sb[csb + BLOCKSIZE + blockDim.x] : p[i*jmax*kmax+(j+1)*kmax+k])
+				+ a2[i*jmax*kmax+j*kmax+k] * (!(threadIdx.x==blockDim.x-1) ? sb[csb + BLOCKSIZE + 1] : p[i*jmax*kmax+j*kmax+(k+1)])
+				+ b0[i*jmax*kmax+j*kmax+k] *(
+			  (!(threadIdx.y==blockDim.y-1) ? sb[(csb + blockDim.x)+2*BLOCKSIZE] : p[(i+1)*jmax*kmax+(j+1)*kmax+k])
+				- (!(threadIdx.y==0) ? sb[(csb - blockDim.x)+2*BLOCKSIZE] : p[(i+1)*jmax*kmax+(j-1)*kmax+k])
+				- (!(threadIdx.y==blockDim.y-1) ? sb[(csb + blockDim.x)] : p[(i-1)*jmax*kmax+(j+1)*kmax+k])
+				+ (!(threadIdx.y==0) ? sb[(csb - blockDim.x)] : p[(i-1)*jmax*kmax+(j-1)*kmax+k]) )
+				+ b1[i*jmax*kmax+j*kmax+k] *(
+				((!(threadIdx.x==(blockDim.x - 1))&&!(threadIdx.y==(blockDim.y - 1))) ? sb[(csb + blockDim.x + 1) + BLOCKSIZE] : p[i*jmax*kmax+(j+1)*kmax+(k+1)])
 				- ((!(threadIdx.y==0)&&!(threadIdx.x==(blockDim.x - 1))) ? sb[(1 + csb) - blockDim.x + BLOCKSIZE] : p[i*jmax*kmax+(j-1)*kmax+(k+1)])
 				- ((!(threadIdx.y==0)&&!(threadIdx.x==0)) ? sb[(csb - 1) - blockDim.x + BLOCKSIZE] : p[i*jmax*kmax+(j-1)*kmax+(k-1)])
-				+ ((!(threadIdx.x==0)&&!(threadIdx.y==(blockDim.y - 1))) ? sb[((csb-1) + blockDim.x) + BLOCKSIZE] : p[i*jmax*kmax+(j+1)*kmax+(k-1)]) )
-				+ b2[i*jmax*kmax+j*kmax+k] * 
-				( !(threadIdx.x==(blockDim.x - 1)) ? sb[((1 + (2 * BLOCKSIZE)) + csb)] : p[(i+1)*jmax*kmax+j*kmax+(k+1)] ) 
-				- ( !(threadIdx.x==(blockDim.x - 1)) ? sb[csb - 1] : p[(i-1)*jmax*kmax+j*kmax+(k+1)] )
+				+ ((!(threadIdx.x==0)&&!(threadIdx.y==(blockDim.y - 1))) ? sb[((csb-1) + blockDim.x) + BLOCKSIZE] : p[i*jmax*kmax+(j+1)*kmax+(k-1)]))
+				+ b2[i*jmax*kmax+j*kmax+k] *(
+				( !(threadIdx.x==(blockDim.x - 1)) ? sb[((1 + (2 * BLOCKSIZE)) + csb)] : p[(i+1)*jmax*kmax+j*kmax+(k+1)] )
+				- ( !(threadIdx.x==(blockDim.x - 1)) ? sb[csb + (2*BLOCKSIZE)  - 1] : p[(i-1)*jmax*kmax+j*kmax+(k+1)] )
 				- ( !(threadIdx.x==0) ? sb[(((2 * BLOCKSIZE) - 1) + csb)] : p[(i+1)*jmax*kmax+j*kmax+(k-1)] )
-				+ ( !(threadIdx.x==0 ? sb[csb - 1] : p[(i-1)*jmax*kmax+j*kmax+(k-1)] ))
+				+ ( !(threadIdx.x==0) ? sb[csb - 1] : p[(i-1)*jmax*kmax+j*kmax+(k-1)] ))
 				+ c0[i*jmax*kmax+j*kmax+k] * sb[csb]
-				+ c1[i*jmax*kmax+j*kmax+k] * (!(threadIdx.x==csb) ? sb[csb + BLOCKSIZE - blockDim.x : p[i*jmax*kmax+(j-1)*kmax+k])
+				+ c1[i*jmax*kmax+j*kmax+k] * (!(threadIdx.y==0) ? sb[csb + BLOCKSIZE - blockDim.x] : p[i*jmax*kmax+(j-1)*kmax+k])
 				+ c2[i*jmax*kmax+j*kmax+k] * ((threadIdx.x != 0) ? sb[csb + BLOCKSIZE - 1] : p[i*jmax*kmax+j*kmax+(k-1)])
 				+ wrk1[i*jmax*kmax+j*kmax+k];
 
