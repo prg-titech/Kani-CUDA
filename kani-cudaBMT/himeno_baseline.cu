@@ -1,11 +1,19 @@
 #include<stdio.h>
 #include<sys/time.h>
 
+<<<<<<< HEAD
+#define BLOCKSIZEX 128
+#define BLOCKSIZEY 4
+#define BLOCKSIZE BLOCKSIZEX * BLOCKSIZEY
+#define GRIDSIZEX 4
+#define GRIDSIZEY 64
+=======
 #define BLOCKSIZEX 64
 #define BLOCKSIZEY 16
 #define BLOCKSIZE BLOCKSIZEX * BLOCKSIZEY
 #define GRIDSIZEX 8
 #define GRIDSIZEY 16
+>>>>>>> b134838f3a58c4117af74290d6fb85e20a9def9b
 #define GRIDSIZE GRIDSIZEX * GRIDSIZEY
 #define THREAD_NUM BLOCKSIZE * GRIDSIZE
 
@@ -129,13 +137,11 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 			 wrk2[i*jmax*kmax+j*kmax+k] = p[i*jmax*kmax+j*kmax+k] + omega * ss;
 		   c += xy;
     }
-    syncthreads();
 	  for(i=1 ; i<imax-1 ; ++i){
 				p[i*jmax*kmax+j*kmax+k] = wrk2[i*jmax*kmax+j*kmax+k];
     }
   } /* end n loop */
-  syncthreads();
-  //printf("%d: temp = %d\n", tid, temp);
+  //printf("%d: p[%d] = %d\n", tid,i*jmax*kmax+j*kmax+k,p[i*jmax*kmax+j*kmax+k]);
   //printf("shared: %f", sb[csb]);
 	gosa[tid] = temp;
 }
@@ -338,7 +344,7 @@ int main(){
 	printf("gpu: %f sec.\n", cpu1);
 	printf("Loop executed for %d times\n", NN);
 	printf("Gosa: %e \n", final_gosa);
-	//printf("MFLOPS measured: %f\n", xmflops2);
+	printf("MFLOPS measured: %f\n", xmflops2);
 	//printf("Score: %f\n", score);
 
 	return(0);

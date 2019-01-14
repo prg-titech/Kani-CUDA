@@ -1,11 +1,19 @@
 #include<stdio.h>
 #include<sys/time.h>
 
+<<<<<<< HEAD
+#define BLOCKSIZEX 128
+#define BLOCKSIZEY 4
+#define BLOCKSIZE BLOCKSIZEX * BLOCKSIZEY
+#define GRIDSIZEX 4
+#define GRIDSIZEY 64
+=======
 #define BLOCKSIZEX 32
 #define BLOCKSIZEY 16
 #define BLOCKSIZE BLOCKSIZEX * BLOCKSIZEY
 #define GRIDSIZEX 16
 #define GRIDSIZEY 16
+>>>>>>> b134838f3a58c4117af74290d6fb85e20a9def9b
 #define GRIDSIZE GRIDSIZEX * GRIDSIZEY
 #define THREAD_NUM BLOCKSIZE * GRIDSIZE
 
@@ -26,6 +34,8 @@ static float work2[MIMAX][MJMAX][MKMAX];*/
 static int imax, jmax, kmax, mimax, mjmax, mkmax;
 static float omega;
 
+<<<<<<< HEAD
+=======
 
 /*void initial_matrix(){
 	int i, j, k;
@@ -66,6 +76,7 @@ static float omega;
 			}
 }*/
 
+>>>>>>> b134838f3a58c4117af74290d6fb85e20a9def9b
 double second(){
 	struct timeval tm;
 	double t;
@@ -91,6 +102,104 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 	int i, j, k, n, xy, c, csb;
 	float s0, ss, temp;
 	//const int size = (imax-1)/(imax-1);
+<<<<<<< HEAD
+	k = threadIdx.x + blockDim.x * blockIdx.x + 1;
+	j = threadIdx.y + blockDim.y * blockIdx.y + 1;
+	const int tid = (k-1) + (j-1) * (kmax-2);
+	xy = kmax * jmax;
+	extern __shared__ float sb[];
+  float *sb_t = sb;
+  float *sb_m = sb + (blockDim.x + 2) * (blockDim.y + 2);
+  float *sb_b = sb + 2 * (blockDim.x + 2) * (blockDim.y + 2);
+	csb = threadIdx.x + 1 + (threadIdx.y + 1) * (blockDim.x + 2);
+  for(n=0;n<nn;++n){
+		c = j * kmax + k;
+		temp = 0.0;
+    //printf("%d, %f\n", 2*(blockDim.x + 2) * (blockDim.y + 2) , sb_t[0]);
+		sb_m[csb] = p[c];
+		sb_b[csb] = p[c+xy];
+    if(threadIdx.x == 0){
+      sb_m[csb-1] = p[c-1];
+      sb_b[csb-1] = p[c+xy-1];
+    }
+    if(threadIdx.x == blockDim.x-1){
+      sb_m[csb+1] = p[c+1];
+      sb_b[csb+1] = p[c+xy+1];
+    }
+    if(threadIdx.y == 0){
+      sb_m[csb-blockDim.x-2] = p[c-kmax];
+      sb_b[csb-blockDim.x-2] = p[c+xy-kmax];
+    }
+    if(threadIdx.y == blockDim.y-1){
+      sb_m[csb+blockDim.x+2] = p[c+kmax];
+      sb_b[csb+blockDim.x+2] = p[c+xy+kmax];
+    }
+		if(threadIdx.x == 0 && threadIdx.y == 0){
+      sb_m[csb-blockDim.x-3] = p[c-kmax-1];
+      sb_m[csb-blockDim.x-1] = p[c-kmax+1];
+      sb_m[csb+blockDim.x+1] = p[c+kmax-1];
+      sb_m[csb+blockDim.x+3] = p[c+kmax+1];
+      sb_b[csb-blockDim.x-3] = p[c+xy-kmax-1];
+      sb_b[csb-blockDim.x-1] = p[c+xy-kmax+1];
+      sb_b[csb+blockDim.x+1] = p[c+xy+kmax-1];
+      sb_b[csb+blockDim.x+3] = p[c+xy+kmax+1];
+    }
+		for(i=1 ; i<imax-1 ; ++i){
+			c += xy;
+      float *sb_tmp = sb_t;
+			sb_t = sb_m;
+			sb_m = sb_b;
+      sb_b = sb_tmp;
+      sb_b[csb] = p[c+xy];
+      if(threadIdx.x == 0){ sb_b[csb-1] = p[c+xy-1];}
+      if(threadIdx.x == blockDim.x-1){ sb_b[csb+1] = p[c+xy+1];}
+      if(threadIdx.y == 0){ sb_b[csb-blockDim.x-2] = p[c+xy-kmax];}
+      if(threadIdx.y == blockDim.y-1){ sb_b[csb+blockDim.x+2] = p[c+xy+kmax];}
+			if(threadIdx.x == 0 && threadIdx.y == 0){
+        sb_b[csb-blockDim.x-3] = p[c+xy-kmax-1];
+        sb_b[csb-blockDim.x-1] = p[c+xy-kmax+1];
+        sb_b[csb+blockDim.x+1] = p[c+xy+kmax-1];
+        sb_b[csb+blockDim.x+3] = p[c+xy+kmax+1];
+      }
+
+			__syncthreads();
+			s0 =
+				a0[i*jmax*kmax+j*kmax+k] * sb_b[csb]
+				+ a1[i*jmax*kmax+j*kmax+k] * sb_m[csb + blockDim.x + 2]
+				+ a2[i*jmax*kmax+j*kmax+k] * sb_m[csb + 1]
+				+ b0[i*jmax*kmax+j*kmax+k] * (
+				  sb_b[csb + blockDim.x + 2]
+        - sb_b[csb - blockDim.x - 2]
+        - sb_t[csb + blockDim.x + 2]
+        + sb_t[csb - blockDim.x - 2])
+        + b1[i*jmax*kmax+j*kmax+k] *(
+				  sb_m[csb + blockDim.x + 3]
+        - sb_m[csb - blockDim.x - 1]
+        - sb_m[csb - blockDim.x - 3]
+        + sb_m[csb + blockDim.x + 1])
+        + b2[i*jmax*kmax+j*kmax+k] *(
+				  sb_b[csb + 1]
+        - sb_t[csb + 1]
+        - sb_b[csb - 1]
+        + sb_t[csb - 1])
+        + c0[i*jmax*kmax+j*kmax+k] * sb_t[csb]
+				+ c1[i*jmax*kmax+j*kmax+k] * sb_m[csb - blockDim.x - 2]
+				+ c2[i*jmax*kmax+j*kmax+k] * sb_m[csb - 1]
+				+ wrk1[i*jmax*kmax+j*kmax+k];
+
+			ss = ( s0 * a3[i*jmax*kmax+j*kmax+k] - p[i*jmax*kmax+j*kmax+k] ) * bnd[i*jmax*kmax+j*kmax+k];
+
+			temp = temp + ss * ss;
+
+			wrk2[i*jmax*kmax+j*kmax+k] = p[i*jmax*kmax+j*kmax+k] + omega * ss;
+    	}
+	  	for(i=1 ; i<imax-1 ; i++){
+			p[i*jmax*kmax+j*kmax+k] = wrk2[i*jmax*kmax+j*kmax+k];
+    	}
+  	} /* end n loop */
+  	//printf("%d: temp = %d\n", tid, temp);
+  	//printf("shared: %f", sb[csb]);
+=======
   k = threadIdx.x + blockDim.x * blockIdx.x + 1;
   j = threadIdx.y + blockDim.y * blockIdx.y + 1;
   const int tid = (k-1) + (j-1) * (kmax-2);
@@ -137,6 +246,7 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
   syncthreads();
   //printf("%d: temp = %d\n", tid, temp);
   //printf("shared: %f", sb[csb]);
+>>>>>>> b134838f3a58c4117af74290d6fb85e20a9def9b
 	gosa[tid] = temp;
 }
 
@@ -156,9 +266,15 @@ int main(){
 	float *bnd;
 	float *wrk1, *wrk2;
 	/************************************/
+<<<<<<< HEAD
+	mimax = MIMAX;
+	mjmax = MJMAX;
+	mkmax = MKMAX;
+=======
   mimax = MIMAX;
   mjmax = MJMAX;
   mkmax = MKMAX;
+>>>>>>> b134838f3a58c4117af74290d6fb85e20a9def9b
 	imax = MIMAX-1;
 	jmax = MJMAX-1;
 	kmax = MKMAX-1;
@@ -230,8 +346,13 @@ int main(){
 	/*****Initialize*********************/
 	//int i,j,k;
 
+<<<<<<< HEAD
+	for(i=0 ; i<mimax ; ++i){
+		for(j=0 ; j<mjmax ; ++j){
+=======
 	for(i=0 ; i<mimax ; ++i)
 		for(j=0 ; j<mjmax ; ++j)
+>>>>>>> b134838f3a58c4117af74290d6fb85e20a9def9b
 			for(k=0 ; k<mkmax ; ++k){
 				a0[i*mjmax*mkmax+j*mkmax+k]=0.0;
 				a1[i*mjmax*mkmax+j*mkmax+k]=0.0;
@@ -246,10 +367,19 @@ int main(){
 				p[i*mjmax*mkmax+j*mkmax+k]=0.0;
 				wrk1[i*mjmax*mkmax+j*mkmax+k]=0.0;
 				bnd[i*mjmax*mkmax+j*mkmax+k]=0.0;
+<<<<<<< HEAD
+			}
+		}
+	}
+
+	for(i=0 ; i<mimax ; ++i){
+		for(j=0 ; j<mjmax ; ++j){
+=======
 	      		}
 
 	for(i=0 ; i<mimax ; ++i)
 		for(j=0 ; j<mjmax ; ++j)
+>>>>>>> b134838f3a58c4117af74290d6fb85e20a9def9b
 			for(k=0 ; k<mkmax ; ++k){
 				a0[i*mjmax*mkmax+j*mkmax+k]=1.0;
 				a1[i*mjmax*mkmax+j*mkmax+k]=1.0;
@@ -265,6 +395,11 @@ int main(){
 				wrk1[i*mjmax*mkmax+j*kmax+k]=0.0;
 				bnd[i*mjmax*mkmax+j*kmax+k]=1.0;
 			}
+<<<<<<< HEAD
+		}
+	}
+=======
+>>>>>>> b134838f3a58c4117af74290d6fb85e20a9def9b
 	/************************************/
 
 	/*****copy array to device mem*******/
@@ -291,10 +426,17 @@ int main(){
 
 	cpu0 = second(); /**measuring**/
 
+<<<<<<< HEAD
+	dim3 block(BLOCKSIZEX, BLOCKSIZEY, 1);
+	dim3 grid(GRIDSIZEX, GRIDSIZEY, 1);
+
+	jacobi<<<grid, block, sizeof(float) * 3 * (BLOCKSIZEX + 2) * (BLOCKSIZEY + 2)>>>(dev_a0, dev_a1, dev_a2, dev_a3, dev_b0, dev_b1, dev_b2, dev_c0, dev_c1, dev_c2, dev_p, dev_wrk1, dev_wrk2, dev_bnd, NN, mimax, mjmax, mkmax, omega, dev_gosa);
+=======
   dim3 block(BLOCKSIZEX, BLOCKSIZEY, 1);
   dim3 grid(GRIDSIZEX, GRIDSIZEY, 1);
 
 	jacobi<<<grid, block>>>(dev_a0, dev_a1, dev_a2, dev_a3, dev_b0, dev_b1, dev_b2, dev_c0, dev_c1, dev_c2, dev_p, dev_wrk1, dev_wrk2, dev_bnd, NN, mimax, mjmax, mkmax, omega, dev_gosa);
+>>>>>>> b134838f3a58c4117af74290d6fb85e20a9def9b
 
 	cudaDeviceSynchronize();
 
@@ -338,9 +480,16 @@ int main(){
 	printf("gpu: %f sec.\n", cpu1);
 	printf("Loop executed for %d times\n", NN);
 	printf("Gosa: %e \n", final_gosa);
+<<<<<<< HEAD
+	printf("MFLOPS measured: %f\n", xmflops2);
+	//printf("Score: %f\n", score);
+
+	return(0);
+=======
 	//printf("MFLOPS measured: %f\n", xmflops2);
 	//printf("Score: %f\n", score);
 
 	return(0);
 
+>>>>>>> b134838f3a58c4117af74290d6fb85e20a9def9b
 }
