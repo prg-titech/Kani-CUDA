@@ -1,19 +1,19 @@
 #include<stdio.h>
 #include<sys/time.h>
 
-#define BLOCKSIZEX 6
-#define BLOCKSIZEY 4
+#define BLOCKSIZEX 64
+#define BLOCKSIZEY 8
 #define BLOCKSIZE BLOCKSIZEX * BLOCKSIZEY
-#define GRIDSIZEX 3
-#define GRIDSIZEY 6
+#define GRIDSIZEX 8
+#define GRIDSIZEY 45
 #define GRIDSIZE GRIDSIZEX * GRIDSIZEY
 #define THREAD_NUM BLOCKSIZE * GRIDSIZE
 
-#define MIMAX	4
+#define MIMAX	256
 #define MJMAX	GRIDSIZEY * (BLOCKSIZEY - 2) + 2
 #define MKMAX	GRIDSIZEX * (BLOCKSIZEX - 2) + 2
 
-#define NN 3
+#define NN 700
 
 /*static float p[MIMAX][MJMAX][MKMAX];
 static float a[MIMAX][MJMAX][MKMAX][4];
@@ -48,88 +48,234 @@ double second(){
 
 
 __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, float *b1, float *b2, float *c0, float *c1, float *c2, float *p, float *wrk1, float *wrk2, float *bnd, int nn, int imax, int jmax, int kmax, float omega, float *gosa){
-	int i, j, k, j2, k2, n, xy, c, csb;
+	int i, j, k, j2, k2, n, xy, c, csb, csb2;
 	float s0, ss, temp;
 	//const int size = (imax-1)/(imax-1);
-	k = threadIdx.x + (blockDim.x-2) * blockIdx.x + 1;
-	j = threadIdx.y + (blockDim.y-2) * blockIdx.y + 1;
+	k = threadIdx.x + (blockDim.x-2) * blockIdx.x;
+	j = threadIdx.y + (blockDim.y-2) * blockIdx.y;
 	k2 = threadIdx.x + blockDim.x * blockIdx.x;
 	j2 = threadIdx.y + blockDim.y * blockIdx.y;
 	const int tid = (k-1) + (j-1) * (kmax-2);
 	xy = kmax * jmax;
-	__shared__ float sb[BLOCKSIZE];
-	csb = threadIdx.x + threadIdx.y * blockDim.x;
-	for(n=0;n<nn;++n){
+	extern __shared__ float sb1[];
+  extern __shared__ float sb2[];
+  float *sb1_t, *sb1_m, *sb1_b, *sb2_t, *sb2_m, *sb2_b;
+  sb1_t = sb1;
+  sb1_m = sb1 + (blockDim.x + 2)*(blockDim.y + 2);
+  sb1_b = sb1 + 2*(blockDim.x + 2)*(blockDim.y + 2);
+  sb2_t = sb2;
+  sb2_m = sb2 + BLOCKSIZE;
+  sb2_b = sb2 + 2*BLOCKSIZE;
+  csb = threadIdx.x + 1 + (threadIdx.y + 1) * (blockDim.x + 2);
+	csb2 = threadIdx.x + threadIdx.y * blockDim.x;
+  int nn_2 = (int)nn/2;
+	for(n=0;n<nn_2;++n){
+    i = 0;
 		c = j * kmax + k;
 		temp=0.0;
-		if(0 < threadIdx.x && k < kmax-1 && 0 < j && j < jmax-1){
-			for(i=1 ; i<imax-1 ; ++i){
-				s0 = a0[i*jmax*kmax+j*kmax+k] * p[(i+1)*jmax*kmax+j*kmax+k]
-				+ a1[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+(j+1)*kmax+k]
-				+ a2[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+j*kmax+(k+1)]
-				+ b0[i*jmax*kmax+j*kmax+k]
-					*(p[(i+1)*jmax*kmax+(j+1)*kmax+k]
-					- p[(i+1)*jmax*kmax+(j-1)*kmax+k]
-					- p[(i-1)*jmax*kmax+(j+1)*kmax+k]
-					+ p[(i-1)*jmax*kmax+(j-1)*kmax+k] )
-				+ b1[i*jmax*kmax+j*kmax+k]
-					*(p[i*jmax*kmax+(j+1)*kmax+(k+1)]
-					- p[i*jmax*kmax+(j-1)*kmax+(k+1)]
-					- p[i*jmax*kmax+(j-1)*kmax+(k-1)]
-					+ p[i*jmax*kmax+(j+1)*kmax+(k-1)])
-				+ b2[i*jmax*kmax+j*kmax+k]
-					*(p[(i+1)*jmax*kmax+j*kmax+(k+1)]
-					- p[(i-1)*jmax*kmax+j*kmax+(k+1)]
-					- p[(i+1)*jmax*kmax+j*kmax+(k-1)]
-					+ p[(i-1)*jmax*kmax+j*kmax+(k-1)] )
-				+ c0[i*jmax*kmax+j*kmax+k] * p[(i-1)*jmax*kmax+j*kmax+k]
-				+ c1[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+(j-1)*kmax+k]
-				+ c2[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+j*kmax+(k-1)]
+    sb1_t[csb] = p[c];
+    sb1_m[csb] = p[c+xy];
+    sb1_b[csb] = p[c+2*xy];
+    if(threadIdx.x==0){
+      sb1_t[csb-1] = p[(k==0) ? c : c - 1];
+      sb1_m[csb-1] = p[(k==0) ? c+xy : c+xy - 1];
+      sb1_b[csb-1] = p[(k==0) ? c+2*xy : c+2*xy - 1];
+    }
+    if(threadIdx.x==blockDim.x-1){
+      sb1_t[csb+1] = p[(k==kmax-1) ? c : c + 1];
+      sb1_m[csb+1] = p[(k==kmax-1) ? c+xy : c+xy + 1];
+      sb1_b[csb+1] = p[(k==kmax-1) ? c+2*xy : c+2*xy + 1];
+    }
+    if(threadIdx.y==0){
+      sb1_t[csb-blockDim.x-2] = p[(j==0) ? c : c - kmax];
+      sb1_m[csb-blockDim.x-2] = p[(j==0) ? c+xy : c+xy - kmax];
+      sb1_b[csb-blockDim.x-2] = p[(j==0) ? c+2*xy : c+2*xy - kmax];
+    }
+    if(threadIdx.y==blockDim.y-1){
+      sb1_t[csb+blockDim.x+2] = p[(j==jmax-1) ? c : c + kmax];
+      sb1_m[csb+blockDim.x+2] = p[(j==jmax-1) ? c+xy : c+xy + kmax];
+      sb1_b[csb+blockDim.x+2] = p[(j==jmax-1) ? c+2*xy : c+2*xy + kmax];
+    }
+    if(threadIdx.x==0&&threadIdx.y==0){
+      sb1_t[0] = p[(k==0||j==0) ? c : c-kmax-1];
+      sb1_t[blockDim.x+1] = p[(k+blockDim.x==kmax||j==0) ? c : c-kmax+blockDim.x];
+      sb1_t[(blockDim.y+1)*(blockDim.x+2)] = p[(k==0||j+blockDim.y==jmax) ? c : c+blockDim.y*kmax-1];
+      sb1_t[(blockDim.y+2)*(blockDim.x+2)-1] = p[(k+blockDim.x==kmax||j+blockDim.y==jmax) ? c : c+blockDim.y*kmax+blockDim.x];
+      sb1_m[0] = p[(k==0||j==0) ? c+xy : c+xy-kmax-1];
+      sb1_m[blockDim.x+1] = p[(k+blockDim.x==kmax||j==0) ? c+xy : c+xy-kmax+blockDim.x];
+      sb1_m[(blockDim.y+1)*(blockDim.x+2)] = p[(k==0||j+blockDim.y==jmax) ? c+xy : c+xy+blockDim.y*kmax-1];
+      sb1_m[(blockDim.y+2)*(blockDim.x+2)-1] = p[(k+blockDim.x==kmax||j+blockDim.y==jmax) ? c+xy : c+xy+blockDim.y*kmax+blockDim.x];
+      sb1_b[0] = p[(k==0||j==0) ? c+2*xy : c+2*xy-kmax-1];
+      sb1_b[blockDim.x+1] = p[(k+blockDim.x==kmax||j==0) ? c+2*xy : c+2*xy-kmax+blockDim.x];
+      sb1_b[(blockDim.y+1)*(blockDim.x+2)] = p[(k==0||j+blockDim.y==jmax) ? c+2*xy : c+2*xy+blockDim.y*kmax-1];
+      sb1_b[(blockDim.y+2)*(blockDim.x+2)-1] = p[(k+blockDim.x==kmax||j+blockDim.y==jmax) ? c+2*xy : c+2*xy+blockDim.y*kmax+blockDim.x];
+    }
+    __syncthreads();
+    sb2_t[csb2] = sb1_t[csb];
+    i = 1;
+    s0 =
+				a0[i*jmax*kmax+j*kmax+k] * sb1_b[csb]
+				+ a1[i*jmax*kmax+j*kmax+k] * sb1_m[csb + blockDim.x + 2]
+				+ a2[i*jmax*kmax+j*kmax+k] * sb1_m[csb + 1]
+				+ b0[i*jmax*kmax+j*kmax+k] * (
+				  sb1_b[csb + blockDim.x + 2]
+        - sb1_b[csb - blockDim.x - 2]
+        - sb1_t[csb + blockDim.x + 2]
+        + sb1_t[csb - blockDim.x - 2])
+        + b1[i*jmax*kmax+j*kmax+k] *(
+				  sb1_m[csb + blockDim.x + 3]
+        - sb1_m[csb - blockDim.x - 1]
+        - sb1_m[csb - blockDim.x - 3]
+        + sb1_m[csb + blockDim.x + 1])
+        + b2[i*jmax*kmax+j*kmax+k] *(
+				  sb1_b[csb + 1]
+        - sb1_t[csb + 1]
+        - sb1_b[csb - 1]
+        + sb1_t[csb - 1])
+        + c0[i*jmax*kmax+j*kmax+k] * sb1_t[csb]
+				+ c1[i*jmax*kmax+j*kmax+k] * sb1_m[csb - blockDim.x - 2]
+				+ c2[i*jmax*kmax+j*kmax+k] * sb1_m[csb - 1]
 				+ wrk1[i*jmax*kmax+j*kmax+k];
 
-				ss = ( s0 * a3[i*jmax*kmax+j*kmax+k] - p[i*jmax*kmax+j*kmax+k] ) * bnd[i*jmax*kmax+j*kmax+k];
+		ss = ( s0 * a3[i*jmax*kmax+j*kmax+k] - sb1_m[csb] ) * bnd[i*jmax*kmax+j*kmax+k];
 
-				temp = temp + ss*ss;
+		temp = temp + ss*ss;
 
-				wrk2[i*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+k2] = p[i*jmax*kmax+j*kmax+k] + omega * ss;
-				c += xy;
-			}
-		}
-		__syncthreads();
-		if(0 < threadIdx.x && threadIdx.x < blockDim.x-1 && 0 < threadIdx.y && threadIdx.y < blockDim.y-1){
-			for(i=1; i<imax-1; i++){
-				s0 = a0[i*jmax*kmax+j*kmax+k] * wrk2[(i+1)*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+k2]
-				+ a1[i*jmax*kmax+j*kmax+k] * wrk2[i*THREAD_NUM+(j2+1)*BLOCKSIZEX*GRIDSIZEX+k2]
-				+ a2[i*jmax*kmax+j*kmax+k] * wrk2[i*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+(k2+1)]
-				+ b0[i*jmax*kmax+j*kmax+k]
-					*(wrk2[(i+1)*THREAD_NUM+(j2+1)*BLOCKSIZEX*GRIDSIZEX+k2]
-					- wrk2[(i+1)*THREAD_NUM+(j2-1)*BLOCKSIZEX*GRIDSIZEX+k2]
-					- wrk2[(i-1)*THREAD_NUM+(j2+1)*BLOCKSIZEX*GRIDSIZEX+k2]
-					+ wrk2[(i-1)*THREAD_NUM+(j2-1)*BLOCKSIZEX*GRIDSIZEX+k2] )
-				+ b1[i*jmax*kmax+j*kmax+k]
-					*(wrk2[i*THREAD_NUM+(j2+1)*BLOCKSIZEX*GRIDSIZEX+(k2+1)]
-					- wrk2[i*THREAD_NUM+(j2-1)*BLOCKSIZEX*GRIDSIZEX+(k2+1)]
-					- wrk2[i*THREAD_NUM+(j2-1)*BLOCKSIZEX*GRIDSIZEX+(k2-1)]
-					+ wrk2[i*THREAD_NUM+(j2+1)*BLOCKSIZEX*GRIDSIZEX+(k2-1)])
-				+ b2[i*jmax*kmax+j*kmax+k]
-					*(wrk2[(i+1)*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+(k2+1)]
-					- wrk2[(i-1)*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+(k2+1)]
-					- wrk2[(i+1)*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+(k2-1)]
-					+ wrk2[(i-1)*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+(k2-1)] )
-				+ c0[i*jmax*kmax+j*kmax+k] * wrk2[(i-1)*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+k2]
-				+ c1[i*jmax*kmax+j*kmax+k] * wrk2[i*THREAD_NUM+(j2-1)*BLOCKSIZEX*GRIDSIZEX+k2]
-				+ c2[i*jmax*kmax+j*kmax+k] * wrk2[i*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+(k2-1)]
+		wrk2[i*jmax*kmax+j*kmax+k] = (k==0||k==kmax-1||j==0||j==jmax-1) ? sb1_m[csb] : (sb1_m[csb] + omega * ss);
+
+    sb2_m[csb2] = wrk2[i*jmax*kmax+j*kmax+k];
+		c += 2*xy;
+    __syncthreads();
+
+		for(i=2 ; i<imax-1 ; ++i){
+      float *sb_tmp = sb1_t;
+      sb1_t = sb1_m;
+      sb1_m = sb1_b;
+      sb1_b = sb_tmp;
+      sb1_b[csb] = p[c+xy];
+      if(threadIdx.x == 0){ sb1_b[csb-1] = p[(k==0) ? c+xy : c+xy-1];}
+      if(threadIdx.x == blockDim.x-1){ sb1_b[csb+1] = p[(k==kmax-1) ? c+xy : c+xy+1];}
+      if(threadIdx.y == 0){ sb1_b[csb-blockDim.x-2] = p[(j==0) ? c+xy : c+xy-kmax];}
+      if(threadIdx.y == blockDim.y-1){ sb1_b[csb+blockDim.x+2] = p[(j==jmax-1) ? c+xy : c+xy+kmax];}
+			if(threadIdx.x == 0 && threadIdx.y == 0){
+        sb1_b[0] = p[(k==0||j==0) ? c+xy : c+xy-kmax-1];
+        sb1_b[blockDim.x+2] = p[(k+blockDim.x==kmax||j==0) ? c+xy : c+xy-kmax+blockDim.x];
+        sb1_b[(blockDim.y+1)*(blockDim.x+2)] = p[(k==0||j+blockDim.y==jmax) ? c+xy : c+xy+blockDim.y*kmax-1];
+        sb1_b[(blockDim.y+2)*(blockDim.x+2)] = p[(k+blockDim.x==kmax||j+blockDim.y==jmax) ? c+xy : c+xy+blockDim.y*kmax+blockDim.x];
+      }
+      __syncthreads();
+
+      s0 =
+				a0[i*jmax*kmax+j*kmax+k] * sb1_b[csb]
+				+ a1[i*jmax*kmax+j*kmax+k] * sb1_m[csb + blockDim.x + 2]
+				+ a2[i*jmax*kmax+j*kmax+k] * sb1_m[csb + 1]
+				+ b0[i*jmax*kmax+j*kmax+k] * (
+				  sb1_b[csb + blockDim.x + 2]
+        - sb1_b[csb - blockDim.x - 2]
+        - sb1_t[csb + blockDim.x + 2]
+        + sb1_t[csb - blockDim.x - 2])
+        + b1[i*jmax*kmax+j*kmax+k] *(
+				  sb1_m[csb + blockDim.x + 3]
+        - sb1_m[csb - blockDim.x - 1]
+        - sb1_m[csb - blockDim.x - 3]
+        + sb1_m[csb + blockDim.x + 1])
+        + b2[i*jmax*kmax+j*kmax+k] *(
+				  sb1_b[csb + 1]
+        - sb1_t[csb + 1]
+        - sb1_b[csb - 1]
+        + sb1_t[csb - 1])
+        + c0[i*jmax*kmax+j*kmax+k] * sb1_t[csb]
+				+ c1[i*jmax*kmax+j*kmax+k] * sb1_m[csb - blockDim.x - 2]
+				+ c2[i*jmax*kmax+j*kmax+k] * sb1_m[csb - 1]
 				+ wrk1[i*jmax*kmax+j*kmax+k];
 
-				ss = ( s0 * a3[i*jmax*kmax+j*kmax+k] - wrk2[i*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+k2] ) * bnd[i*jmax*kmax+j*kmax+k];
+		  ss = ( s0 * a3[i*jmax*kmax+j*kmax+k] - sb1_b[csb] ) * bnd[i*jmax*kmax+j*kmax+k];
 
-				temp = temp + ss*ss;
+		  temp = temp + ss*ss;
 
-				p[i*jmax*kmax+j*kmax+k] = wrk2[i*THREAD_NUM+j2*BLOCKSIZEX*GRIDSIZEX+k2] + omega * ss;
-				c += xy;
-			}
+		  wrk2[i*jmax*kmax+j*kmax+k] = (k==0||k==kmax-1||j==0||j==jmax-1) ? sb1_m[csb] : (sb1_b[csb] + omega * ss);
+
+      sb2_b[csb2] = wrk2[i*jmax*kmax+j*kmax+k];
+
+	  	__syncthreads();
+
+      if(0<threadIdx.x && threadIdx.x<blockDim.x-1 && 0<threadIdx.y && threadIdx.y<blockDim.y-1){
+		    s0 =
+				a0[i*jmax*kmax+j*kmax+k] * sb2_b[csb2]
+				+ a1[i*jmax*kmax+j*kmax+k] * sb2_m[csb2 + blockDim.x]
+				+ a2[i*jmax*kmax+j*kmax+k] * sb2_m[csb2 + 1]
+				+ b0[i*jmax*kmax+j*kmax+k] * (
+				  sb2_b[csb2 + blockDim.x]
+        - sb2_b[csb2 - blockDim.x]
+        - sb2_t[csb2 + blockDim.x]
+        + sb2_t[csb2 - blockDim.x])
+        + b1[i*jmax*kmax+j*kmax+k] *(
+				  sb2_m[csb2 + blockDim.x]
+        - sb2_m[csb2 - blockDim.x]
+        - sb2_m[csb2 - blockDim.x]
+        + sb2_m[csb2 + blockDim.x])
+        + b2[i*jmax*kmax+j*kmax+k] *(
+				  sb2_b[csb2 + 1]
+        - sb2_t[csb2 + 1]
+        - sb2_b[csb2 - 1]
+        + sb2_t[csb2 - 1])
+        + c0[i*jmax*kmax+j*kmax+k] * sb2_t[csb2]
+				+ c1[i*jmax*kmax+j*kmax+k] * sb2_m[csb2 - blockDim.x]
+				+ c2[i*jmax*kmax+j*kmax+k] * sb2_m[csb2 - 1]
+				+ wrk1[i*jmax*kmax+j*kmax+k];
+
+
+		  ss = ( s0 * a3[i*jmax*kmax+j*kmax+k] - sb2_m[csb2] ) * bnd[i*jmax*kmax+j*kmax+k];
+
+	  	temp = temp + ss*ss;
+
+		  p[i*jmax*kmax+j*kmax+k] = sb2_m[csb2] + omega * ss;
+      }
+		c += xy;
+    __syncthreads();
+
+    sb_tmp = sb2_t;
+    sb2_t = sb2_m;
+    sb2_m = sb2_b;
+    sb2_b = sb_tmp;
 		}
-	} /* end n loop */
+
+
+    sb2_b[csb2] = sb1_b[csb];
+    if(0<threadIdx.x && threadIdx.x<blockDim.x-1 && 0<threadIdx.y && threadIdx.y<blockDim.y-1){
+		  s0 =
+				a0[i*jmax*kmax+j*kmax+k] * sb2_b[csb2]
+				+ a1[i*jmax*kmax+j*kmax+k] * sb2_m[csb2 + blockDim.x]
+				+ a2[i*jmax*kmax+j*kmax+k] * sb2_m[csb2 + 1]
+				+ b0[i*jmax*kmax+j*kmax+k] * (
+				  sb2_b[csb2 + blockDim.x]
+        - sb2_b[csb2 - blockDim.x]
+        - sb2_t[csb2 + blockDim.x]
+        + sb2_t[csb2 - blockDim.x])
+        + b1[i*jmax*kmax+j*kmax+k] *(
+				  sb2_m[csb2 + blockDim.x]
+        - sb2_m[csb2 - blockDim.x]
+        - sb2_m[csb2 - blockDim.x]
+        + sb2_m[csb2 + blockDim.x])
+        + b2[i*jmax*kmax+j*kmax+k] *(
+				  sb2_b[csb2 + 1]
+        - sb2_t[csb2 + 1]
+        - sb2_b[csb2 - 1]
+        + sb2_t[csb2 - 1])
+        + c0[i*jmax*kmax+j*kmax+k] * sb2_t[csb2]
+				+ c1[i*jmax*kmax+j*kmax+k] * sb2_m[csb2 - blockDim.x]
+				+ c2[i*jmax*kmax+j*kmax+k] * sb2_m[csb2 - 1]
+				+ wrk1[i*jmax*kmax+j*kmax+k];
+
+
+		  ss = ( s0 * a3[i*jmax*kmax+j*kmax+k] - sb2_m[csb2] ) * bnd[i*jmax*kmax+j*kmax+k];
+
+	  	temp = temp + ss*ss;
+
+		  p[i*jmax*kmax+j*kmax+k] = sb2_m[csb2] + omega * ss;
+    }
+    __syncthreads();
+  } /* end n loop */
 	__syncthreads();
 	gosa[tid] = temp;
 }
@@ -258,6 +404,7 @@ int main(){
 				c2[i*mjmax*mkmax+j*mkmax+k]=1.0;
 				p[i*mjmax*mkmax+j*mkmax+k]=(float)(i*i)/(float)(imax*imax);
 				wrk1[i*mjmax*mkmax+j*mkmax+k]=0.0;
+        wrk2[i*mjmax*mkmax+j*mkmax+k]=0.0;
 				bnd[i*mjmax*mkmax+j*mkmax+k]=1.0;
 			}
 		}
@@ -276,7 +423,7 @@ int main(){
 	cudaMemcpy(dev_c1, c1, N_IJK*sizeof(float), cudaMemcpyHostToDevice);
 	cudaMemcpy(dev_c2, c2, N_IJK*sizeof(float), cudaMemcpyHostToDevice);
 	cudaMemcpy(dev_wrk1, wrk1, N_IJK*sizeof(float), cudaMemcpyHostToDevice);
-	cudaMemcpy(dev_wrk2, wrk2, WORKSIZE*sizeof(float), cudaMemcpyHostToDevice);
+	cudaMemcpy(dev_wrk2, wrk2, N_IJK*sizeof(float), cudaMemcpyHostToDevice);
 	cudaMemcpy(dev_bnd, bnd, N_IJK*sizeof(float), cudaMemcpyHostToDevice);
 	cudaMemcpy(dev_p, p, N_IJK*sizeof(float), cudaMemcpyHostToDevice);
 
@@ -291,8 +438,11 @@ int main(){
 	dim3 block(BLOCKSIZEX, BLOCKSIZEY, 1);
 	dim3 grid(GRIDSIZEX, GRIDSIZEY, 1);
 
-	jacobi<<<grid, block>>>(dev_a0, dev_a1, dev_a2, dev_a3, dev_b0, dev_b1, dev_b2, dev_c0, dev_c1, dev_c2, dev_p, dev_wrk1, dev_wrk2, dev_bnd, NN, mimax, mjmax, mkmax, omega, dev_gosa);
+	jacobi<<<grid, block, sizeof(float)*3*(BLOCKSIZE+(BLOCKSIZEX+2)*(BLOCKSIZEY+2))>>>(dev_a0, dev_a1, dev_a2, dev_a3, dev_b0, dev_b1, dev_b2, dev_c0, dev_c1, dev_c2, dev_p, dev_wrk1, dev_wrk2, dev_bnd, NN, mimax, mjmax, mkmax, omega, dev_gosa);
 
+  //for(int i = 0; i<N_IJK; i++){
+  //  printf("%f ", p[i]);
+  //}
 	cudaDeviceSynchronize();
 
 	cpu1 = second();
@@ -337,7 +487,7 @@ int main(){
 	printf("gpu: %f sec.\n", cpu1);
 	printf("Loop executed for %d times\n", NN);
 	printf("Gosa: %e \n", final_gosa);
-	//printf("MFLOPS measured: %f\n", xmflops2);
+	printf("MFLOPS measured: %f\n", xmflops2);
 	//printf("Score: %f\n", score);
 
 	return(0);

@@ -1,19 +1,19 @@
 #include<stdio.h>
 #include<sys/time.h>
 
-#define BLOCKSIZEX 128
-#define BLOCKSIZEY 4
+#define BLOCKSIZEX 2
+#define BLOCKSIZEY 2
 #define BLOCKSIZE BLOCKSIZEX * BLOCKSIZEY
-#define GRIDSIZEX 4
-#define GRIDSIZEY 64
+#define GRIDSIZEX 3
+#define GRIDSIZEY 3
 #define GRIDSIZE GRIDSIZEX * GRIDSIZEY
 #define THREAD_NUM BLOCKSIZE * GRIDSIZE
 
-#define MIMAX	256
+#define MIMAX	4
 #define MJMAX	GRIDSIZEY * BLOCKSIZEY + 2
 #define MKMAX	GRIDSIZEX * BLOCKSIZEX + 2
 
-#define NN 750
+#define NN 10
 
 /*static float p[MIMAX][MJMAX][MKMAX];
 static float a[MIMAX][MJMAX][MKMAX][4];
@@ -57,41 +57,14 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 	xy = kmax * jmax;
 	extern __shared__ float sb[];
   float *sb_t = sb;
-  float *sb_m = sb + (blockDim.x + 2) * (blockDim.y + 2);
-  float *sb_b = sb + 2 * (blockDim.x + 2) * (blockDim.y + 2);
-	csb = threadIdx.x + 1 + (threadIdx.y + 1) * (blockDim.x + 2);
-  for(n=0;n<nn;++n){
+  float *sb_m = sb + (blockDim.x*blockDim.y);
+  float *sb_b = sb + 2 * (blockDim.x*blockDim.y);
+	csb = threadIdx.x + threadIdx.y * blockDim.x;
+	for(n=0;n<nn;++n){
 		c = j * kmax + k;
 		temp = 0.0;
-    //printf("%d, %f\n", 2*(blockDim.x + 2) * (blockDim.y + 2) , sb_t[0]);
 		sb_m[csb] = p[c];
 		sb_b[csb] = p[c+xy];
-    if(threadIdx.x == 0){
-      sb_m[csb-1] = p[c-1];
-      sb_b[csb-1] = p[c+xy-1];
-    }
-    if(threadIdx.x == blockDim.x-1){
-      sb_m[csb+1] = p[c+1];
-      sb_b[csb+1] = p[c+xy+1];
-    }
-    if(threadIdx.y == 0){
-      sb_m[csb-blockDim.x-2] = p[c-kmax];
-      sb_b[csb-blockDim.x-2] = p[c+xy-kmax];
-    }
-    if(threadIdx.y == blockDim.y-1){
-      sb_m[csb+blockDim.x+2] = p[c+kmax];
-      sb_b[csb+blockDim.x+2] = p[c+xy+kmax];
-    }
-		if(threadIdx.x == 0 && threadIdx.y == 0){
-      sb_m[0] = p[c-kmax-1];
-      sb_m[blockDim.x + 2] = p[c-kmax+blockDim.x];
-      sb_m[(blockDim.y+1)*(blockDim.x+2)] = p[c+blockDim.y*kmax-1];
-      sb_m[(blockDim.y+2)*(blockDim.x+2)-1] = p[c+blockDim.y*kmax+blockDim.x];
-      sb_b[0] = p[c+xy-kmax-1];
-      sb_b[blockDim.x+2] = p[c+xy-kmax+blockDim.x];
-      sb_b[(blockDim.y+1)*(blockDim.x+2)] = p[c+xy+blockDim.y*kmax-1];
-      sb_b[(blockDim.y+2)*(blockDim.x+2)] = p[c+xy+blockDim.y*kmax+blockDim.x];
-    }
     __syncthreads();
 		for(i=1 ; i<imax-1 ; ++i){
 			c += xy;
@@ -99,44 +72,33 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 			sb_t = sb_m;
 			sb_m = sb_b;
       sb_b = sb_tmp;
-      sb_b[csb] = p[c+xy];
-      if(threadIdx.x == 0){ sb_b[csb-1] = p[c+xy-1];}
-      if(threadIdx.x == blockDim.x-1){ sb_b[csb+1] = p[c+xy+1];}
-      if(threadIdx.y == 0){ sb_b[csb-blockDim.x-2] = p[c+xy-kmax];}
-      if(threadIdx.y == blockDim.y-1){ sb_b[csb+blockDim.x+2] = p[c+xy+kmax];}
-			if(threadIdx.x == 0 && threadIdx.y == 0){
-        sb_b[0] = p[(i+1)*jmax*kmax];
-        sb_b[blockDim.x+2] = p[(i+1)*jmax*kmax+kmax-1];
-        sb_b[(blockDim.y+1)*(blockDim.x+2)] = p[(i+1)*jmax*kmax+(jmax-1)*kmax];
-        sb_b[(blockDim.y+2)*(blockDim.x+2)] = p[(i+1)*jmax*kmax+jmax*kmax-1];
-      }
-
+			sb_b[csb] = p[c+xy];
 			__syncthreads();
 			s0 =
 				a0[i*jmax*kmax+j*kmax+k] * sb_b[csb]
-				+ a1[i*jmax*kmax+j*kmax+k] * sb_m[csb + blockDim.x + 2]
-				+ a2[i*jmax*kmax+j*kmax+k] * sb_m[csb + 1]
+				+ a1[i*jmax*kmax+j*kmax+k] * (!(threadIdx.y==blockDim.y-1) ? sb_m[csb + blockDim.x] : p[i*jmax*kmax+(j+1)*kmax+k])
+				+ a2[i*jmax*kmax+j*kmax+k] * (!(threadIdx.x==blockDim.x-1) ? sb_m[csb + 1] : p[i*jmax*kmax+j*kmax+(k+1)])
 				+ b0[i*jmax*kmax+j*kmax+k] * (
-				  sb_b[csb + blockDim.x + 2]
-        - sb_b[csb - blockDim.x - 2]
-        - sb_t[csb + blockDim.x + 2]
-        + sb_t[csb - blockDim.x - 2])
-        + b1[i*jmax*kmax+j*kmax+k] *(
-				  sb_m[csb + blockDim.x + 3]
-        - sb_m[csb - blockDim.x - 1]
-        - sb_m[csb - blockDim.x - 3]
-        + sb_m[csb + blockDim.x + 1])
-        + b2[i*jmax*kmax+j*kmax+k] *(
-				  sb_b[csb + 1]
-        - sb_t[csb + 1]
-        - sb_b[csb - 1]
-        + sb_t[csb - 1])
-        + c0[i*jmax*kmax+j*kmax+k] * sb_t[csb]
-				+ c1[i*jmax*kmax+j*kmax+k] * sb_m[csb - blockDim.x - 2]
-				+ c2[i*jmax*kmax+j*kmax+k] * sb_m[csb - 1]
+				  (!(threadIdx.y==blockDim.y-1) ? sb_b[csb + blockDim.x] : p[(i+1)*jmax*kmax+(j+1)*kmax+k])
+				- (!(threadIdx.y==0) ? sb_b[csb - blockDim.x] : p[(i+1)*jmax*kmax+(j-1)*kmax+k])
+				- (!(threadIdx.y==blockDim.y-1) ? sb_t[csb + blockDim.x] : p[(i-1)*jmax*kmax+(j+1)*kmax+k])
+				+ (!(threadIdx.y==0) ? sb_t[csb - blockDim.x] : p[(i-1)*jmax*kmax+(j-1)*kmax+k]) )
+				+ b1[i*jmax*kmax+j*kmax+k] *(
+				  ((!(threadIdx.x==(blockDim.x - 1))&&!(threadIdx.y==(blockDim.y - 1))) ? sb_m[csb + blockDim.x + 1] : p[i*jmax*kmax+(j+1)*kmax+(k+1)])
+				- ((!(threadIdx.y==0)&&!(threadIdx.x==(blockDim.x - 1))) ? sb_m[csb - blockDim.x + 1] : p[i*jmax*kmax+(j-1)*kmax+(k+1)])
+				- ((!(threadIdx.y==0)&&!(threadIdx.x==0)) ? sb_m[csb - blockDim.x - 1] : p[i*jmax*kmax+(j-1)*kmax+(k-1)])
+				+ ((!(threadIdx.x==0)&&!(threadIdx.y==(blockDim.y - 1))) ? sb_m[csb + blockDim.x - 1] : p[i*jmax*kmax+(j+1)*kmax+(k-1)]))
+				+ b2[i*jmax*kmax+j*kmax+k] *(
+				  ( !(threadIdx.x==(blockDim.x - 1)) ? sb_b[1 + csb] : p[(i+1)*jmax*kmax+j*kmax+(k+1)] )
+				- ( !(threadIdx.x==(blockDim.x - 1)) ? sb_t[csb + 1] : p[(i-1)*jmax*kmax+j*kmax+(k+1)] )
+				- ( !(threadIdx.x==0) ? sb_b[csb - 1] : p[(i+1)*jmax*kmax+j*kmax+(k-1)] )
+				+ ( !(threadIdx.x==0) ? sb_t[csb - 1] : p[(i-1)*jmax*kmax+j*kmax+(k-1)] ))
+				+ c0[i*jmax*kmax+j*kmax+k] * sb_t[csb]
+				+ c1[i*jmax*kmax+j*kmax+k] * (!(threadIdx.y==0) ? sb_m[csb - blockDim.x] : p[i*jmax*kmax+(j-1)*kmax+k])
+				+ c2[i*jmax*kmax+j*kmax+k] * (!(threadIdx.x==0) ? sb_m[csb - 1] : p[i*jmax*kmax+j*kmax+(k-1)])
 				+ wrk1[i*jmax*kmax+j*kmax+k];
 
-			ss = ( s0 * a3[i*jmax*kmax+j*kmax+k] - sb_m[csb] ) * bnd[i*jmax*kmax+j*kmax+k];
+			ss = ( s0 * a3[i*jmax*kmax+j*kmax+k] - p[i*jmax*kmax+j*kmax+k] ) * bnd[i*jmax*kmax+j*kmax+k];
 
 			temp = temp + ss * ss;
 
@@ -309,10 +271,12 @@ int main(){
 	dim3 block(BLOCKSIZEX, BLOCKSIZEY, 1);
 	dim3 grid(GRIDSIZEX, GRIDSIZEY, 1);
 
-	jacobi<<<grid, block, sizeof(float) * 3 * (BLOCKSIZEX + 2) * (BLOCKSIZEY + 2)>>>(dev_a0, dev_a1, dev_a2, dev_a3, dev_b0, dev_b1, dev_b2, dev_c0, dev_c1, dev_c2, dev_p, dev_wrk1, dev_wrk2, dev_bnd, NN, mimax, mjmax, mkmax, omega, dev_gosa);
+	jacobi<<<grid, block, sizeof(float) * 3 * BLOCKSIZE>>>(dev_a0, dev_a1, dev_a2, dev_a3, dev_b0, dev_b1, dev_b2, dev_c0, dev_c1, dev_c2, dev_p, dev_wrk1, dev_wrk2, dev_bnd, NN, mimax, mjmax, mkmax, omega, dev_gosa);
 
 	cudaDeviceSynchronize();
-
+  for(int i = 0; i<N_IJK; i++){
+    printf("%f ", p[i]);
+  }
 	cpu1 = second();
 
 	cudaMemcpy(&gosa, dev_gosa, sizeof(float)*THREAD_NUM, cudaMemcpyDeviceToHost);
