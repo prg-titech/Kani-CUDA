@@ -1,6 +1,6 @@
 package Expression;
 
-public class IfExpression {
+public class IfExpression extends AIfExpression{
 	BoolExpression cond;
 	Expression thn;
 	Expression els;

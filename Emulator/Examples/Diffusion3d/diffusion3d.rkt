@@ -9,7 +9,8 @@
                           out
                           nx ny nz
                           ce cw cn cs ct cb cc
-                          file)
+                          file
+                          file2)
   (:= int tid-x (thread-idx 0))
   (:= int tid-y (thread-idx 1))
   (:= int BLOCKSIZE (*/LS (block-dim 0) (block-dim 1)))
@@ -32,16 +33,16 @@
     (:= int t (?: (eq?/LS k (-/LS nz 1)) c (+/LS c xy)))
     (= [out c] (+/LS (*/LS cc [in c])
                      ; tid bid id smid i j c threadIdx.x threadIdx.y c2 blockDim.x blockDim.y nx ny nz
-                     (*/LS cw (profiling-access file in w i j c tid-x tid-y c2 (block-dim 0) (block-dim 1) nx ny nz))
-                     (*/LS cw [in w])
-                     (*/LS ce [in e])
-                     (*/LS cs [in s])
+                     (*/LS cw (profiling-access file in w i j c tid-x tid-y c2 (block-dim 0) nx ny))
+                     (*/LS ce (profiling-access file2 in e i j c tid-x tid-y c2 (block-dim 0) nx ny))
                      (*/LS cn [in n])
+                     (*/LS cs [in s])
                      (*/LS cb [in b])
                      (*/LS ct [in t])))
     (+=/LS c xy)))
 
 (define (diffusion-run-kernel file
+                              file2
                               grid
                               block
                               count
@@ -55,7 +56,8 @@
                    in out
                    nx ny nz
                    ce cw cn cs ct cb cc
-                   file)
+                   file
+                   file2)
     (define temp in)
     (set! in out)
     (set! out temp)))
@@ -73,7 +75,11 @@
   (define-symbolic* r real?)
   r)
 
-(define-values (SIZEX SIZEY SIZEZ) (values 9 6 3))
+
+(define-values (GRIDSIZEX GRIDSIZEY) (values 3 3))
+(define-values (BLOCKSIZEX BLOCKSIZEY) (values 3 3))
+
+(define-values (SIZEX SIZEY SIZEZ) (values (* BLOCKSIZEX GRIDSIZEX) (* BLOCKSIZEY GRIDSIZEY) 3))
 (define SIZE (* SIZEX SIZEY SIZEZ))
 
 (define CPU-in (make-array (for/vector ([i SIZE]) (make-element (r))) SIZE))
@@ -81,8 +87,8 @@
 (define CPU-out (make-array (for/vector ([i SIZE]) (make-element 0)) SIZE))
 (define GPU-out (make-array (for/vector ([i SIZE]) (make-element 0)) SIZE))
 
-;(define-symbolic e w n s t b c real?)
-(define-values (e w n s t b c) (values 1 1 1 1 1 1 1))
+(define-symbolic e w n s t b c real?)
+;(define-values (e w n s t b c) (values 1 1 1 1 1 1 1))
 
 ;; Execute a diffusion program on CPU
 ;(diffusion3d-baseline 2
@@ -102,16 +108,20 @@
 (define counter (new-counter))
 
 (define out-file (open-output-file (string-append "profiles/profile" (number->string (counter))) #:exists 'truncate))
+(define out-file2 (open-output-file (string-append "profiles/profile" (number->string (counter))) #:exists 'truncate))
 ;(define out-file (open-output-file "profile" #:exists 'truncate))
-(fprintf out-file "tid bid id smid i j c tid-x tid-y c2 blockDim.x blockDim.y\n")
+(fprintf out-file "tid bid id smid i j c tid-x tid-y c2 blockDim.x nx ny\n")
+(fprintf out-file2 "tid bid id smid i j c tid-x tid-y c2 blockDim.x nx ny\n")
 (time (diffusion-run-kernel out-file
-                            '(3 3)
-                            '(3 2)
+                            out-file2
+                            (list GRIDSIZEX GRIDSIZEY)
+                            (list BLOCKSIZEX BLOCKSIZEY)
                             1
                             GPU-in GPU-out
                             SIZEX SIZEY SIZEZ
                             e w n s t b c))
 (close-output-port out-file)
+(close-output-port out-file2)
 
 
 ;(define (diffusion-verify) (time (verify (array-eq-verify CPU-in GPU-in SIZE))))

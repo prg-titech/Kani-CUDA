@@ -18,6 +18,7 @@ public class Synthesizer {
 	}
 	
 	public void input(File file){
+		this.data = new ArrayList<String>();
 		try{
 			if(file.exists()){
 				FileReader fr = new FileReader(file);
@@ -33,9 +34,9 @@ public class Synthesizer {
 				
 				// TODO Add datum when env.existsSmIdx() is true.
 				while ((datum = br.readLine()) != null) {
-					data.add(datum);
-					env.setVal(vars, Arrays.asList(datum.split(" ")));
-					if (env.exsitsSmIdx()) {
+					this.data.add(datum);
+					this.env.setVal(vars, Arrays.asList(datum.split(" ")));
+					if (this.env.exsitsSmIdx()) {
 						this.limit++;
 					}
 				}
@@ -49,7 +50,7 @@ public class Synthesizer {
 	}
 
 
-	public void synthesizeArith(int num){
+	public Expression synthesizeArith(int num){
 		List<Expression> exps = env.generateArith2(num);
 //		for(Expression ex : exps){
 //			ex.print();
@@ -66,15 +67,14 @@ public class Synthesizer {
 				if (i == size-1) {
 					//System.out.printf("The number of variables: %d%n", this.vars.size()-2);
 					//System.out.printf("The number of datum: %d%n", size);
-					System.out.println("Synthesized expression:");
-					e.print();
-					break loop;
+					return e;
 				}
 			}
 		}
+		return new None();
 	}
 	
-	public void synthesizeBool(){
+	public BoolExpression synthesizeBool(){
 		List<BoolExpression> exps = env.generateBoolAux(1);
 		Iterator<BoolExpression> it = exps.iterator();
 		int size = this.data.size();
@@ -90,9 +90,9 @@ public class Synthesizer {
 				if (i == size-1) {
 					//System.out.printf("The number of variables: %d%n", this.vars.size()-2);
 					//System.out.printf("The number of datum: %d%n", size);
-					System.out.println("Synthesized expression:");
-					e.print();
-					return;
+					//System.out.println("Synthesized expression:");
+					//e.print();
+					return e;
 				}
 			}
 		}		
@@ -110,15 +110,16 @@ public class Synthesizer {
 				if (i == size-1) {
 					//System.out.printf("The number of variables: %d%n", this.vars.size()-2);
 					//System.out.printf("The number of datum: %d%n", size);
-					System.out.println("Synthesized expression:");
-					e.print();
-					return;
+					//System.out.println("Synthesized expression:");
+					//e.print();
+					return e;
 				}
 			}
-		}	
+		}
+		return new BNone();
 	}
 	
-	public void synthsizeIf() {
+	public Expression synthsizeIf() {
 		List<String> thns = new ArrayList<String>();
 		List<String> elss = new ArrayList<String>();
 		Expression thn = new Constant<Integer>(0);
@@ -210,18 +211,15 @@ public class Synthesizer {
 						if (j == sizee - 1) {
 							//System.out.printf("The number of variables: %d%n", this.vars.size()-2);
 							//System.out.printf("The number of datum: %d%n", size);
-							System.out.println("Synthesized expression:");
-							new IfExpression(e, thn, els).print();
-							return;
-						}
-						if (j == sizee - 1) {
-							System.out.println("Unsat");
+							//System.out.println("Synthesized expression:");
+							//new IfExpression(e, thn, els).print();
+							return new IfExpression(e, thn, els);
 						}
 					}
 				}
 			}
 		}
-		
+/*		
 		boolExps = env.generateBool(1);
 		
 		it3 = boolExps.iterator();
@@ -241,17 +239,74 @@ public class Synthesizer {
 						if (j == sizee - 1) {
 							//System.out.printf("The number of variables: %d%n", this.vars.size()-2);
 							//System.out.printf("The number of datum: %d%n", size);
-							System.out.println("Synthesized expression:");
-							new IfExpression(e, thn, els).print();
-							return;
-						}
-						if (j == sizee - 1) {
-							System.out.println("Unsat");
+							//System.out.println("Synthesized expression:");
+							//new IfExpression(e, thn, els).print();
+							return new IfExpression(e, thn, els);
 						}
 					}
 				}
 			}
-		}
-		
+		}*/
+		return new None();
 	}
+	
+	public void synthesizeFrom(File[] profiles){				
+		long start;
+		long end;
+		BoolExpression bnone = new BNone();
+		Expression none = new None();
+		BoolExpression bexp;
+		Expression exp;
+		for(File profile : profiles){
+			bexp = bnone;
+			exp = none;
+			this.input(profile);
+			start = System.currentTimeMillis();
+			bexp = this.synthesizeBool();
+			if(!bexp.equals(bnone)){
+				exp = this.synthesizeArith(3);
+			}
+			if(!bexp.equals(bnone)&&exp.equals(none)){
+				exp = this.synthsizeIf();
+			}
+			if(exp.equals(none)){
+				System.out.println("Not synthesized from " + profile.toString());
+			} else {
+				System.out.println("Expression synthesized from " + profile.toString() + ":");
+				bexp.print();
+				exp.print();
+			}
+			end = System.currentTimeMillis();
+			System.out.println("time: " + (end - start) + "ms");
+		}
+		return;
+	}
+	
+	public void synthesizeFrom(File profile){				
+		long start;
+		long end;
+		BoolExpression bnone = new BNone();
+		Expression none = new None();
+		BoolExpression bexp = bnone;
+		Expression exp = none;
+		this.input(profile);
+		start = System.currentTimeMillis();
+		bexp = this.synthesizeBool();
+		if(!bexp.equals(bnone)){
+			exp = this.synthesizeArith(3);
+		}
+		if(!bexp.equals(bnone)&&exp.equals(none)){
+			exp = this.synthsizeIf();
+		}
+		if(exp.equals(none)){
+			System.out.println("Not synthesized from " + profile.toString());
+		} else {
+			System.out.println("Expression synthesized from " + profile.toString() + ":");
+			bexp.print();
+			exp.print();
+		}
+		end = System.currentTimeMillis();
+		System.out.println("time: " + (end - start) + "ms");
+		return;
+	}	
 }

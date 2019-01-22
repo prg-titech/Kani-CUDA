@@ -153,25 +153,26 @@ public class ExpressionExamples {
 		assertEquals(-1, arith2.contain(-1, one));;
 	}
 	
+	//@Test
+	public void testNone() {
+		Expression n1 = new None();
+		Expression n2 = new None();
+		BoolExpression bn1 = new BNone();
+		BoolExpression bn2 = new BNone();
+		assertEquals(true, n1.equals(n2));
+		assertEquals(false, n1.equals(arith1));
+		assertEquals(false, bn1.equals(bool1));
+		assertEquals(true, bn1.equals(bn2));
+	}	
+	
 	@Test
 	public void testSynth() {
-		File file1 = new File("/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/himenoBMT/profile");
-		File file2 = new File("/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/Matrixmultiply/profile");
-		File file3 = new File("/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/Diffusion3d/profile");
+		File profile = new File("/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/Diffusion3d/profiles/profile1");
+		File dir = new File("/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/Diffusion3d/profiles");
+		File[] profiles = dir.listFiles();
 		
-		Synthesizer kani_cuda = new Synthesizer();
-		kani_cuda.input(file1);
+		Synthesizer psysha = new Synthesizer();
 		
-		long start = System.currentTimeMillis();
-		kani_cuda.synthesizeBool();
-		long end = System.currentTimeMillis();
-		System.out.println("time: " + (end - start) + "ms");
-		
-		start = System.currentTimeMillis();
-		kani_cuda.synthesizeArith(3);
-		kani_cuda.synthsizeIf();
-		end = System.currentTimeMillis();
-		
-		System.out.println("time: " + (end - start) + "ms");
+		psysha.synthesizeFrom(profiles);
 	}
 }

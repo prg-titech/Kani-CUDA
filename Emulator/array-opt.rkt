@@ -201,68 +201,71 @@
   ;          [k (length arg)])
   ;      (fprintf out " ~a" (vector-ref arg tid)))
   ;    (fprintf out "\n"))
-  (for/vector ([tid (tid)] 
-               [i (vecfy ixs)]
-               [m (mask)])
-    (if m
-        (let* ([bid (bid)]
-               [smem (memory-contents (vector-ref (shared-memory) bid))]
-               [vec (array-contents arr)]
-               [elem (vector-ref vec i)]
-               [cont (element-content elem)]
-               [read (element-read elem)]
-               [write (element-write elem)]
-               [read/B (element-read/B elem)]
-               [write/B (element-write/B elem)]
-               [sm-ok (element-smem elem)])
-          (for ([sm smem])
-            (for ([e (array-contents sm)]
-                  [smix (vector-length (array-contents sm))])
-              ;(println (element-content e))
-              (when (&& (not (term? (eq? (element-content e) cont))) (eq? (element-content e) cont) (eq? sm-ok #f))
-                (begin
-                  ;                  (println "shared-memory in the block")
-                  ;                  (map (lambda (x) (print-matrix x 9 1)) smem)
-                  ;                  (printf "global-idx: ~a\n" i)
-                  ;                  (printf "global-cont: ~a\n" (element-content e))
-                  ;                  (printf "shared-memory: ")
-                  ;                  (print-matrix sm 9 1)
-                  ;                  (printf "shared-cont: ~a\n" cont)
-                  ;                  (newline)
-                  ;; print 0:tid, 1:bid, 2:i, 3:smix, 4:arg0, ...
-                  (fprintf out "~a ~a ~a ~a" tid bid i smix)
-                  (for ([arg (map vecfy arg)]
-                        [k (length arg)])
-                    (fprintf out " ~a" (vector-ref arg tid)))
-                  (fprintf out "\n")
-                  (set-element-smem! elem #t)))))
-          (when (eq? (element-smem elem) #f)
-            (fprintf out "~a ~a ~a N" tid bid i)
-            (for ([arg (map vecfy arg)]
-                  [k (length arg)])
-              (fprintf out " ~a" (vector-ref arg tid)))
-            (fprintf out "\n"))
-          (if race-check? 
-              (if (and (or (eq? write tid) (eq? write #f)) (or (eq? write/B bid) (eq? write/B #f)))
+  (define val
+    (for/vector ([tid (tid)] 
+                 [i (vecfy ixs)]
+                 [m (mask)])
+      (if m
+          (let* ([bid (bid)]
+                 [smem (memory-contents (vector-ref (shared-memory) bid))]
+                 [vec (array-contents arr)]
+                 [elem (vector-ref vec i)]
+                 [cont (element-content elem)]
+                 [read (element-read elem)]
+                 [write (element-write elem)]
+                 [read/B (element-read/B elem)]
+                 [write/B (element-write/B elem)]
+                 [sm-ok (element-smem elem)])
+            (for ([sm smem])
+              (for ([e (array-contents sm)]
+                    [smix (vector-length (array-contents sm))])
+                ;(println (element-content e))
+                (when (&& (not (term? (eq? (element-content e) cont))) (eq? (element-content e) cont) (eq? sm-ok #f))
                   (begin
-                    (set-element-read/B! elem bid)
-                    (cond
-                      [(eq? read #f)
-                       ;; If this element is not read, its read set is rewritten to tid
-                       (begin
-                         (set-element-read! elem tid)
-                         cont)]
-                      [(eq? read tid)
-                       ;; If this element is read in this thread, its read set is through
-                       cont]
-                      [else
-                       ;; If this element is read in a other thread, its read is rewritten to -1
-                       (begin
-                         (set-element-read! elem -1)
-                         cont)]))
-                  (assert false "read conflict"))
-              cont))
-        'masked-value)))
+                    ;                  (println "shared-memory in the block")
+                    ;                  (map (lambda (x) (print-matrix x 9 1)) smem)
+                    ;                  (printf "global-idx: ~a\n" i)
+                    ;                  (printf "global-cont: ~a\n" (element-content e))
+                    ;                  (printf "shared-memory: ")
+                    ;                  (print-matrix sm 9 1)
+                    ;                  (printf "shared-cont: ~a\n" cont)
+                    ;                  (newline)
+                    ;; print 0:tid, 1:bid, 2:i, 3:smix, 4:arg0, ...
+                    (fprintf out "~a ~a ~a ~a" tid bid i smix)
+                    (for ([arg (map vecfy arg)]
+                          [k (length arg)])
+                      (fprintf out " ~a" (vector-ref arg tid)))
+                    (fprintf out "\n")
+                    (set-element-smem! elem #t)))))
+            (when (eq? (element-smem elem) #f)
+              (fprintf out "~a ~a ~a N" tid bid i)
+              (for ([arg (map vecfy arg)]
+                    [k (length arg)])
+                (fprintf out " ~a" (vector-ref arg tid)))
+              (fprintf out "\n"))
+            (set-element-smem! elem #f)
+            (if race-check? 
+                (if (and (or (eq? write tid) (eq? write #f)) (or (eq? write/B bid) (eq? write/B #f)))
+                    (begin
+                      (set-element-read/B! elem bid)
+                      (cond
+                        [(eq? read #f)
+                         ;; If this element is not read, its read set is rewritten to tid
+                         (begin
+                           (set-element-read! elem tid)
+                           cont)]
+                        [(eq? read tid)
+                         ;; If this element is read in this thread, its read set is through
+                         cont]
+                        [else
+                         ;; If this element is read in a other thread, its read is rewritten to -1
+                         (begin
+                           (set-element-read! elem -1)
+                           cont)]))
+                    (assert false "read conflict"))
+                cont))
+          'masked-value)))
+  val)
 
 (define (profiling-access file arr ixs . arg)
   (for*/all ([ixs ixs]
