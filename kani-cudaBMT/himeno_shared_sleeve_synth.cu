@@ -88,11 +88,17 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 			float *sb_tmp = sb_t;
 			sb_t = sb_m;
 			sb_m = sb_b;
-			if(threadIdx.x == 0 && threadIdx.y == 0){
-				sb_m[0] = p[c-kmax-1];
-				sb_m[blockDim.x+2] = p[c-kmax+1];
-				sb_m[(blockDim.y+1)*(blockDim.x+2)] = p[c+kmax-1];
-				sb_m[(blockDim.y+2)*(blockDim.x+2)] = p[c+kmax+1];
+			if(threadIdx.x==0&&threadIdx.y==0){
+				sb1_m[csb-blockDim.x-3] = p[c-kmax-1];
+			}
+			if(threadIdx.x==blockDim.x-1&&threadIdx.y==0){
+				sb1_m[csb-blockDim.x-1] = p[c-kmax+1];
+			}
+			if(threadIdx.x==0&&threadIdx.y==blockDim.y-1){
+				sb1_m[csb+blockDim.x+1] = p[c+kmax-1];
+			}
+			if(threadIdx.x==blockDim.x-1&&threadIdx.y==blockDim.y-1){
+				sb1_m[csb+blockDim.x+3] = p[c+kmax+1];
 			}
 			sb_b = sb_tmp;
 			sb_b[csb] = p[c+xy];
@@ -100,7 +106,6 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 			if(threadIdx.x == blockDim.x-1){ sb_b[csb+1] = p[c+xy+1];}
 			if(threadIdx.y == 0){ sb_b[csb-blockDim.x-2] = p[c+xy-kmax];}
 			if(threadIdx.y == blockDim.y-1){ sb_b[csb+blockDim.x+2] = p[c+xy+kmax];}
-
 
 			__syncthreads();
 			s0 =

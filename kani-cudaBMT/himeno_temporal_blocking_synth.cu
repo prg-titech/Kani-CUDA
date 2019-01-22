@@ -96,7 +96,18 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 			sb1_m[csb+blockDim.x+2] = p[(j==jmax-1) ? c+xy : c+xy + kmax];
 			sb1_b[csb+blockDim.x+2] = p[(j==jmax-1) ? c+2*xy : c+2*xy + kmax];
 		}
-
+		if(threadIdx.x==0&&threadIdx.y==0){
+			sb1_m[csb-blockDim.x-3] = p[(k==0||j==0) ? c+xy : c+xy-kmax-1];
+		}
+		if(threadIdx.x==blockDim.x-1&&threadIdx.y==0){
+			sb1_m[csb-blockDim.x-1] = p[(k==kmax-1||j==0) ? c+xy : c+xy-kmax+1];
+		}
+		if(threadIdx.x==0&&threadIdx.y==blockDim.y-1){
+			sb1_m[csb+blockDim.x+1] = p[(k==0||j==jmax-1) ? c+xy : c+xy+kmax-1];
+		}
+		if(threadIdx.x==blockDim.x-1&&threadIdx.y==blockDim.y-1){
+			sb1_m[csb+blockDim.x+3] = p[(k==kmax-1||j==jmax-1) ? c+xy : c+xy+kmax+1];
+		}
 		__syncthreads();
 		sb2_t[csb2] = sb1_t[csb];
 		i = 1;
@@ -139,10 +150,16 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 			sb1_t = sb1_m;
 			sb1_m = sb1_b;
 			if(threadIdx.x==0&&threadIdx.y==0){
-				sb1_m[0] = p[(k==0||j==0) ? c+xy : c+xy-kmax-1];
-				sb1_m[blockDim.x+1] = p[(k+blockDim.x==kmax||j==0) ? c+xy : c+xy-kmax+blockDim.x];
-				sb1_m[(blockDim.y+1)*(blockDim.x+2)] = p[(k==0||j+blockDim.y==jmax) ? c+xy : c+xy+blockDim.y*kmax-1];
-				sb1_m[(blockDim.y+2)*(blockDim.x+2)-1] = p[(k+blockDim.x==kmax||j+blockDim.y==jmax) ? c+xy : c+xy+blockDim.y*kmax+blockDim.x];
+				sb1_m[csb-blockDim.x-3] = p[(k==0||j==0) ? c+xy : c+xy-kmax-1];
+			}
+			if(threadIdx.x==blockDim.x-1&&threadIdx.y==0){
+				sb1_m[csb-blockDim.x-1] = p[(k==kmax-1||j==0) ? c+xy : c+xy-kmax+1];
+			}
+			if(threadIdx.x==0&&threadIdx.y==blockDim.y-1){
+				sb1_m[csb+blockDim.x+1] = p[(k==0||j==jmax-1) ? c+xy : c+xy+kmax-1];
+			}
+			if(threadIdx.x==blockDim.x-1&&threadIdx.y==blockDim.y-1){
+				sb1_m[csb+blockDim.x+3] = p[(k==kmax-1||j==jmax-1) ? c+xy : c+xy+kmax+1];
 			}
 			sb1_b = sb_tmp;
 			sb1_b[csb] = p[c+xy];
@@ -150,6 +167,7 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 			if(threadIdx.x == blockDim.x-1){ sb1_b[csb+1] = p[(k==kmax-1) ? c+xy : c+xy+1];}
 			if(threadIdx.y == 0){ sb1_b[csb-blockDim.x-2] = p[(j==0) ? c+xy : c+xy-kmax];}
 			if(threadIdx.y == blockDim.y-1){ sb1_b[csb+blockDim.x+2] = p[(j==jmax-1) ? c+xy : c+xy+kmax];}
+			
 			__syncthreads();
 
 			s0 =
