@@ -76,7 +76,7 @@
 (define-values (SIZEX SIZEY SIZEZ) (values 9 6 3))
 (define SIZE (* SIZEX SIZEY SIZEZ))
 
-(define CPU-in (make-array (for/vector ([i SIZE]) (make-element i)) SIZE))
+(define CPU-in (make-array (for/vector ([i SIZE]) (make-element (r))) SIZE))
 (define GPU-in (make-array (for/vector ([i SIZE]) (make-element (array-ref-host CPU-in i))) SIZE))
 (define CPU-out (make-array (for/vector ([i SIZE]) (make-element 0)) SIZE))
 (define GPU-out (make-array (for/vector ([i SIZE]) (make-element 0)) SIZE))
@@ -101,8 +101,8 @@
 
 (define counter (new-counter))
 
-;(define out-file (open-output-file (string-append "profiles/profile" (number->string (counter))) #:exists 'truncate))
-(define out-file (open-output-file "profile" #:exists 'truncate))
+(define out-file (open-output-file (string-append "profiles/profile" (number->string (counter))) #:exists 'truncate))
+;(define out-file (open-output-file "profile" #:exists 'truncate))
 (fprintf out-file "tid bid id smid i j c tid-x tid-y c2 blockDim.x blockDim.y\n")
 (time (diffusion-run-kernel out-file
                             '(3 3)

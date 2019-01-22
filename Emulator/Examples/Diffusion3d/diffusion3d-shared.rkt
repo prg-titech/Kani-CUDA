@@ -24,7 +24,7 @@
   (= t2 (?: (eq?/LS k 0) t3 [in (-/LS c xy)]))
   (:= int w (?: (eq?/LS i (? 0 (-/LS (? nx ny) (? 0 1)))) c1 ((? +/LS -/LS) c1 (? 1 (block-dim (? 0 1))))))
   ;(:= int w (?: (eq?/LS i 0) c1 (-/LS c1 1)))
-  (:= int e (?: (eq?/LS i (-/LS nx 1)) c1 (+/LS c1 1)))
+  (:= int e (?: (eq?/LS i (? 0 (-/LS (? nx ny) (? 0 1)))) c1 ((? +/LS -/LS) c1 (? 1 (block-dim (? 0 1))))))
   (:= int n (?: (eq?/LS j 0) c1 (-/LS c1 (block-dim 0))))
   (:= int s (?: (eq?/LS j (-/LS ny 1)) c1 (+/LS c1 (block-dim 0))))
   (:= bool bw (&&/LS (eq?/LS (? tid-x tid-y) (? 0 ((? -/LS +/LS) (block-dim (? 0 1)) 1))) (!/LS (eq?/LS i 0))))

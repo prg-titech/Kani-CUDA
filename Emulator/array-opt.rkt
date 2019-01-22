@@ -219,7 +219,7 @@
             (for ([e (array-contents sm)]
                   [smix (vector-length (array-contents sm))])
               ;(println (element-content e))
-              (when (&& (eq? (element-content e) cont) (eq? sm-ok #f))
+              (when (&& (not (term? (eq? (element-content e) cont))) (eq? (element-content e) cont) (eq? sm-ok #f))
                 (begin
                   ;                  (println "shared-memory in the block")
                   ;                  (map (lambda (x) (print-matrix x 9 1)) smem)
@@ -361,7 +361,8 @@
                [write/B (element-write/B elem)]
                [sm-ok (element-smem elem)])
           ;(println (element-content e))
-          (if (eq? (array-ref-host arr i) (array-ref-host sb si))
+          (define copied? (eq? (array-ref-host arr i) (array-ref-host sb si)))
+          (if (&& (not (term? copied?)) copied?)
               (begin
                 ;                  (println "shared-memory in the block")
                 ;                  (map (lambda (x) (print-matrix x 9 1)) smem)

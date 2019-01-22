@@ -29,7 +29,7 @@
   (:= int BLOCKSIZE (*/LS (block-dim 0) (block-dim 1)))
   
   ; Shared memory
-  (:shared real smem[BLOCKSIZE])
+  (:shared float [smem BLOCKSIZE])
   
   (:= int i (+/LS (*/LS (block-dim 0) (block-idx 0)) (thread-idx 0)))
   (:= int j (+/LS (*/LS (block-dim 1) (block-idx 1)) (thread-idx 1)))
