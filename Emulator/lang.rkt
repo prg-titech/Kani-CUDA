@@ -11,6 +11,8 @@
  mask
  puts
  ;; Syntax
+ ;; Function statement
+ func
  ;; Control statement
  if- while for-
  ;; Variable declaration
@@ -114,6 +116,11 @@
         (lambda () cond)
         (lambda () body ...))]))
 
+(define-syntax (func stx)
+  (syntax-case stx ()
+    [(_ type1 name ([type2 arg] ...) body ...)
+     #'(define (name arg ...)
+         body ...)]))
 
 (define-syntax (: stx)
   (syntax-case stx ()
