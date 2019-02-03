@@ -4,6 +4,8 @@
 
 (require c)
 
+;; TODO __global__の処理を書く
+
 (define (host-translator src)
   (cond
     [(type? src) (cond
@@ -110,48 +112,61 @@
                                         (host-translator (expr:prefix-expr src)))]
                    [(expr:sizeof? src) '1]
                    [(expr:cast? src) (host-translator (expr:cast-expr src))])]
-    [(decl? src) (cond [(decl:vars? src) (let ([decls (decl:vars-declarators src)])
-                                           (list*
-                                            'begin
-                                            (for/list ([decl decls])
-                                              (let ([init (decl:declarator-initializer decl)]
-                                                    [type (decl:declarator-type decl)])
-                                                (if (type:array? type)
-                                                    (if init
-                                                        (quasiquote
-                                                         (:= (unquote (host-translator (decl:vars-type src)))
-                                                             [(unquote (host-translator (decl:declarator-id decl)))
-                                                              (unquote (host-translator type))]
-                                                             (unquote (host-translator (init:expr-expr init)))))
-                                                        (quasiquote
-                                                         (: (unquote (host-translator (decl:vars-type src)))
-                                                            [(unquote (host-translator (decl:declarator-id decl)))
-                                                             (unquote (host-translator type))])))
-                                                    (if (type:pointer? type)
-                                                        (if init
-                                                            (quasiquote
-                                                             (:= (unquote (host-translator (decl:vars-type src)))
-                                                                 (unquote (host-translator (decl:declarator-id decl)))
-                                                                 (unquote (host-translator (init:expr-expr init)))))
-                                                            (quasiquote
-                                                             (:* (unquote (host-translator (decl:vars-type src)))
-                                                                 (unquote (host-translator (decl:declarator-id decl))))))
-                                                        (if init
-                                                            (quasiquote
-                                                             (define
-                                                               (unquote (host-translator (decl:declarator-id decl)))
-                                                               (unquote (host-translator (init:expr-expr init)))))
-                                                            (quasiquote
-                                                             (define 
-                                                               (unquote (host-translator (decl:declarator-id decl)))
-                                                               0)))))))))]
-                       [(decl:function? src) (append
-                                              (list 'define
-                                                    (list*
-                                                     (host-translator (decl:declarator-id (decl:function-declarator src)))
-                                                     (for/list ([arg (host-translator (decl:declarator-type (decl:function-declarator src)))])
-                                                       (host-translator arg))))
-                                              (host-translator (decl:function-body src)))]
-                       [(decl:formal? src) (host-translator (decl:declarator-id (decl:formal-declarator src)))])]
+    [(decl? src) (cond
+                   [(decl:vars? src)
+                    (let ([decls (decl:vars-declarators src)])
+                      (list*
+                       'begin
+                       (for/list ([decl decls])
+                         (let ([init (decl:declarator-initializer decl)]
+                               [type (decl:declarator-type decl)])
+                           (if (type:array? type)
+                               (if init
+                                   (quasiquote
+                                    (:= (unquote (host-translator (decl:vars-type src)))
+                                        [(unquote (host-translator (decl:declarator-id decl)))
+                                         (unquote (host-translator type))]
+                                        (unquote (host-translator (init:expr-expr init)))))
+                                   (quasiquote
+                                    (: (unquote (host-translator (decl:vars-type src)))
+                                       [(unquote (host-translator (decl:declarator-id decl)))
+                                        (unquote (host-translator type))])))
+                               (if (type:pointer? type)
+                                   (if init
+                                       (quasiquote
+                                        (:= (unquote (host-translator (decl:vars-type src)))
+                                            (unquote (host-translator (decl:declarator-id decl)))
+                                            (unquote (host-translator (init:expr-expr init)))))
+                                       (quasiquote
+                                        (:* (unquote (host-translator (decl:vars-type src)))
+                                            (unquote (host-translator (decl:declarator-id decl))))))
+                                   (if init
+                                       (quasiquote
+                                        (define
+                                          (unquote (host-translator (decl:declarator-id decl)))
+                                          (unquote (host-translator (init:expr-expr init)))))
+                                       (quasiquote
+                                        (define 
+                                          (unquote (host-translator (decl:declarator-id decl)))
+                                          0)))))))))]
+                   [(decl:function? src) (append
+                                          (list 'func
+                                                (host-translator (decl:function-return-type src))
+                                                (host-translator (decl:declarator-id (decl:function-declarator src)))
+                                                (for/list ([arg (host-translator (decl:declarator-type (decl:function-declarator src)))])
+                                                  (host-translator arg)))
+                                          (host-translator (decl:function-body src)))]
+                   [(decl:formal? src) (list
+                                        (host-translator (decl:formal-type src))
+                                        (host-translator (decl:declarator-id (decl:formal-declarator src))))])]
     ))
+
+(pretty-display
+ (host-translator
+  (list-ref (parse-program "void test(int a, int b){
+for(int i = 0; i<10; i++){
+for(int j = 0; j<10; j++){
+int k = 0;
+i = a + b;}}}
+") 0)))
 
