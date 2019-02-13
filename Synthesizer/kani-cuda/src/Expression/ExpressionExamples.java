@@ -165,14 +165,18 @@ public class ExpressionExamples {
 		assertEquals(true, bn1.equals(bn2));
 	}	
 	
+	//@Test
+	public void testInput(){
+		File profile = new File("/Users/akira/masuhara-lab/Kani-CUDA/Translator/profiles");
+		Synthesizer psysha = new Synthesizer();
+		psysha.input(profile);
+		System.out.println(psysha.vars);
+	}
+	
 	@Test
 	public void testSynth() {
-		File profile = new File("/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/Diffusion3d/profiles/profile1");
-		File dir = new File("/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/Diffusion3d/profiles");
-		File[] profiles = dir.listFiles();
-		
-		Synthesizer psysha = new Synthesizer();
-		
-		psysha.synthesizeFrom(profiles);
+		File profile = new File("/Users/akira/masuhara-lab/Kani-CUDA/Translator/profiles");	
+		Synthesizer psysha = new Synthesizer();		
+		psysha.synthesizeFrom(profile);
 	}
 }

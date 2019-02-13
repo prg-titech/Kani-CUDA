@@ -90,20 +90,26 @@
                                             (unquote (host-translator (expr:array-ref-expr src)))
                                             (unquote (host-translator (expr:array-ref-offset src)))))]
                    [(expr:call? src) (let ([name (host-translator (expr:call-function src))])
-                                       (if (or (eq? name 'block) (eq? name 'grid))
-                                           (list
-                                            'define
-                                            name
-                                            (list*
-                                             'list
-                                             (for/list
-                                                 ([arg (expr:call-arguments src)])
-                                               (host-translator arg))))
-                                           (list*
-                                            name
-                                            (for/list
-                                                ([arg (expr:call-arguments src)])
-                                              (host-translator arg)))))]
+                                       (cond [(or (eq? name 'block) (eq? name 'grid))
+                                              (list
+                                               'define
+                                               name
+                                               (list*
+                                                'list
+                                                (for/list
+                                                    ([arg (expr:call-arguments src)])
+                                                  (host-translator arg))))]
+                                             [(string-contains? (symbol->string name) "__global__")
+                                              (list* 'invoke-kernel
+                                                     name
+                                                     (for/list
+                                                         ([arg (expr:call-arguments src)])
+                                                       (host-translator arg)))]
+                                             [else (list*
+                                                    name
+                                                    (for/list
+                                                        ([arg (expr:call-arguments src)])
+                                                      (host-translator arg)))]))]
                    [(expr:postfix? src) (list
                                          (host-translator (expr:postfix-op src))
                                          (host-translator (expr:postfix-expr src)))]
@@ -164,9 +170,9 @@
 (pretty-display
  (host-translator
   (list-ref (parse-program "void test(int a, int b){
-for(int i = 0; i<10; i++){
-for(int j = 0; j<10; j++){
-int k = 0;
-i = a + b;}}}
-") 0)))
+                                                    for(int i = 0; i<10; i++){
+                                                            for(int j = 0; j<10; j++){
+                                                                    int k = 0;
+                                                                    i = a + b;}}}
+                                                                    ") 0)))
 

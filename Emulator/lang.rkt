@@ -10,8 +10,11 @@
 (provide
  mask
  puts
+ set-profiled-vars!
+ profiled-vars
+ profile-vars
  ;; Syntax
- ;; Function statement
+ ;; Function declatation
  func
  ;; Control statement
  if- while for-
@@ -56,7 +59,6 @@
  switch
  synth-with-kani-cuda
  profiling-access
- profiling-access2
  profiling-access3
  env
  add-env

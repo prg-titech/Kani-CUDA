@@ -6,6 +6,7 @@ import java.util.*;
 public class Synthesizer {
 	Environment env;
 	List<String> vars;
+	List<File> profiles;
 	List<String> data;
 	int limit = 0;
 	
@@ -14,21 +15,31 @@ public class Synthesizer {
 		super();
 		this.env = new Environment();
 		this.vars = new ArrayList<String>();
+		this.profiles = new ArrayList<File>();
 		this.data = new ArrayList<String>();
 	}
 	
-	public void input(File file){
-		this.data = new ArrayList<String>();
+	public void inputVars(File file){
 		try{
 			if(file.exists()){
 				FileReader fr = new FileReader(file);
 				BufferedReader br = new BufferedReader(fr);
 				String datum = br.readLine();
-				
-				// Save the names of variables
 				this.vars = Arrays.asList(datum.split(" "));
-				
-				this.env = new Environment(vars);
+				this.env = new Environment(this.vars);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void inputData(File file){
+		this.data = new ArrayList<String>();
+		try{
+			if(file.exists()){
+				FileReader fr = new FileReader(file);
+				BufferedReader br = new BufferedReader(fr);
+				String datum = "";
 				
 				limit = 0;
 				
@@ -46,6 +57,19 @@ public class Synthesizer {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public void input(File profile){
+		// file名でマッチングするとなんかおかしなことが起こった
+		File vars = new File(profile, "vars");
+		
+		for(File file : profile.listFiles()){
+			if (file.equals(vars)) {
+				this.inputVars(file);
+			} else {
+				this.profiles.add(file);
+			}
 		}
 	}
 
@@ -250,46 +274,14 @@ public class Synthesizer {
 		return new None();
 	}
 	
-	public void synthesizeFrom(File[] profiles){				
-		long start;
-		long end;
-		BoolExpression bnone = new BNone();
-		Expression none = new None();
-		BoolExpression bexp;
-		Expression exp;
-		for(File profile : profiles){
-			bexp = bnone;
-			exp = none;
-			this.input(profile);
-			start = System.currentTimeMillis();
-			bexp = this.synthesizeBool();
-			if(!bexp.equals(bnone)){
-				exp = this.synthesizeArith(3);
-			}
-			if(!bexp.equals(bnone)&&exp.equals(none)){
-				exp = this.synthsizeIf();
-			}
-			if(exp.equals(none)){
-				System.out.println("Not synthesized from " + profile.toString());
-			} else {
-				System.out.println("Expression synthesized from " + profile.toString() + ":");
-				bexp.print();
-				exp.print();
-			}
-			end = System.currentTimeMillis();
-			System.out.println("time: " + (end - start) + "ms");
-		}
-		return;
-	}
-	
-	public void synthesizeFrom(File profile){				
+	public void synthMemExp(File profile){				
 		long start;
 		long end;
 		BoolExpression bnone = new BNone();
 		Expression none = new None();
 		BoolExpression bexp = bnone;
 		Expression exp = none;
-		this.input(profile);
+		this.inputData(profile);
 		start = System.currentTimeMillis();
 		bexp = this.synthesizeBool();
 		if(!bexp.equals(bnone)){
@@ -307,6 +299,12 @@ public class Synthesizer {
 		}
 		end = System.currentTimeMillis();
 		System.out.println("time: " + (end - start) + "ms");
-		return;
 	}	
+	
+	public void synthesizeFrom(File profiles){				
+		this.input(profiles);
+		for(File f : this.profiles){
+			this.synthMemExp(f);
+		}
+	}
 }

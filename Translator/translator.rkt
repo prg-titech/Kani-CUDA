@@ -8,22 +8,26 @@
 ;; TODO for文に{}がない場合の変換規則
 (define (desired-line? line)
   (not
-   (or (string-contains? line "\"")
+   (or (string-contains? line "print")
        (string-contains? line "#"))))
+
+(define (get-var-name line)
+  (list-ref (string-split (string-trim line) #rx"[ |[]") 2))
+
+(define (add-var-prefix line word)
+  (let ([name (get-var-name line)])
+    (string-replace
+     (string-replace line word "")
+     name
+     (string-append word name))))
 
 (define (convert-line line)
   (cond
     [(string-contains? line "__global__")
-     (let ([name (list-ref (string-split (string-trim line) #rx"[ |[]") 2)])
-       ;(println (string-split line #rx"[ |[]"))
-       (string-replace
-        (string-replace line "__global__" "") name (string-append "__global__" name)))]
+     (add-var-prefix line "__global__")]
     ;; TODO : diffusion2d_temporal_blocking.cuでおかしなことが起こってる
     [(string-contains? line "__shared__")
-     (let ([name (list-ref (string-split line #rx"[ |[]") 2)])
-       ;(println (string-split line #rx"[ |[]"))
-       (string-replace
-        (string-replace line "__shared__" "") name (string-append "__shared__" name)))]
+     (add-var-prefix line "__shared__")]
     [(string-contains? line "dim3 ")
      (string-replace line "dim3 " "")]
     [(string-contains? line "<<<")
@@ -39,7 +43,6 @@
 (define (cpp file)
   (define in (open-input-file file))
   (define cp (open-output-file "__cp.cu" #:exists 'truncate))
-  (define dst (open-output-file "__cp.cu" #:exists 'truncate))
   (define line (read-line in 'any))
   (when (not (eof-object? line))
     (set! line (string-append line "\n")))
@@ -51,7 +54,6 @@
            (set! line (string-append line "\n"))))
   (close-input-port in)
   (close-output-port cp)
-  (close-output-port dst)
   (system* "/usr/bin/cpp" "__cp.cu" "__dst.cu"))
   
 
@@ -72,13 +74,15 @@
   ;(pretty-print (string-join (flatten program)))
   (pretty-display "#lang rosette\n" out)
   (pretty-display "(require \"../Emulator/lang.rkt\")" out)
+  (pretty-display "(delete-directory/files \"profiles\")" out)
+  (pretty-display "(make-directory* \"profiles\")" out)
   (for ([src (parse-program (string-join (flatten program)))])
-    (println (symbol->string (get-name src)))
+    ;(println (symbol->string (get-name src)))
     (if (string-contains? (symbol->string (get-name src)) "__global__")
         (pretty-display (kernel-translator src) out)
         (pretty-display (host-translator src) out)))
   (pretty-display "(main)" out)
   (close-output-port out))
 
-(translate "/Users/akira/masuhara-lab/Kani-CUDA/Translator/himeno_shared.cu")
+(translate "/Users/akira/masuhara-lab/Kani-CUDA/Translator/himeno_baseline.cu")
 ;(translate "/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/Diffusion2d/diffusion2d_temporal_blocking.cu")

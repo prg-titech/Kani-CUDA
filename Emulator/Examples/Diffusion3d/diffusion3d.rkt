@@ -10,7 +10,10 @@
                           nx ny nz
                           ce cw cn cs ct cb cc
                           file
-                          file2)
+                          file2
+                          file3
+                          file4
+                          file5)
   (:= int tid-x (thread-idx 0))
   (:= int tid-y (thread-idx 1))
   (:= int BLOCKSIZE (*/LS (block-dim 0) (block-dim 1)))
@@ -33,16 +36,19 @@
     (:= int t (?: (eq?/LS k (-/LS nz 1)) c (+/LS c xy)))
     (= [out c] (+/LS (*/LS cc [in c])
                      ; tid bid id smid i j c threadIdx.x threadIdx.y c2 blockDim.x blockDim.y nx ny nz
-                     (*/LS cw (profiling-access file in w i j c tid-x tid-y c2 (block-dim 0) nx ny))
-                     (*/LS ce (profiling-access file2 in e i j c tid-x tid-y c2 (block-dim 0) nx ny))
-                     (*/LS cn [in n])
-                     (*/LS cs [in s])
-                     (*/LS cb [in b])
+                     (*/LS cw (profiling-access "0" in w i j c tid-x tid-y c2 (block-dim 0) nx ny))
+                     (*/LS ce (profiling-access "1" in e i j c tid-x tid-y c2 (block-dim 0) nx ny))
+                     (*/LS cn (profiling-access "3" in n i j c tid-x tid-y c2 (block-dim 0) nx ny))
+                     (*/LS cs (profiling-access "4" in s i j c tid-x tid-y c2 (block-dim 0) nx ny))
+                     (*/LS cb (profiling-access "5" in b i j c tid-x tid-y c2 (block-dim 0) nx ny))
                      (*/LS ct [in t])))
     (+=/LS c xy)))
 
 (define (diffusion-run-kernel file
                               file2
+                              file3
+                              file4
+                              file5
                               grid
                               block
                               count
@@ -57,7 +63,10 @@
                    nx ny nz
                    ce cw cn cs ct cb cc
                    file
-                   file2)
+                   file2
+                   file3
+                   file4
+                   file5)
     (define temp in)
     (set! in out)
     (set! out temp)))
@@ -75,9 +84,15 @@
   (define-symbolic* r real?)
   r)
 
+(define k 3) ; upper bound
+(define-symbolic* v integer? [k])
+(define-symbolic n0 integer?)
+(define vn (take v n0)) ; list of up to k integers
+(define (len)
+  (length vn))
 
-(define-values (GRIDSIZEX GRIDSIZEY) (values 3 3))
-(define-values (BLOCKSIZEX BLOCKSIZEY) (values 3 3))
+(define-values (GRIDSIZEX GRIDSIZEY) (values 4 3))
+(define-values (BLOCKSIZEX BLOCKSIZEY) (values 4 3))
 
 (define-values (SIZEX SIZEY SIZEZ) (values (* BLOCKSIZEX GRIDSIZEX) (* BLOCKSIZEY GRIDSIZEY) 3))
 (define SIZE (* SIZEX SIZEY SIZEZ))
@@ -109,11 +124,20 @@
 
 (define out-file (open-output-file (string-append "profiles/profile" (number->string (counter))) #:exists 'truncate))
 (define out-file2 (open-output-file (string-append "profiles/profile" (number->string (counter))) #:exists 'truncate))
+(define out-file3 (open-output-file (string-append "profiles/profile" (number->string (counter))) #:exists 'truncate))
+(define out-file4 (open-output-file (string-append "profiles/profile" (number->string (counter))) #:exists 'truncate))
+(define out-file5 (open-output-file (string-append "profiles/profile" (number->string (counter))) #:exists 'truncate))
 ;(define out-file (open-output-file "profile" #:exists 'truncate))
 (fprintf out-file "tid bid id smid i j c tid-x tid-y c2 blockDim.x nx ny\n")
 (fprintf out-file2 "tid bid id smid i j c tid-x tid-y c2 blockDim.x nx ny\n")
+(fprintf out-file3 "tid bid id smid i j c tid-x tid-y c2 blockDim.x nx ny\n")
+(fprintf out-file4 "tid bid id smid i j c tid-x tid-y c2 blockDim.x nx ny\n")
+(fprintf out-file5 "tid bid id smid i j c tid-x tid-y c2 blockDim.x nx ny\n")
 (time (diffusion-run-kernel out-file
                             out-file2
+                            out-file3
+                            out-file4
+                            out-file5
                             (list GRIDSIZEX GRIDSIZEY)
                             (list BLOCKSIZEX BLOCKSIZEY)
                             1
@@ -122,6 +146,11 @@
                             e w n s t b c))
 (close-output-port out-file)
 (close-output-port out-file2)
+(close-output-port out-file3)
+(close-output-port out-file4)
+(close-output-port out-file5)
+
+
 
 
 ;(define (diffusion-verify) (time (verify (array-eq-verify CPU-in GPU-in SIZE))))

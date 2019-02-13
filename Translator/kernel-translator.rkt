@@ -2,14 +2,24 @@
 
 (provide (all-defined-out))
 
-(require c)
+(require c "../Emulator/work.rkt")
+;; TODO: メンバ変数の変換時、id:labelに渡されるが、変数名がx、y、zの時おかしなことが起こる
 
-;; TODO: Implement ternary op
+(define vars "")
 
 (define (get-name src)
   (if (decl:function? src)
       (kernel-translator (decl:declarator-id (decl:function-declarator src)))
       'xxx))
+
+(define (convert-var str)
+  (cond [(string-contains? str "threadIdx.x") '(thread-idx 0)]
+        [(string-contains? str "threadIdx.y") '(thread-idx 1)]
+        [(string-contains? str "blockDim.x") '(block-dim 0)]
+        [(string-contains? str "blockDim.y") '(block-dim 1)]
+        [(string-contains? str "blockIdx.x") '(block-idx 0)]
+        [(string-contains? str "blockIdx.y") '(block-idx 1)]
+        [else (string->symbol str)]))
 
 (define (kernel-translator src)
   (cond
@@ -37,7 +47,8 @@
                            "/LS")))]
        [(id:label? src) (cond [(eq? (id:label-name src) 'x) 0]
                               [(eq? (id:label-name src) 'y) 1]
-                              [(eq? (id:label-name src) 'z) 2])])]
+                              [(eq? (id:label-name src) 'z) 2]
+                              [else (id:label-name src)])])]
     [(stmt? src)
      (cond
        [(stmt:expr? src) (kernel-translator (stmt:expr-expr src))]
@@ -78,6 +89,7 @@
      (cond
        [(expr:int? src) (expr:int-value src)]
        [(expr:float? src) (expr:float-value src)]
+       [(expr:string? src) (expr:string-source src)]
        [(expr:unop? src) (quasiquote
                           ((unquote (kernel-translator (expr:unop-op src)))
                            (unquote (kernel-translator (expr:unop-expr src)))))]
@@ -98,14 +110,28 @@
                             ((unquote (kernel-translator (expr:member-expr src)))
                              (unquote (kernel-translator (expr:member-label src)))))]
        [(expr:ref? src) (kernel-translator (expr:ref-id src))]
-       [(expr:array-ref? src) (quasiquote
-                               [(unquote (kernel-translator (expr:array-ref-expr src)))
-                                (unquote (kernel-translator (expr:array-ref-offset src)))])]
-       [(expr:call? src) (list*
-                          (kernel-translator (expr:call-function src))
-                          (for/list
-                              ([arg (expr:call-arguments src)])
-                            (kernel-translator arg)))]
+       [(expr:array-ref? src) (if (expr:member? (expr:array-ref-expr src))
+                                  (list*
+                                   'profiling-access
+                                   (string-append "\"" (number->string (random 100000000))  "\"")
+                                   (kernel-translator (expr:member-label (expr:array-ref-expr src)))
+                                   (kernel-translator (expr:array-ref-offset src))
+                                   (map (lambda (x) (convert-var x)) (string-split vars)))
+                                  (quasiquote
+                                   [(unquote (kernel-translator (expr:array-ref-expr src)))
+                                    (unquote (kernel-translator (expr:array-ref-offset src)))]))]
+       [(expr:call? src) (if
+                          (eq? 'profile (kernel-translator (expr:call-function src)))
+                          (begin
+                            (set! vars (puts (kernel-translator (list-ref (expr:call-arguments src) 0))))
+                            (quasiquote
+                             (profile-vars
+                              (unquote (string-append "\"" (kernel-translator (list-ref (expr:call-arguments src) 0)) "\"")))))
+                          (list*
+                           (kernel-translator (expr:call-function src))
+                           (for/list
+                               ([arg (expr:call-arguments src)])
+                             (kernel-translator arg))))]
        [(expr:postfix? src) (list
                              (kernel-translator (expr:postfix-op src))
                              (kernel-translator (expr:postfix-expr src)))]
@@ -130,10 +156,22 @@
                             [(unquote (kernel-translator (decl:declarator-id decl)))
                              (unquote (kernel-translator type))]
                             (unquote (kernel-translator (init:expr-expr init)))))
-                       (quasiquote
-                        (: (unquote (kernel-translator (decl:vars-type src)))
-                           [(unquote (kernel-translator (decl:declarator-id decl)))
-                            (unquote (kernel-translator type))])))
+                       (if (string-contains?
+                            (symbol->string
+                             (kernel-translator (decl:declarator-id decl)))
+                            "__shared__")
+                           (quasiquote
+                            (:shared (unquote (kernel-translator (decl:vars-type src)))
+                                     [(unquote (string->symbol
+                                                (string-trim
+                                                 (symbol->string
+                                                  (kernel-translator (decl:declarator-id decl)))
+                                                 "__shared__")))
+                                      (unquote (kernel-translator type))]))
+                           (quasiquote
+                            (: (unquote (kernel-translator (decl:vars-type src)))
+                               [(unquote (kernel-translator (decl:declarator-id decl)))
+                                (unquote (kernel-translator type))]))))
                    (if (type:pointer? type)
                        (if init
                            (quasiquote
@@ -166,6 +204,5 @@
 (pretty-display
  (kernel-translator
   (list-ref (parse-program "void test(int a, int b){
-int i = 0;
-i = (a>b) ? a : b;}
+int arr[10];}
 ") 0)))

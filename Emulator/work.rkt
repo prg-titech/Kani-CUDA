@@ -5,7 +5,8 @@
 (provide  grid-dimension grid-dim grid-size block-dimension block-dim
           block-index block-idx block-size mask thread-idx vecfy to-bid
           tid bid barrier-count mask incl-bc clear-bc get-bc out-file
-          env clear-env add-env profile profiling puts cudaDeviceSynchronize)
+          env clear-env add-env profiled-vars set-profiled-vars!
+          profile-vars puts cudaDeviceSynchronize)
 
 (define barrier-count (make-parameter 0))
 
@@ -97,11 +98,16 @@
 (define (add-env x v)
   (hash-set! env x v))
 
-(define profile
-  0)
+(define profiled-vars
+  "")
 
-(define (profiling file)
-  (set! profile file))
+(define (set-profiled-vars! str)
+  (set! profiled-vars str))
+
+(define (profile-vars str)
+  (define out (open-output-file "profiles/vars" #:exists 'truncate))
+  (fprintf out (string-append "tid bid id smid " str))
+  (close-output-port out))
 
 (define (puts x)
   (println x)

@@ -1,2 +1,0 @@
-(define res-f (lambda (arr SIZE) (if (switch) (? (syncthreads) (void)) (syncthreads)) (:= int i (thread-idx 0)) (if (switch) (? (syncthreads) (void)) (syncthreads)) (:= int x (arr i)) (if (switch) (? (syncthreads) (void)) (syncthreads)) (= (arr (modulo/LS (+/LS i 281) SIZE)) x) (if (switch) (? (syncthreads) (void)) (syncthreads))))
-(parameterize ((switch #t)) (generate-forms (optimize-barrier (spec-rotate-opt res-f))))

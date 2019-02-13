@@ -13,6 +13,6 @@
 (vec-add-baseline A B C SIZEX)
 ;(print-matrix C SIZEX SIZEX)
 
-(invoke-kernel-synth vec-add '(1 1) '(3 3) A B C SIZEX)
+(invoke-kernel vec-add '(1 1) '(3 3) A B C SIZEX)
 ;(print-matrix C SIZEX SIZEX)
 
