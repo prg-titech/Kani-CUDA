@@ -6,6 +6,143 @@
     <language>en</language>
      <atom:link href="http://marketplace.eclipse.org/rss.xml" rel="self" type="application/rss+xml" />
       <item>
+    <title>Checkstyle Plug-in</title>
+    <link>http://marketplace.eclipse.org/content/checkstyle-plug</link>
+    <description>&lt;div class=&quot;field field-name-field-resource-image field-type-image field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;img typeof=&quot;foaf:Image&quot; class=&quot;img-responsive&quot; src=&quot;http://marketplace.eclipse.org/sites/default/files/eclipse-cs-little.png&quot; width=&quot;80&quot; height=&quot;80&quot; alt=&quot;&quot; /&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-shared-date-updated field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Date Updated:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;Tue, 2019-02-12 16:27&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;a href=&quot;/search/content/%22Lars%20K%C3%B6dderitzsch%22&quot;&gt;Lars Ködderitzsch&lt;/a&gt;&lt;div class=&quot;field field-name-shared-date-created field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Date Created:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;Thu, 2005-05-26 21:03&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-shared-submitted-by field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Submitted by:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/user/ldderitzsch74f/listings&quot; title=&quot;Lars  Ködderitzsch&quot;&gt;Lars  Ködderitzsch&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot; property=&quot;content:encoded&quot;&gt;&lt;p&gt;The Checkstyle Plugin (eclipse-cs) integrates the well-known source code analyzer Checkstyle into the Eclipse IDE. Checkstyle is a development tool to help you ensure that your Java code adheres to a set of coding standards. Checkstyle does this by inspecting your Java source code and pointing out items that deviate from a defined set of coding rules. With the Checkstyle Plugin your code is constantly inspected for problems. Within the Eclipse workbench you are notified of problems via the Eclipse Problems View and source code annotations just as you would see with compiler errors or warnings. A comfortable Checkstyle configuration editor helps you create and maintain your audit rule configurations. Using filters and file sets you are able to define which files get checked and which don&#039;t.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+     <pubDate>Fri, 27 May 2005 01:03:32 +0000</pubDate>
+ <dc:creator>ldderitzsch74f</dc:creator>
+ <guid isPermaLink="false">150 at http://marketplace.eclipse.org</guid>
+ <comments>http://marketplace.eclipse.org/content/checkstyle-plug#comments</comments>
+  </item>
+  <item>
+    <title>Groovy Development Tools</title>
+    <link>http://marketplace.eclipse.org/content/groovy-development-tools</link>
+    <description>&lt;div class=&quot;field field-name-field-resource-image field-type-image field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;img typeof=&quot;foaf:Image&quot; class=&quot;img-responsive&quot; src=&quot;http://marketplace.eclipse.org/sites/default/files/groovy-logo-medium.png&quot; width=&quot;110&quot; height=&quot;55&quot; alt=&quot;&quot; /&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-shared-date-updated field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Date Updated:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;Tue, 2019-02-12 11:53&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;a href=&quot;/search/content/%22Pivotal%22&quot;&gt;Pivotal&lt;/a&gt;&lt;div class=&quot;field field-name-shared-date-created field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Date Created:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;Wed, 2012-07-04 13:05&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-shared-submitted-by field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Submitted by:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/user/aclement/listings&quot; title=&quot;Andrew Clement&quot;&gt;Andrew Clement&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot; property=&quot;content:encoded&quot;&gt;&lt;p&gt;The Groovy Development Tools (GDT) provides Eclipse and Maven support for the &lt;a href=&quot;http://groovy-lang.org/&quot; rel=&quot;nofollow&quot;&gt;Apache Groovy&lt;/a&gt; programming language. GDT adds full-featured IDE support for Groovy including editors, wizards, content assist, debugging, refactoring and searching.&lt;/p&gt;
+&lt;p&gt;The GDT requires the &lt;a href=&quot;https://marketplace.eclipse.org/content/eclipse-java-development-tools-0&quot; rel=&quot;nofollow&quot;&gt;Eclipse Java Development Tools&lt;/a&gt; (JDT) as it builds upon Java/JVM support, including Java interoperability. If your Eclipse flavor does not include JDT, you must install it first.&lt;/p&gt;
+&lt;p&gt;GDT does not provide any direct support for &lt;a href=&quot;http://grails.org&quot; rel=&quot;nofollow&quot;&gt;Grails&lt;/a&gt;. If you want Grails tooling, then please consider &lt;a href=&quot;https://marketplace.eclipse.org/content/groovygrails-tool-suite-ggts-eclipse&quot; rel=&quot;nofollow&quot;&gt;Groovy-Grails Tools Suite&lt;/a&gt; or &lt;a href=&quot;https://marketplace.eclipse.org/content/spring-tools-aka-spring-ide-and-spring-tool-suite&quot; rel=&quot;nofollow&quot;&gt;Spring Tool Suite&lt;/a&gt; for your Grails projects.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+     <pubDate>Wed, 04 Jul 2012 17:05:41 +0000</pubDate>
+ <dc:creator>aclement</dc:creator>
+ <guid isPermaLink="false">321859 at http://marketplace.eclipse.org</guid>
+ <comments>http://marketplace.eclipse.org/content/groovy-development-tools#comments</comments>
+  </item>
+  <item>
+    <title>ImageJ Plugin</title>
+    <link>http://marketplace.eclipse.org/content/imagej-plugin</link>
+    <description>&lt;div class=&quot;field field-name-field-resource-image field-type-image field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;img typeof=&quot;foaf:Image&quot; class=&quot;img-responsive&quot; src=&quot;http://marketplace.eclipse.org/sites/default/files/default_images/default_2.png&quot; width=&quot;110&quot; height=&quot;80&quot; alt=&quot;&quot; /&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-shared-date-updated field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Date Updated:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;Tue, 2019-02-12 11:47&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;a href=&quot;/search/content/%22Bio7%22&quot;&gt;Bio7&lt;/a&gt;&lt;div class=&quot;field field-name-shared-date-created field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Date Created:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;Wed, 2016-10-05 06:59&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-shared-submitted-by field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Submitted by:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/user/mmisingnameaoh/listings&quot; title=&quot;Marcel Austenfeld&quot;&gt;Marcel Austenfeld&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot; property=&quot;content:encoded&quot;&gt;&lt;p&gt;This plugin integrates the scientific image application ImageJ in an Eclipse view and is also part of the Bio7 application (&lt;a href=&quot;http://bio7.org&quot; rel=&quot;nofollow&quot;&gt;http://bio7.org&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;ImageJ is an open source image processing program designed for the analysis of scientific multidimensional images. Supported ImageJ images can be opened and analyzed in multiple view tabs.&lt;/p&gt;
+&lt;p&gt;ImageJ Plugins and macros are supported, too and can be installed in the plugins subfolder or the install location defined in the preferences.&lt;/p&gt;
+&lt;p&gt;Furthermore a full featured ImageJ macro editor is available to script image analysis tasks within the Eclipse environment which can be opened together with the ImageJ view in an available ImageJ perspective.&lt;/p&gt;
+&lt;p&gt;For more information visit:&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/Bio7/EclipseImageJ1Plugin&quot; rel=&quot;nofollow&quot;&gt;https://github.com/Bio7/EclipseImageJ1Plugin&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://bio7.org&quot; rel=&quot;nofollow&quot;&gt;http://bio7.org&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;ImageJ documentation and websites:&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://imagej.nih.gov/ij/&quot; rel=&quot;nofollow&quot;&gt;https://imagej.nih.gov/ij/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://imagej.net/Welcome&quot; rel=&quot;nofollow&quot;&gt;http://imagej.net/Welcome&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://imagej.nih.gov/ij/docs/guide/146.html&quot; rel=&quot;nofollow&quot;&gt;https://imagej.nih.gov/ij/docs/guide/146.html&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;New in 1.52m (1.52m12)&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;Updated ImageJ version 1.52m (1.52m12)&lt;/li&gt;
+&lt;li&gt;Improved the ImageJ canvas (Plot canvas and Image canvas are now opened as intended)&lt;/li&gt;
+&lt;li&gt;Improved plot canvas (zooming, actions, etc. are now working as intended)&lt;/li&gt;
+&lt;li&gt;Plot action buttons are now added below the each plot&lt;/li&gt;
+&lt;li&gt;Added new actions to interpret the current opened Eclipse editor sources (BeanShell, JavaScript, Jython and ImageJ macro) using the ImageJ interpreters (using, e.g., PyDev for Jython).&lt;/li&gt;
+&lt;li&gt;Added a new Java compile action to compile the current opened Eclipse editor source (ImageJ plugins, etc.)&lt;/li&gt;
+&lt;li&gt;MouseWheel actions are now working as intended (use STRG+MousWheel to zoom!)&lt;/li&gt;
+&lt;li&gt;Improved stability for drag and drop of multiple image files&lt;/li&gt;
+&lt;li&gt;Improved stability for MacOSX&lt;/li&gt;
+&lt;li&gt;Reorganized Eclipse plugins and features&lt;/li&gt;
+&lt;li&gt;ImageJ2 can now be optionally installed and is not bundled by default (now optional dependent of ImageJ). Customization is possible (plugin can be populated with maven command in Eclipse)&lt;/li&gt;
+&lt;li&gt;Added the latest ImageJ macro function templates&lt;/li&gt;
+&lt;li&gt;JavaFX (embed Swing in JavaFX and SWT panel) can now be optionally installed (but is not necessary by default)&lt;/li&gt;
+&lt;li&gt;Removed the outdated Albireo plugin dependency&lt;/li&gt;
+&lt;li&gt;Added key listener for the tab when all images are closed (ImageJ keys!)&lt;/li&gt;
+&lt;li&gt;Improved the ImageJ macro hoover (workaround for SWT_AWT)&lt;/li&gt;
+&lt;li&gt;Added a workaround for repaint issues in MacOSX when switching perspectives with SWT_AWT&lt;/li&gt;
+&lt;li&gt;Added a workaround for MacOSX to receive key events again after focus lost (sometimes you need to press the mouse two times when the perspectives have been switched)&lt;/li&gt;
+&lt;li&gt;Fixed several rare occuring deadlock events on MacOSX&lt;/li&gt;
+&lt;/ul&gt;&lt;p&gt;New in 1.52h (1.52h5):&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;Updated to ImageJ 1.52h (1.52h5)&lt;/li&gt;
+&lt;li&gt;Added a new rename action (rename all words like the current selection - multiple cursor)&lt;/li&gt;
+&lt;li&gt;Improved dark theme with popular Eclipse darkest dark theme and default dark theme&lt;/li&gt;
+&lt;li&gt;Editor colors are automatically switched when using the dark theme (or darkest dark theme)&lt;/li&gt;
+&lt;li&gt;ImageJ toolbar improved for the dark theme&lt;/li&gt;
+&lt;li&gt;Added a new ImageJ detach image menu in the ‘Window’ menu of the ImageJ-Canvas view&lt;/li&gt;
+&lt;li&gt;Added all new ImageJ macro API functions to the code completion of the macro editor&lt;/li&gt;
+&lt;li&gt;Improved the ImageJ MacOSX touchpad resizing of the ImageJ panel&lt;/li&gt;
+&lt;li&gt;Improved the default font size for Swing components on Retina displays (e.g., ImageJ components - can be changed in the preferences)&lt;/li&gt;
+&lt;li&gt;Added some new macro source actions (Block Selection, Find And Replace, etc. - submenu Text ) to the macro editor&lt;/li&gt;
+&lt;/ul&gt;&lt;p&gt;New in 1.52c12:&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;Updated to ImageJ 1.52c12&lt;/li&gt;
+&lt;li&gt;Updated ImageJ2 libraries (pom-scijava 20.0.0)&lt;/li&gt;
+&lt;li&gt;Added recent macro API commands to code completion&lt;/li&gt;
+&lt;li&gt;Fixed some minor bugs (hoover offset, Linux awt dialogs etc.)&lt;/li&gt;
+&lt;/ul&gt;&lt;p&gt;New in 1.51u54:&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;Updated to ImageJ 1.51u54&lt;/li&gt;
+&lt;li&gt;Fixed lost keyboard focus for key shortcuts&lt;/li&gt;
+&lt;li&gt;Improved preferences for Swing fonts (to decrease on Retina displays)&lt;/li&gt;
+&lt;li&gt;Several other fixes for MacOSX&lt;/li&gt;
+&lt;li&gt;Added description for increased fonts for MacOSX (see Github page!)&lt;/li&gt;
+&lt;/ul&gt;&lt;p&gt;New in 1.51u20:&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;Cluttered MACOSX menus are now closed (added from opened application windows and frames). Some default added menus are disabled in the Bio7 preferences by default&lt;/li&gt;
+&lt;li&gt;Code completion (template) action now displays the macro documentation and context information when typing&lt;/li&gt;
+&lt;li&gt;Improved code completion layout (context information)&lt;/li&gt;
+&lt;li&gt;Added debug context menu actions to the macro editor&lt;/li&gt;
+&lt;li&gt;Added some other context menu actions, too (&#039;Get Macro Recorder Text&#039;, &#039;Evaluate Line&#039;)&lt;/li&gt;
+&lt;/ul&gt;&lt;p&gt;New in 1.51s24:&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;Updated ImageJ plugin to version 1.51.s24&lt;/li&gt;
+&lt;li&gt;Code completion (templates) action now displays the macro documentation when typing&lt;/li&gt;
+&lt;li&gt;Code completion context information improved&lt;/li&gt;
+&lt;li&gt;Images from macros are now opened fast (before had a 2s delay because of a missing attribute)&lt;/li&gt;
+&lt;li&gt;MacOSX extra menu disabled (avoids a cluttered menu)&lt;/li&gt;
+&lt;li&gt;Macros can now be executed within an external ImageJ instance in a separate Java process (if enabled in the preference - see screenshot 2 below)&lt;/li&gt;
+&lt;li&gt;Added JavaFX library reference for Java9&lt;/li&gt;
+&lt;/ul&gt;&lt;p&gt;New in 1.51p4 (bugfix):&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;Fixed a bug to rename the &#039;Results&#039; table&lt;/li&gt;
+&lt;li&gt;Fixed a key shortcut bug&lt;/li&gt;
+&lt;/ul&gt;&lt;p&gt;New in 1.51p3 (bugfix):&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;    Improved the grammar&lt;/li&gt;
+&lt;li&gt;    Added an action to transfer the ImageJ macro recorder text to the selected line in the macro editor (CTRL+SHIFT+R, CMD+SHIFT+R)&lt;/li&gt;
+&lt;/ul&gt;&lt;p&gt;New in 1.51p (bugfix):&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;Fixed a bug to control dialogs&lt;/li&gt;
+&lt;li&gt;Fixed a Linux code templates bug&lt;/li&gt;
+&lt;li&gt;Added more code completion templates&lt;/li&gt;
+&lt;/ul&gt;&lt;p&gt;New in 1.51p:&lt;/p&gt;
+&lt;p&gt;In this relase a macro editor and ImageJ perspective have been added to the ImageJ plugin. In addition the menu of the ImageJ plugin is now right assigned and the toolbar resizes dynamically.&lt;/p&gt;
+&lt;p&gt;The editor has the following features:&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;    Dynamic error detection (grammar derived from the ECMA grammar by Bart Kiers)&lt;/li&gt;
+&lt;li&gt;    Toolbar action to execute ImageJ macros&lt;/li&gt;
+&lt;li&gt;    Syntax highlightening&lt;/li&gt;
+&lt;li&gt;    Debugging support (reusing and implementing interfaces and methods from ImageJ - same keyboard shortcuts - see animation below)&lt;/li&gt;
+&lt;li&gt;    Code completion (with browser help)&lt;/li&gt;
+&lt;li&gt;    Code templates (add you own templates)&lt;/li&gt;
+&lt;li&gt;    Info popups (text hoover)&lt;/li&gt;
+&lt;li&gt;    Outline view (var variables, variables, methods and macros)&lt;/li&gt;
+&lt;li&gt;    Automatic closing of braces, parentheses and strings Automatic indention of functions,loops, etc.&lt;/li&gt;
+&lt;li&gt;    Code folding&lt;/li&gt;
+&lt;li&gt;    Code formatting (based on the Eclipse-javascript-formatter by Sebastian Moran)&lt;/li&gt;
+&lt;li&gt;    Resize fonts functions (with Ctrl++ or CMD++, CTRL+- or CMD +-)&lt;/li&gt;
+&lt;li&gt;    Font preferences&lt;/li&gt;
+&lt;li&gt;    Mark occurences (scope independant)&lt;/li&gt;
+&lt;li&gt;    A copy function for this forum&lt;br /&gt;
+	 &lt;/li&gt;
+&lt;/ul&gt;&lt;p&gt;New in 1.51n:&lt;/p&gt;
+&lt;p&gt;* Added a fake editor to register and open standard image files from the Navigator or Project Explorer, etc in the ImageJ view.&lt;/p&gt;
+&lt;p&gt;* Fixed several image conversion bugs&lt;/p&gt;
+&lt;p&gt;* Moved plugin update site to github (if you have an old installation please uninstall the old plugins first before you install from this location!)&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+     <pubDate>Wed, 05 Oct 2016 10:59:26 +0000</pubDate>
+ <dc:creator>mmisingnameaoh</dc:creator>
+ <guid isPermaLink="false">3103502 at http://marketplace.eclipse.org</guid>
+ <comments>http://marketplace.eclipse.org/content/imagej-plugin#comments</comments>
+  </item>
+  <item>
+    <title>IBM Monitoring and Diagnostic Tools - Garbage Collection and Memory Visualizer (GCMV)</title>
+    <link>http://marketplace.eclipse.org/content/ibm-monitoring-and-diagnostic-tools-garbage-collection-and-memory-visualizer-gcmv</link>
+    <description>&lt;div class=&quot;field field-name-field-resource-image field-type-image field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;img typeof=&quot;foaf:Image&quot; class=&quot;img-responsive&quot; src=&quot;http://marketplace.eclipse.org/sites/default/files/runtime_tools_110x80_0_0.png&quot; width=&quot;110&quot; height=&quot;80&quot; alt=&quot;&quot; /&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-shared-date-updated field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Date Updated:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;Tue, 2019-02-12 11:38&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;a href=&quot;/search/content/%22IBM%22&quot;&gt;IBM&lt;/a&gt;&lt;div class=&quot;field field-name-shared-date-created field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Date Created:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;Tue, 2014-02-18 08:50&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-shared-submitted-by field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Submitted by:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/user/probbins/listings&quot; title=&quot;Pete Robbins&quot;&gt;Pete Robbins&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot; property=&quot;content:encoded&quot;&gt;&lt;p&gt;Garbage Collection and Memory Visualizer (GCMV) can plot and analyze verbose GC data to help diagnose Node.js and Java application memory and performance problems. It provides recommendations to improve the performance of your Node.js and Java applications New in version 2.8.5 - Support for Node.js Version 7 New in version 2.8.4 - Support for Node.js Version 6 New in version 2.8.3: - Support for Node.js version 4 - Support for IBM SDK for Node.js version 4 New in version 2.8.2: - Updated translations for Japanese and Chinese - User created templates can now be removed New in version 2.8.1: - Additional information parsed from Node.js log files - Usability enhancements selecting data to display New in version 2.8: Garbage Collection and Memory Visualizer can now parse logs that are generated by Node.js. You can use the Node --trace_gc command line parameter to generate garbage collection data which can then be loaded into GCMV. You can additionally specify either --trace_gc_nvp or --trace_gc_verbose parameters to generate more detailed information&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+     <pubDate>Tue, 18 Feb 2014 13:50:19 +0000</pubDate>
+ <dc:creator>probbins</dc:creator>
+ <guid isPermaLink="false">1496765 at http://marketplace.eclipse.org</guid>
+ <comments>http://marketplace.eclipse.org/content/ibm-monitoring-and-diagnostic-tools-garbage-collection-and-memory-visualizer-gcmv#comments</comments>
+  </item>
+  <item>
     <title>Microclimate Developer Tools</title>
     <link>http://marketplace.eclipse.org/content/microclimate-developer-tools</link>
     <description>&lt;div class=&quot;field field-name-field-resource-image field-type-image field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;img typeof=&quot;foaf:Image&quot; class=&quot;img-responsive&quot; src=&quot;http://marketplace.eclipse.org/sites/default/files/mdt-110x80.png&quot; width=&quot;110&quot; height=&quot;80&quot; alt=&quot;&quot; /&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-shared-date-updated field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Date Updated:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;Mon, 2019-02-11 15:39&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;a href=&quot;/search/content/%22IBM%22&quot;&gt;IBM&lt;/a&gt;&lt;div class=&quot;field field-name-shared-date-created field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Date Created:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;Thu, 2018-10-04 13:18&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-shared-submitted-by field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Submitted by:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/user/jkim/listings&quot; title=&quot;Joseph Kim&quot;&gt;Joseph Kim&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot; property=&quot;content:encoded&quot;&gt;&lt;p&gt;Use &lt;a href=&quot;https://microclimate-dev2ops.github.io/mdteclipseoverview&quot; rel=&quot;nofollow&quot;&gt;Microclimate Developer Tools for Eclipse&lt;/a&gt; to develop your &lt;a href=&quot;https://microclimate-dev2ops.github.io/documentation&quot; rel=&quot;nofollow&quot;&gt;Microclimate&lt;/a&gt; projects from within Eclipse. Use the tools to access Microclimate features in the comfort of your IDE.&lt;/p&gt;
@@ -44,7 +181,7 @@
   <item>
     <title>Relative Line Number Ruler</title>
     <link>http://marketplace.eclipse.org/content/relative-line-number-ruler</link>
-    <description>&lt;div class=&quot;field field-name-field-resource-image field-type-image field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;img typeof=&quot;foaf:Image&quot; class=&quot;img-responsive&quot; src=&quot;http://marketplace.eclipse.org/sites/default/files/default_images/default_2.png&quot; width=&quot;110&quot; height=&quot;80&quot; alt=&quot;&quot; /&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-shared-submitted-by field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Submitted by:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/user/mmisingname3rt/listings&quot; title=&quot;Matt F&quot;&gt;Matt F&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-shared-date-updated field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Date Updated:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;Mon, 2019-02-11 13:44&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-shared-date-created field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Date Created:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;Thu, 2019-02-07 11:30&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot; property=&quot;content:encoded&quot;&gt;&lt;p&gt;Shows a line number ruler with line numbers relative to the current caret position. This helps with text editing when using a Vim plugin in Eclipse such as Vrapper.&lt;/p&gt;
+    <description>&lt;div class=&quot;field field-name-field-resource-image field-type-image field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;img typeof=&quot;foaf:Image&quot; class=&quot;img-responsive&quot; src=&quot;http://marketplace.eclipse.org/sites/default/files/default_images/default_2.png&quot; width=&quot;110&quot; height=&quot;80&quot; alt=&quot;&quot; /&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-shared-submitted-by field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Submitted by:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/user/mmisingname3rt/listings&quot; title=&quot;Matt Fritschi&quot;&gt;Matt Fritschi&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-shared-date-updated field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Date Updated:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;Mon, 2019-02-11 13:44&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-shared-date-created field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Date Created:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;Thu, 2019-02-07 11:30&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot; property=&quot;content:encoded&quot;&gt;&lt;p&gt;Shows a line number ruler with line numbers relative to the current caret position. This helps with text editing when using a Vim plugin in Eclipse such as Vrapper.&lt;/p&gt;
 &lt;p&gt;The ruler is enabled by default and can be disabled using the context menu on the ruler.&lt;/p&gt;
 &lt;p&gt;The line numbers on the ruler can be displayed either as relative to the cursor or absolute.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
      <pubDate>Thu, 07 Feb 2019 16:30:20 +0000</pubDate>
@@ -91,128 +228,6 @@
  <dc:creator>sriderdp1</dc:creator>
  <guid isPermaLink="false">3956172 at http://marketplace.eclipse.org</guid>
  <comments>http://marketplace.eclipse.org/content/dbeaver-sql-debugger#comments</comments>
-  </item>
-  <item>
-    <title>Doma Tools</title>
-    <link>http://marketplace.eclipse.org/content/doma-tools</link>
-    <description>&lt;div class=&quot;field field-name-field-resource-image field-type-image field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;img typeof=&quot;foaf:Image&quot; class=&quot;img-responsive&quot; src=&quot;http://marketplace.eclipse.org/sites/default/files/default_images/no_image.png&quot; width=&quot;110&quot; height=&quot;80&quot; alt=&quot;&quot; /&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-shared-date-updated field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Date Updated:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;Mon, 2019-02-11 07:42&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;a href=&quot;/search/content/%22domaframework.org%22&quot;&gt;domaframework.org&lt;/a&gt;&lt;div class=&quot;field field-name-shared-date-created field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Date Created:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;Sat, 2014-02-08 22:15&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-shared-submitted-by field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Submitted by:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/user/tnakamurark1/listings&quot; title=&quot;Toshihiro Nakamura&quot;&gt;Toshihiro Nakamura&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot; property=&quot;content:encoded&quot;&gt;&lt;p&gt;Tools for the Doma (&lt;a href=&quot;https://github.com/domaframework/doma&quot; rel=&quot;nofollow&quot;&gt;https://github.com/domaframework/doma&lt;/a&gt;).&lt;/p&gt;
-&lt;p&gt;Doma Tools provides the following features:&lt;/p&gt;
-&lt;ul&gt;&lt;li&gt;Jump from Java files to the corresponding SQL files and vice versa.&lt;/li&gt;
-&lt;li&gt;Run annotation processors from SQL files.&lt;/li&gt;
-&lt;/ul&gt;&lt;p&gt; &lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
-     <pubDate>Sun, 09 Feb 2014 03:15:03 +0000</pubDate>
- <dc:creator>tnakamurark1</dc:creator>
- <guid isPermaLink="false">1476280 at http://marketplace.eclipse.org</guid>
- <comments>http://marketplace.eclipse.org/content/doma-tools#comments</comments>
-  </item>
-  <item>
-    <title>Asciidoctor Editor</title>
-    <link>http://marketplace.eclipse.org/content/asciidoctor-editor</link>
-    <description>&lt;div class=&quot;field field-name-field-resource-image field-type-image field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;img typeof=&quot;foaf:Image&quot; class=&quot;img-responsive&quot; src=&quot;http://marketplace.eclipse.org/sites/default/files/asciidoctor-editor-logo_0.png&quot; width=&quot;110&quot; height=&quot;80&quot; alt=&quot;&quot; /&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-shared-date-updated field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Date Updated:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;Sun, 2019-02-10 18:20&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;a href=&quot;/search/content/%22Albert%20Tregnaghi%22&quot;&gt;Albert Tregnaghi&lt;/a&gt;&lt;div class=&quot;field field-name-shared-date-created field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Date Created:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;Thu, 2018-03-15 15:51&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-shared-submitted-by field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Submitted by:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/user/atregnaghi/listings&quot; title=&quot;Albert Tregnaghi&quot;&gt;Albert Tregnaghi&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot; property=&quot;content:encoded&quot;&gt;&lt;h2&gt;Asciidoctor Editor&lt;/h2&gt;
-&lt;p&gt;This eclipse plugin is a text editor for asciidoc files.&lt;/p&gt;
-&lt;h3&gt;Features&lt;/h3&gt;
-&lt;ul&gt;&lt;li&gt;Fast html preview&lt;/li&gt;
-&lt;li&gt;Contains embedded asciidoctor but can also use installed asciidoctor with customizable CLI arguments&lt;/li&gt;
-&lt;li&gt;Supports text based diagram generation&lt;br /&gt;
-	( &lt;a href=&quot;https://github.com/stathissideris/ditaa&quot; rel=&quot;nofollow&quot;&gt;ditaa&lt;/a&gt;, &lt;a href=&quot;https://plantuml.com/&quot; rel=&quot;nofollow&quot;&gt; plantuml&lt;/a&gt; and &lt;a href=&quot;https://www.graphviz.org/&quot; rel=&quot;nofollow&quot;&gt;graphviz&lt;/a&gt; )&lt;/li&gt;
-&lt;li&gt;3 different preview modes:
-&lt;ul&gt;&lt;li&gt;Inline preview with editor
-&lt;ul&gt;&lt;li&gt;Vertical splitted&lt;/li&gt;
-&lt;li&gt;Horizontal splitted&lt;/li&gt;
-&lt;li&gt;Both variantes are immediately updated on text save&lt;/li&gt;
-&lt;li&gt;When cursor comes in line of anchor or headline it automatically scrolls internal preview to location&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;External preview
-&lt;ul&gt;&lt;li&gt;Using external Browser&lt;/li&gt;
-&lt;li&gt;Update per autorefresh in browser
-&lt;ul&gt;&lt;li&gt;time configurable&lt;/li&gt;
-&lt;li&gt;can be turned off also&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;Interesting when having multiple monitors and wanting to have full sized text document and preview&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;Outline and Quickoutline
-&lt;ul&gt;&lt;li&gt;Headlines&lt;/li&gt;
-&lt;li&gt;Includes (double click opens file)&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;Syntax highlighting in Text Editor
-&lt;ul&gt;&lt;li&gt;Colors can be customized.&lt;/li&gt;
-&lt;li&gt;Dark theme automatic color support.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;Tooltips&lt;/li&gt;
-&lt;li&gt;Hyperlinking of include parts (CTRL+Mouse)&lt;/li&gt;
-&lt;li&gt;Convenient toolbar actions
-&lt;ul&gt;&lt;li&gt;Table wizard&lt;/li&gt;
-&lt;li&gt;Code block templates&lt;/li&gt;
-&lt;li&gt;Possibility to toggle TOC on/off in output view&lt;/li&gt;
-&lt;li&gt;Switch preview layout variant&lt;/li&gt;
-&lt;li&gt;Jump to top of preview (internal preview panel only)&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;Additional editors included for
-&lt;ul&gt;&lt;li&gt;.ditaa files&lt;/li&gt;
-&lt;li&gt;.plantuml files&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;h3&gt;Links related to the plugin&lt;/h3&gt;
-&lt;ul&gt;&lt;li&gt;&lt;a href=&quot;https://github.com/de-jcup/eclipse-asciidoctor-editor/issues&quot; rel=&quot;nofollow&quot;&gt;Issue Tracker&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://github.com/de-jcup/eclipse-asciidoctor-editor/releases&quot; rel=&quot;nofollow&quot;&gt;Release history&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://github.com/de-jcup/eclipse-asciidoctor-editor/wiki&quot; rel=&quot;nofollow&quot;&gt;Wiki&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://www.youtube.com/playlist?list=PLaBYAz_I_8tFByQ7EWnemjZgx7q-quDyp&quot; rel=&quot;nofollow&quot;&gt;YouTube Video playlist&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;h3&gt;Additional links&lt;/h3&gt;
-&lt;ul&gt;&lt;li&gt;&lt;a href=&quot;https://asciidoctor.org/docs/asciidoc-syntax-quick-reference&quot; rel=&quot;nofollow&quot;&gt;Asciidoctor Quickreference&lt;/a&gt; for details about syntax&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://github.com/stathissideris/ditaa&quot; rel=&quot;nofollow&quot;&gt;ditaa&lt;/a&gt;on github&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://plantuml.com/&quot; rel=&quot;nofollow&quot;&gt;plantuml&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://www.graphviz.org/&quot; rel=&quot;nofollow&quot;&gt;graphviz&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;h3&gt;Technical details&lt;/h3&gt;
-&lt;ul&gt;&lt;li&gt;It uses internally asciidoctorj 1.5.6 and jruby to provide a WYSWYG integration.&lt;/li&gt;
-&lt;li&gt;When using plantuml (or graphviz itself) you must ensure you have installed graphviz on your machine&lt;/li&gt;
-&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
-     <pubDate>Thu, 15 Mar 2018 19:51:28 +0000</pubDate>
- <dc:creator>atregnaghi</dc:creator>
- <guid isPermaLink="false">3976500 at http://marketplace.eclipse.org</guid>
- <comments>http://marketplace.eclipse.org/content/asciidoctor-editor#comments</comments>
-  </item>
-  <item>
-    <title>Path Tools</title>
-    <link>http://marketplace.eclipse.org/content/path-tools</link>
-    <description>&lt;div class=&quot;field field-name-field-resource-image field-type-image field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;img typeof=&quot;foaf:Image&quot; class=&quot;img-responsive&quot; src=&quot;http://marketplace.eclipse.org/sites/default/files/default_images/default_2.png&quot; alt=&quot;&quot; /&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-shared-date-updated field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Date Updated:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;Sun, 2019-02-10 17:15&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;a href=&quot;/search/content/%22Sandip%20V.%20Chitale%22&quot;&gt;Sandip V. Chitale&lt;/a&gt;&lt;div class=&quot;field field-name-shared-date-created field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Date Created:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;Wed, 2008-08-27 13:44&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-shared-submitted-by field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Submitted by:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/user/schitale/listings&quot; title=&quot;Sandip Chitale&quot;&gt;Sandip Chitale&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot; property=&quot;content:encoded&quot;&gt;&lt;p&gt;What is new? * Added support for Copy Path, Explore and Command Line Shell actions to local resources in RSE (Needs RSE) * Added Copy SVN URL for resources in SVN based projects (Needs Subclipse) * Fixed Issue 14 in pathtools: Path Tools update breaks launchers using Indigo RC1 * Make the PathTools variables as Eclipse substitution variables. * Allow use of other Eclipse substitution variables such as ${eclipse_home} in PathTools commands. Interesting things are possible using the ${string_prompt} or ${folder_prompt} etc. * The PathTool commands now work for Text Editor tabs of Multipage editors such as Plug-in Manifest editor. The PathTools plug-in adds the following actions to Eclipse. * CopyPath - this action copies the fully qualified path of selected folders and files into the Clipboard. Copy Paths action is now a drop down and allows you to copy paths in all different formats. The last used format is remembered and used. The action&#039;s drop down allows copying paths of other well known places. * Explore - this action opens the selected folder or the folder containing the selected file in the OS file explorer. The user can configure the exact command that is used to launch the file explorer. The action&#039;s drop down allows exploring other well known places. * Command Line Shell - this action opens a command line shell window at the selected folder or the folder containing the selected file. The action&#039;s drop down allows opening a command line shell window at other well known folders. * Open in external editor... - this action opens the selected folder or file using the selected external editor. The user can configure the exact command that is used to launch the external editor * Custom actions pull down menu. This custom actions can be defined in Path Tools preferences page. You can specify display label, wildcard pattern and command to execute. The display label is used as the label for menu items. The wildcard pattern is used to match file name to determine applicable commands.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
-     <pubDate>Wed, 27 Aug 2008 17:44:03 +0000</pubDate>
- <dc:creator>schitale</dc:creator>
- <guid isPermaLink="false">754 at http://marketplace.eclipse.org</guid>
- <comments>http://marketplace.eclipse.org/content/path-tools#comments</comments>
-  </item>
-  <item>
-    <title>jSparrow - Automatic Java Refactoring</title>
-    <link>http://marketplace.eclipse.org/content/jsparrow-automatic-java-refactoring</link>
-    <description>&lt;div class=&quot;field field-name-field-resource-image field-type-image field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;img typeof=&quot;foaf:Image&quot; class=&quot;img-responsive&quot; src=&quot;http://marketplace.eclipse.org/sites/default/files/jSparrow_Fluegel_110x80.jpg&quot; width=&quot;110&quot; height=&quot;77&quot; alt=&quot;&quot; /&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-shared-date-updated field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Date Updated:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;Sun, 2019-02-10 03:19&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;a href=&quot;/search/content/%22Splendit%20IT-Consulting%20GmbH%22&quot;&gt;Splendit IT-Consulting GmbH&lt;/a&gt;&lt;div class=&quot;field field-name-shared-date-created field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Date Created:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;Tue, 2017-06-20 11:34&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-shared-submitted-by field-type-text field-label-inline clearfix&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;Submitted by:&amp;nbsp;&lt;/div&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/user/mprehofer/listings&quot; title=&quot;Michaela Prehofer&quot;&gt;Michaela Prehofer&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot; property=&quot;content:encoded&quot;&gt;&lt;p&gt;&lt;strong&gt;jSparrow &lt;/strong&gt;detects and replaces bugs and code smells in Java sources with a rule based approach automatically. It improves your Java code and &lt;strong&gt;transforms &lt;/strong&gt;it to Java 8/9/10 user-guided and safe.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Refactor your Java code. Improve the code quality. Apply the latest Java features. All automatically.&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;
-jSparrow has a set of&lt;strong&gt; 53 rules &lt;/strong&gt;now, which are grouped into seven categories,which are designed for applying coding conventions, removing code smells, improving readability and modernising your Java codebase.&lt;/p&gt;
-&lt;p&gt; &lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Removal &lt;/strong&gt;of potential &lt;strong&gt;bugs and code smells&lt;/strong&gt; is one of the main purposes of jSparrow. jSparrow is very efficient in disposing of these threats with its rules. You can group the profiles into individual &lt;strong&gt;rule profiles&lt;/strong&gt;, which also can be &lt;strong&gt;exported &lt;/strong&gt;and &lt;strong&gt;imported &lt;/strong&gt;to share them within your development team.&lt;/p&gt;
-&lt;p&gt;Being up to date with the latest Java standards is normally requiring a lot of manual software maintenance work. &lt;strong&gt;jSparrow upgrades &lt;/strong&gt;old code-artifacts to new state-of-the-art programming practices. The usage of jSparrow´s &lt;strong&gt;full version&lt;/strong&gt; allows you to save a lot of valuable time, while offering the option of &lt;strong&gt;automatically upgrading&lt;/strong&gt; to the latest version of Java within minutes in a safe way.&lt;/p&gt;
-&lt;p&gt;You can then decide if you want to use the jSparrow Free version, as usual, or the new features of jSparrow Starter for automatic refactoring.&lt;/p&gt;
-&lt;p&gt;With jSparrow Starter you will be able to apply 15 rules free of charge. After a short registration, you will get a license key, allowing you to apply the rules on your projects.&lt;/p&gt;
-&lt;p&gt; &lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;Don´t lose time with tedious and repetitive work - let jSparrow do it!&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;Documentation: &lt;a href=&quot;https://jsparrow.github.io/&quot; rel=&quot;nofollow&quot;&gt;https://jsparrow.github.io/&lt;/a&gt;&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;LATEST VERSION:&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;jSparrow Release 3.1.0&lt;/p&gt;
-&lt;p&gt;jSparrow Maven PlugIn 1.0.0&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;OUR RELEASE POLICY IS AS FOLLOWS:&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt; &lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Monthly releases&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Every 3rd Tuesday we will release at least one new rule.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Quaterly relaeses&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;All three months we will release at least three rules and upgrade to the latest Eclipse version.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Weekly Bugfix &lt;/strong&gt;releases&lt;/p&gt;
-&lt;p&gt;Bugfixes will be released each Tuesday&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Hotfix Releases &lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Hotfix Releases can be deployed any time (hopefully not necessary)&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
-     <pubDate>Tue, 20 Jun 2017 15:34:11 +0000</pubDate>
- <dc:creator>mprehofer</dc:creator>
- <guid isPermaLink="false">3503691 at http://marketplace.eclipse.org</guid>
- <comments>http://marketplace.eclipse.org/content/jsparrow-automatic-java-refactoring#comments</comments>
   </item>
   </channel>
 </rss>

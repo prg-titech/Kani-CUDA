@@ -110,28 +110,34 @@
                             ((unquote (kernel-translator (expr:member-expr src)))
                              (unquote (kernel-translator (expr:member-label src)))))]
        [(expr:ref? src) (kernel-translator (expr:ref-id src))]
-       [(expr:array-ref? src) (if (expr:member? (expr:array-ref-expr src))
-                                  (list*
-                                   'profiling-access
-                                   (string-append "\"" (number->string (random 100000000))  "\"")
-                                   (kernel-translator (expr:member-label (expr:array-ref-expr src)))
-                                   (kernel-translator (expr:array-ref-offset src))
-                                   (map (lambda (x) (convert-var x)) (string-split vars)))
-                                  (quasiquote
-                                   [(unquote (kernel-translator (expr:array-ref-expr src)))
-                                    (unquote (kernel-translator (expr:array-ref-offset src)))]))]
-       [(expr:call? src) (if
-                          (eq? 'profile (kernel-translator (expr:call-function src)))
-                          (begin
-                            (set! vars (puts (kernel-translator (list-ref (expr:call-arguments src) 0))))
-                            (quasiquote
-                             (profile-vars
-                              (unquote (string-append "\"" (kernel-translator (list-ref (expr:call-arguments src) 0)) "\"")))))
-                          (list*
-                           (kernel-translator (expr:call-function src))
-                           (for/list
-                               ([arg (expr:call-arguments src)])
-                             (kernel-translator arg))))]
+       [(expr:array-ref? src)
+        (if (expr:member? (expr:array-ref-expr src))
+            (list*
+             'profiling-access
+             (string-append "\"" (number->string (random 100000000))  "\"")
+             (kernel-translator (expr:member-label (expr:array-ref-expr src)))
+             (kernel-translator (expr:array-ref-offset src))
+             (map (lambda (x) (convert-var x)) (string-split vars)))
+            (quasiquote
+             [(unquote (kernel-translator (expr:array-ref-expr src)))
+              (unquote (kernel-translator (expr:array-ref-offset src)))]))]
+       [(expr:call? src)
+        (let ([name (kernel-translator (expr:call-function src))])
+          (cond
+            [(eq? '__syncthreads name)
+             '(syncthreads)]
+            [(eq? 'profile name)
+             (let ([lst (kernel-translator (list-ref (expr:call-arguments src) 0))])
+               (set! vars lst)
+               (quasiquote
+                (profile-vars
+                 (unquote
+                  (string-append "\"" lst "\"")))))]
+            [else (list*
+                   name
+                   (for/list
+                       ([arg (expr:call-arguments src)])
+                     (kernel-translator arg)))]))]
        [(expr:postfix? src) (list
                              (kernel-translator (expr:postfix-op src))
                              (kernel-translator (expr:postfix-expr src)))]
@@ -200,9 +206,3 @@
                             (kernel-translator (decl:formal-type src))
                             (kernel-translator (decl:declarator-id (decl:formal-declarator src))))])]
     ))
-
-(pretty-display
- (kernel-translator
-  (list-ref (parse-program "void test(int a, int b){
-int arr[10];}
-") 0)))

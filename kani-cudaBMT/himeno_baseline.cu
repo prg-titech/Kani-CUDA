@@ -1,19 +1,11 @@
 #include<stdio.h>
 #include<sys/time.h>
 
-<<<<<<< HEAD
 #define BLOCKSIZEX 128
 #define BLOCKSIZEY 4
 #define BLOCKSIZE BLOCKSIZEX * BLOCKSIZEY
 #define GRIDSIZEX 4
 #define GRIDSIZEY 64
-=======
-#define BLOCKSIZEX 64
-#define BLOCKSIZEY 16
-#define BLOCKSIZE BLOCKSIZEX * BLOCKSIZEY
-#define GRIDSIZEX 8
-#define GRIDSIZEY 16
->>>>>>> b134838f3a58c4117af74290d6fb85e20a9def9b
 #define GRIDSIZE GRIDSIZEX * GRIDSIZEY
 #define THREAD_NUM BLOCKSIZE * GRIDSIZE
 
@@ -303,7 +295,16 @@ int main(){
 	jacobi<<<grid, block>>>(dev_a0, dev_a1, dev_a2, dev_a3, dev_b0, dev_b1, dev_b2, dev_c0, dev_c1, dev_c2, dev_p, dev_wrk1, dev_wrk2, dev_bnd, NN, mimax, mjmax, mkmax, omega, dev_gosa);
 
 	cudaDeviceSynchronize();
-
+    
+    for(i=0 ; i<mimax ; ++i){
+		for(j=0 ; j<mjmax ; ++j){
+			for(k=0 ; k<mkmax ; ++k){
+				printf("%f ", p[i*mjmax*mkmax+j*mkmax+k]);
+			}
+            printf("\n");
+		}
+        printf("\n");
+    }	
 	cpu1 = second();
 
 	cudaMemcpy(&gosa, dev_gosa, sizeof(float)*THREAD_NUM, cudaMemcpyDeviceToHost);

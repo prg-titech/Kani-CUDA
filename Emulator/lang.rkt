@@ -144,13 +144,6 @@
            (define x (new-vec type))
            (add-env 'x x))
          ...)]
-    ;    [(_ type [x val] ...)
-    ;     #'(begin
-    ;         (begin
-    ;           (define x (new-vec type))
-    ;           (vec-set! x val)
-    ;           (add-env 'x x))
-    ;         ...)]
     ))
 
 (define-syntax (:* stx)
@@ -501,7 +494,6 @@
 
 ;; 
 (define (synth-with-kani-cuda path spec test)
-  
   (define in (open-input-file path))
   (read-line in)
   (define stmt #f)

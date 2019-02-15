@@ -6,6 +6,7 @@ int main(){
         int j = i;
         int k = i;
     };
-    printf("%d",j);
+    int a[5];
+    printf("%d",a+1);
     return 0;
 }

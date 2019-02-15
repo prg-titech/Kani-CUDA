@@ -4,7 +4,7 @@
 
 (provide  grid-dimension grid-dim grid-size block-dimension block-dim
           block-index block-idx block-size mask thread-idx vecfy to-bid
-          tid bid barrier-count mask incl-bc clear-bc get-bc out-file
+          tid bid barrier-count mask incl-bc clear-bc get-bc
           env clear-env add-env profiled-vars set-profiled-vars!
           profile-vars puts cudaDeviceSynchronize)
 
@@ -15,20 +15,17 @@
 
 (define (grid-dim idx) (list-ref (grid-dimension) idx))
 
-;; Return current grid size
 (define (grid-size) (apply * (grid-dimension)))
 
-;; Return current block id
+;; Model of block stracture
 (define block-index (make-parameter '(0)))
 
 (define (block-idx idx) (list-ref (block-index) idx))
 
-;; Model of block stracture
 (define block-dimension (make-parameter '(16)))
 
 (define (block-dim idx) (list-ref (block-dimension) idx))
 
-;; Return current block size 
 (define (block-size) (apply * (block-dimension)))
 
 ;; mask is only internally used  
@@ -40,8 +37,7 @@
     ;(printf "vecfy x = ~a\n" x)
     (cond [(or (integer? x) (boolean? x) (real? x)) (vector->immutable-vector (make-vector (block-size) x))]
           [(vector? x) x]
-          [else (begin (println x)
-                       (raise "vecfy: expected an integer/boolean or a vector"))])))
+          [else (raise "vecfy: expected an integer/boolean or a vector")])))
 
 ;; Convert a block number(integer) to block ID(list of int)
 (define (to-bid i)
@@ -75,8 +71,6 @@
 (define (tid) (for/vector ([i (block-size)]) i))
 
 (define bid (make-parameter 0))
-
-(define out-file (make-parameter 0))
 
 (define barrier-counter 0)
 

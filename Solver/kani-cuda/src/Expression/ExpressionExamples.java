@@ -175,7 +175,7 @@ public class ExpressionExamples {
 	
 	@Test
 	public void testSynth() {
-		File profile = new File("/Users/akira/masuhara-lab/Kani-CUDA/Translator/profiles");	
+		File profile = new File("/Users/akira/masuhara-lab/Kani-CUDA/Synthesizer/profiles");	
 		Synthesizer psysha = new Synthesizer();		
 		psysha.synthesizeFrom(profile);
 	}

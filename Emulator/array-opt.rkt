@@ -49,7 +49,8 @@
 ;; Structure of array
 ;; TODO? type check
 (struct array
-  ([contents #:mutable]  ;vector of element
+  ([pointer #:mutable]
+   [contents #:mutable]  ;vector of element
    [dimension #:mutable]);list of int
   #:property prop:procedure
   (lambda (arr . ixs)
@@ -65,7 +66,7 @@
 
 ;; Make a new array
 (define (make-array vec . dim)
-  (define arr (array vec dim))
+  (define arr (array 0 vec dim))
   (memory-allocate! arr)
   arr)
 
@@ -85,21 +86,21 @@
 
 (define (make-shared-array type . dim)
   (cond
-    [(eq? (length dim) 1) (let ([elem (list-ref dim 0)])
-                            (if (check-const elem)
-                                (make-shared-array-content type (list (vector-ref elem 0)))
-                                (make-shared-array-content type dim)))]
-    [else (let ([elem1 (list-ref dim 0)]
-                [elem2 (list-ref dim 1)])
-            (if (check-const elem1)
-                (if (check-const elem2)
-                    (make-shared-array-content type (list (vector-ref elem1 0) (vector-ref elem2 0)))
-                    (make-shared-array-content type (list (vector-ref elem1 0) elem2)))
-                (if (check-const elem2)
-                    (make-shared-array-content type (list elem1 (vector-ref elem2 0)))
-                    (make-shared-array-content type (list elem1 elem2)))))]))
-
-
+    [(eq? (length dim) 1)
+     (let ([elem (list-ref dim 0)])
+       (if (check-const elem)
+           (make-shared-array-content type (list (vector-ref elem 0)))
+           (make-shared-array-content type dim)))]
+    [else
+     (let ([elem1 (list-ref dim 0)]
+           [elem2 (list-ref dim 1)])
+       (if (check-const elem1)
+           (if (check-const elem2)
+               (make-shared-array-content type (list (vector-ref elem1 0) (vector-ref elem2 0)))
+               (make-shared-array-content type (list (vector-ref elem1 0) elem2)))
+           (if (check-const elem2)
+               (make-shared-array-content type (list elem1 (vector-ref elem2 0)))
+               (make-shared-array-content type (list elem1 elem2)))))]))
 
 ;; Make a symbolic vector with length ``n'' and type ``type''
 (define (new-symbolic-vector n type)
@@ -111,6 +112,7 @@
 (define (new-symbolic-array type dim)
   (let ([n (apply * dim)])
     (array
+     0
      (for/vector ([i (in-range n)])
        ;(define-symbolic* x type)
        ;(make-element x))
@@ -160,12 +162,9 @@
                [write (element-write elem)]
                [read/B (element-read/B elem)]
                [write/B (element-write/B elem)])
-          ;(print read)
-          ;(newline)
-          ;(print write)
-          ;(newline)
           (if race-check?
-              (if (and (or (eq? write tid) (eq? write #f)) (or (eq? write/B bid) (eq? write/B #f)))
+              (if (and (or (eq? write tid) (eq? write #f))
+                       (or (eq? write/B bid) (eq? write/B #f)))
                   (begin
                     (set-element-read/B! elem bid)
                     (cond

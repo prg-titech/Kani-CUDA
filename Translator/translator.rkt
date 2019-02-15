@@ -1,5 +1,7 @@
 #lang rosette
 
+(provide translate)
+
 (require "host-translator.rkt"
          "kernel-translator.rkt"
          control
@@ -70,11 +72,11 @@
          (when (not (eof-object? line))
            (set! line (string-append line "\n"))))
   (close-input-port in)
-  (define out (open-output-file "out.cu" #:exists 'truncate))
+  (define out (open-output-file "out.rkt" #:exists 'truncate))
   ;(pretty-print (string-join (flatten program)))
   (pretty-display "#lang rosette\n" out)
   (pretty-display "(require \"../Emulator/lang.rkt\")" out)
-  (pretty-display "(delete-directory/files \"profiles\")" out)
+  (pretty-display "(delete-directory/files \"profiles\" #:must-exist? #f)" out)
   (pretty-display "(make-directory* \"profiles\")" out)
   (for ([src (parse-program (string-join (flatten program)))])
     ;(println (symbol->string (get-name src)))
@@ -84,5 +86,4 @@
   (pretty-display "(main)" out)
   (close-output-port out))
 
-(translate "/Users/akira/masuhara-lab/Kani-CUDA/Translator/himeno_baseline.cu")
 ;(translate "/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/Diffusion2d/diffusion2d_temporal_blocking.cu")

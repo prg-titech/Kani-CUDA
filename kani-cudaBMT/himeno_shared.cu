@@ -274,7 +274,16 @@ int main(){
 	jacobi<<<grid, block, sizeof(float) * 3 * BLOCKSIZE>>>(dev_a0, dev_a1, dev_a2, dev_a3, dev_b0, dev_b1, dev_b2, dev_c0, dev_c1, dev_c2, dev_p, dev_wrk1, dev_wrk2, dev_bnd, NN, mimax, mjmax, mkmax, omega, dev_gosa);
 
 	cudaDeviceSynchronize();
-
+    
+    for(i=0 ; i<mimax ; ++i){
+		for(j=0 ; j<mjmax ; ++j){
+			for(k=0 ; k<mkmax ; ++k){
+				printf("%f ", p[i*mjmax*mkmax+j*mkmax+k]);
+			}
+            printf("\n");
+		}
+        printf("\n");
+    }	
 	cpu1 = second();
 
 	cudaMemcpy(&gosa, dev_gosa, sizeof(float)*THREAD_NUM, cudaMemcpyDeviceToHost);

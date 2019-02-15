@@ -1,19 +1,19 @@
 #include<stdio.h>
 #include<sys/time.h>
 
-#define BLOCKSIZEX 4
-#define BLOCKSIZEY 4
+#define BLOCKSIZEX 64
+#define BLOCKSIZEY 8
 #define BLOCKSIZE BLOCKSIZEX * BLOCKSIZEY
-#define GRIDSIZEX 2
-#define GRIDSIZEY 2
+#define GRIDSIZEX 8
+#define GRIDSIZEY 64
 #define GRIDSIZE GRIDSIZEX * GRIDSIZEY
 #define THREAD_NUM BLOCKSIZE * GRIDSIZE
 
-#define MIMAX	3
+#define MIMAX	256
 #define MJMAX	GRIDSIZEY * BLOCKSIZEY + 2
 #define MKMAX	GRIDSIZEX * BLOCKSIZEX + 2
 
-#define NN 3
+#define NN 5
 
 /*static float p[MIMAX][MJMAX][MKMAX];
 static float a[MIMAX][MJMAX][MKMAX][4];
@@ -92,7 +92,6 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 	profile("threadIdx.x threadIdx.y blockDim.x blockDim.y csb SIZE i j");
 	int i, j, k, n, xy, c, csb;
 	float s0, ss, temp;
-	//const int size = (imax-1)/(imax-1);
 	k = threadIdx.x + blockDim.x * blockIdx.x + 1;
 	j = threadIdx.y + blockDim.y * blockIdx.y + 1;
 	const int tid = (k-1) + (j-1) * (kmax-2);
@@ -105,24 +104,25 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 		temp=0.0;
 		for(i=1 ; i<imax-1 ; ++i){
 			sb[csb] = p[c];
-			syncthreads();
-      //printf("shared: %f\n", sb[csb]);
-      //syncthreads();
+			__syncthreads();
 			s0 = a0[i*jmax*kmax+j*kmax+k] * p[(i+1)*jmax*kmax+j*kmax+k]
 			+ a1[i*jmax*kmax+j*kmax+k] * __opt__.p[i*jmax*kmax+(j+1)*kmax+k]
-			+ a2[i*jmax*kmax+j*kmax+k] * __opt__.p[i*jmax*kmax+j*kmax+(k+1)]
+			+ a2[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+j*kmax+(k+1)]
 			+ b0[i*jmax*kmax+j*kmax+k] * ( 
 				p[(i+1)*jmax*kmax+(j+1)*kmax+k] 
 				- p[(i+1)*jmax*kmax+(j-1)*kmax+k]
 				- p[(i-1)*jmax*kmax+(j+1)*kmax+k] 
 				+ p[(i-1)*jmax*kmax+(j-1)*kmax+k] )
 			+ b1[i*jmax*kmax+j*kmax+k] *(
-				__opt__.p[i*jmax*kmax+(j+1)*kmax+(k+1)]
-				- __opt__.p[i*jmax*kmax+(j-1)*kmax+(k+1)]
-				- __opt__.p[i*jmax*kmax+(j-1)*kmax+(k-1)]
-				+ __opt__.p[i*jmax*kmax+(j+1)*kmax+(k-1)])
-			+ b2[i*jmax*kmax+j*kmax+k] * ( p[(i+1)*jmax*kmax+j*kmax+(k+1)] - p[(i-1)*jmax*kmax+j*kmax+(k+1)]
-				- p[(i+1)*jmax*kmax+j*kmax+(k-1)] + p[(i-1)*jmax*kmax+j*kmax+(k-1)] )
+				p[i*jmax*kmax+(j+1)*kmax+(k+1)]
+				- p[i*jmax*kmax+(j-1)*kmax+(k+1)]
+				- p[i*jmax*kmax+(j-1)*kmax+(k-1)]
+				+ p[i*jmax*kmax+(j+1)*kmax+(k-1)])
+			+ b2[i*jmax*kmax+j*kmax+k] * ( 
+				p[(i+1)*jmax*kmax+j*kmax+(k+1)] 
+				- p[(i-1)*jmax*kmax+j*kmax+(k+1)]
+				- p[(i+1)*jmax*kmax+j*kmax+(k-1)] 
+				+ p[(i-1)*jmax*kmax+j*kmax+(k-1)] )
 			+ c0[i*jmax*kmax+j*kmax+k] * p[(i-1)*jmax*kmax+j*kmax+k]
 			+ c1[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+(j-1)*kmax+k]
 			+ c2[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+j*kmax+(k-1)]
@@ -135,14 +135,12 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 			wrk2[i*jmax*kmax+j*kmax+k] = p[i*jmax*kmax+j*kmax+k] + omega * ss;
 			c += xy;
 		}
-		syncthreads();
+		__syncthreads();
 		for(i=1 ; i<imax-1 ; ++i){
 			p[i*jmax*kmax+j*kmax+k] = wrk2[i*jmax*kmax+j*kmax+k];
 		}
   	} /* end n loop */
-		syncthreads();
-  //printf("%d: p[%d] = %d\n", tid,i*jmax*kmax+j*kmax+k,p[i*jmax*kmax+j*kmax+k]);
-  //printf("shared: %f", sb[csb]);
+		__syncthreads();
 		gosa[tid] = temp;
 	}
 

@@ -8,6 +8,20 @@
 	<description>Planet Eclipse - http://planeteclipse.org/planet/</description>
 
 <item>
+	<title>InfoQ Eclipse feed: Presentation: Getting Super Productive with Spring Tools 4 and Spring Boot 2</title>
+	<guid isPermaLink="true">https://www.infoq.com/presentations/spring-tools-5-boot-2?utm_campaign=infoq_content&amp;utm_source=infoq&amp;utm_medium=feed&amp;utm_term=Eclipse</guid>
+	<link>https://www.infoq.com/presentations/spring-tools-5-boot-2?utm_campaign=infoq_content&amp;utm_source=infoq&amp;utm_medium=feed&amp;utm_term=Eclipse</link>
+	<description>&lt;img src=&quot;https://res.infoq.com/presentations/spring-tools-5-boot-2/en/headerimage/Alexbig-1550020694881.JPG&quot; /&gt;&lt;p&gt;Alex Boyko, Martin Lippert show how to use the Spring Tools 4 in Eclipse and Visual Studio Code when working on Spring Boot 2 applications.&lt;/p&gt; &lt;i&gt;By Alex Boyko, Martin Lippert&lt;/i&gt;</description>
+	<pubDate>Wed, 13 Feb 2019 04:14:00 +0000</pubDate>
+</item>
+<item>
+	<title>EclipseCon Europe 2018: Save the dates for 2019!</title>
+	<guid isPermaLink="false">https://www.eclipsecon.org/news/1772 at https://www.eclipsecon.org</guid>
+	<link>https://www.eclipsecon.org/europe2018/news/save-dates-2019</link>
+	<description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;Mark you calendar for the next edition of EclipseCon Europe / OSGi Community Event.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+	<pubDate>Tue, 12 Feb 2019 17:07:22 +0000</pubDate>
+</item>
+<item>
 	<title>Eclipse Announcements: Participate in the 2019 IoT Developer Survey!</title>
 	<guid isPermaLink="true">http://feedproxy.google.com/~r/eclipse/fnews/~3/PQGqQX0ryoE/participate-2019-iot-developer-survey</guid>
 	<link>http://feedproxy.google.com/~r/eclipse/fnews/~3/PQGqQX0ryoE/participate-2019-iot-developer-survey</link>
@@ -367,30 +381,6 @@ results in a lowering of the learning curve. &lt;/p&gt;
 
 &lt;p&gt;So, what do you think of our typical users for Papyrus UML Light?&lt;/p&gt;</description>
 	<pubDate>Wed, 16 Jan 2019 20:45:46 +0000</pubDate>
-</item>
-<item>
-	<title>PapyrusUML: Papyrus UML Light update</title>
-	<guid isPermaLink="false">http://papyrusuml.wordpress.com/?p=1133</guid>
-	<link>https://papyrusuml.wordpress.com/2019/01/14/papyrus-uml-light-update/</link>
-	<description>&lt;p&gt;First, I would like to which a happy new year that will keep you all in good health (and modeling with Moi!)!&lt;/p&gt;
-&lt;p&gt;In a previous posting, I mentioned a new variant of Papyrus (me), Well, Papyrus UML Light has progressed progressing  well since then!&lt;/p&gt;
-&lt;p&gt;This is what happened thus far:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Requirements have been defined, including the subset of UML that is being implemented (which involved many people … and voting…)&lt;/li&gt;
-&lt;li&gt;Personae have been defined for our three principal users (Nicole, Steve, and Brisha and their current names).&lt;/li&gt;
-&lt;li&gt;There is a logo:  &lt;a href=&quot;https://papyrusuml.files.wordpress.com/2019/01/umllight64.png&quot;&gt;&lt;img alt=&quot;&quot; class=&quot;alignnone size-full wp-image-1135&quot; src=&quot;https://papyrusuml.files.wordpress.com/2019/01/umllight64.png?w=604&quot; /&gt; &lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;There have been three internal development releases thus far.&lt;/li&gt;
-&lt;li&gt;The “Getting Started” tutorial is progressing.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;As usual, I’ll try to keep you up-to-date!&lt;/p&gt;</description>
-	<pubDate>Mon, 14 Jan 2019 08:15:58 +0000</pubDate>
-</item>
-<item>
-	<title>Eclipse Announcements: Tradista Joins Eclipse Foundation</title>
-	<guid isPermaLink="true">http://feedproxy.google.com/~r/eclipse/fnews/~3/jp4ffjHeg8Q/Tradista-Joins-Eclipse-Foundation.html</guid>
-	<link>http://feedproxy.google.com/~r/eclipse/fnews/~3/jp4ffjHeg8Q/Tradista-Joins-Eclipse-Foundation.html</link>
-	<description>Tradista will contribute to the Jakarta EE project, bringing its long experience in the Java EE platform applied to the financial sector.&lt;img alt=&quot;&quot; height=&quot;1&quot; src=&quot;http://feeds.feedburner.com/~r/eclipse/fnews/~4/jp4ffjHeg8Q&quot; width=&quot;1&quot; /&gt;</description>
-	<pubDate>Thu, 10 Jan 2019 13:35:00 +0000</pubDate>
 </item>
 
 </channel>
