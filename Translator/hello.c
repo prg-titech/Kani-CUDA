@@ -1,12 +1,7 @@
 #include<stdio.h>
 
 int main(){
-    int j = 0;
-    for(int i = 0; i<10; i++){
-        int j = i;
-        int k = i;
-    };
-    int a[5];
-    printf("%d",a+1);
+    int j = (1>0) ? 1 : 2 + (1>0) ? 3 : 4;
+    printf("%d",j);
     return 0;
 }

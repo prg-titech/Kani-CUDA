@@ -61,7 +61,6 @@ public class Synthesizer {
 	}
 	
 	public void input(File profile){
-		// file名でマッチングするとなんかおかしなことが起こった
 		File vars = new File(profile, "vars");
 		
 		for(File file : profile.listFiles()){
@@ -274,7 +273,7 @@ public class Synthesizer {
 		return new None();
 	}
 	
-	public void synthMemExp(File profile){				
+	public String synthMemExp(File profile){				
 		long start;
 		long end;
 		BoolExpression bnone = new BNone();
@@ -282,8 +281,10 @@ public class Synthesizer {
 		BoolExpression bexp = bnone;
 		Expression exp = none;
 		this.inputData(profile);
+		
 		start = System.currentTimeMillis();
 		bexp = this.synthesizeBool();
+		
 		if(!bexp.equals(bnone)){
 			exp = this.synthesizeArith(3);
 		}
@@ -294,17 +295,32 @@ public class Synthesizer {
 			System.out.println("Not synthesized from " + profile.toString());
 		} else {
 			System.out.println("Expression synthesized from " + profile.toString() + ":");
-			bexp.print();
-			exp.print();
+			return bexp.toStringExp() + " ? " + exp.toStringExp() + " : ";
 		}
+		
 		end = System.currentTimeMillis();
 		System.out.println("time: " + (end - start) + "ms");
+		return "";
 	}	
 	
-	public void synthesizeFrom(File profiles){				
+	public void synthesizeFrom(File profiles){	
+		long start = System.currentTimeMillis();
+		
+		File fr = new File("/Users/akira/masuhara-lab/Kani-CUDA/Synthesizer/__ir.cu");
+		ExpressionWriter writer = new ExpressionWriter();
+		writer.input(fr);
+		
 		this.input(profiles);
 		for(File f : this.profiles){
-			this.synthMemExp(f);
+			String exp = this.synthMemExp(f);
+			writer.assignExp(exp, f.getName());	
 		}
+		
+		long end = System.currentTimeMillis();		
+		
+		System.out.println(writer.getCode());
+		System.out.println("Synthesis time: " + (end - start) + "ms");
+		
+		writer.output();
 	}
 }

@@ -252,7 +252,7 @@
   val)
 
 (define (profiling-access suffix arr ixs . arg)
-  (define path (string-append "profiles/profile" suffix))
+  (define path (string-append "profiles/" suffix))
   (define out (open-output-file path #:exists 'append))
   (define val
     (for*/all ([ixs ixs]

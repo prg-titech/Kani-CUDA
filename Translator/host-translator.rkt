@@ -167,12 +167,3 @@
                                         (host-translator (decl:declarator-id (decl:formal-declarator src))))])]
     ))
 
-(pretty-display
- (host-translator
-  (list-ref (parse-program "void test(int a, int b){
-                                                    for(int i = 0; i<10; i++){
-                                                            for(int j = 0; j<10; j++){
-                                                                    int k = 0;
-                                                                    i = a + b;}}}
-                                                                    ") 0)))
-

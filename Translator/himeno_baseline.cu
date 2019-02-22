@@ -1,19 +1,19 @@
 #include<stdio.h>
 #include<sys/time.h>
 
-#define BLOCKSIZEX 64
-#define BLOCKSIZEY 8
+#define BLOCKSIZEX 5
+#define BLOCKSIZEY 4
 #define BLOCKSIZE BLOCKSIZEX * BLOCKSIZEY
-#define GRIDSIZEX 8
-#define GRIDSIZEY 64
+#define GRIDSIZEX 2
+#define GRIDSIZEY 3
 #define GRIDSIZE GRIDSIZEX * GRIDSIZEY
 #define THREAD_NUM BLOCKSIZE * GRIDSIZE
 
-#define MIMAX	256
+#define MIMAX	4
 #define MJMAX	GRIDSIZEY * BLOCKSIZEY + 2
 #define MKMAX	GRIDSIZEX * BLOCKSIZEX + 2
 
-#define NN 5
+#define NN 3
 
 /*static float p[MIMAX][MJMAX][MKMAX];
 static float a[MIMAX][MJMAX][MKMAX][4];
@@ -107,17 +107,17 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 			__syncthreads();
 			s0 = a0[i*jmax*kmax+j*kmax+k] * p[(i+1)*jmax*kmax+j*kmax+k]
 			+ a1[i*jmax*kmax+j*kmax+k] * __opt__.p[i*jmax*kmax+(j+1)*kmax+k]
-			+ a2[i*jmax*kmax+j*kmax+k] * p[i*jmax*kmax+j*kmax+(k+1)]
+			+ a2[i*jmax*kmax+j*kmax+k] * __opt__.p[i*jmax*kmax+j*kmax+(k+1)]
 			+ b0[i*jmax*kmax+j*kmax+k] * ( 
 				p[(i+1)*jmax*kmax+(j+1)*kmax+k] 
 				- p[(i+1)*jmax*kmax+(j-1)*kmax+k]
 				- p[(i-1)*jmax*kmax+(j+1)*kmax+k] 
 				+ p[(i-1)*jmax*kmax+(j-1)*kmax+k] )
 			+ b1[i*jmax*kmax+j*kmax+k] *(
-				p[i*jmax*kmax+(j+1)*kmax+(k+1)]
-				- p[i*jmax*kmax+(j-1)*kmax+(k+1)]
-				- p[i*jmax*kmax+(j-1)*kmax+(k-1)]
-				+ p[i*jmax*kmax+(j+1)*kmax+(k-1)])
+				__opt__.p[i*jmax*kmax+(j+1)*kmax+(k+1)]
+				- __opt__.p[i*jmax*kmax+(j-1)*kmax+(k+1)]
+				- __opt__.p[i*jmax*kmax+(j-1)*kmax+(k-1)]
+				+ __opt__.p[i*jmax*kmax+(j+1)*kmax+(k-1)])
 			+ b2[i*jmax*kmax+j*kmax+k] * ( 
 				p[(i+1)*jmax*kmax+j*kmax+(k+1)] 
 				- p[(i-1)*jmax*kmax+j*kmax+(k+1)]

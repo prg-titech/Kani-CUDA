@@ -23,6 +23,15 @@
      name
      (string-append word name))))
 
+(define (assign-opt-id line)
+  (if
+   (string-contains? line "__opt__")
+   (string-replace
+    line
+    "__opt__"
+    (string-append "__opt__" (number->string (random 1000000))))
+   line))
+
 (define (convert-line line)
   (cond
     [(string-contains? line "__global__")
@@ -42,6 +51,17 @@
     [(desired-line? line) line]
     [else ""]))
 
+(define (assign-opt-id-file file)
+  (define in (open-input-file file))
+  (define ir (open-output-file "__ir.cu" #:exists 'truncate))
+  (define line (read-line in 'any))
+  (while (not (eof-object? line))
+         (fprintf ir (assign-opt-id line))
+         (fprintf ir "\n")
+         (set! line (read-line in 'any)))
+  (close-input-port in)
+  (close-output-port ir))
+
 (define (cpp file)
   (define in (open-input-file file))
   (define cp (open-output-file "__cp.cu" #:exists 'truncate))
@@ -57,10 +77,11 @@
   (close-input-port in)
   (close-output-port cp)
   (system* "/usr/bin/cpp" "__cp.cu" "__dst.cu"))
-  
 
 (define (translate file)
-  (cpp file)
+  (assign-opt-id-file file)
+  (cpp "__ir.cu")
+  
   (define in (open-input-file "__dst.cu"))
   (define line (read-line in))
   (when (not (eof-object? line))
@@ -72,18 +93,15 @@
          (when (not (eof-object? line))
            (set! line (string-append line "\n"))))
   (close-input-port in)
+  
   (define out (open-output-file "out.rkt" #:exists 'truncate))
-  ;(pretty-print (string-join (flatten program)))
   (pretty-display "#lang rosette\n" out)
   (pretty-display "(require \"../Emulator/lang.rkt\")" out)
   (pretty-display "(delete-directory/files \"profiles\" #:must-exist? #f)" out)
   (pretty-display "(make-directory* \"profiles\")" out)
   (for ([src (parse-program (string-join (flatten program)))])
-    ;(println (symbol->string (get-name src)))
     (if (string-contains? (symbol->string (get-name src)) "__global__")
         (pretty-display (kernel-translator src) out)
         (pretty-display (host-translator src) out)))
   (pretty-display "(main)" out)
   (close-output-port out))
-
-;(translate "/Users/akira/masuhara-lab/Kani-CUDA/Emulator/Examples/Diffusion2d/diffusion2d_temporal_blocking.cu")

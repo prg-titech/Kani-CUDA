@@ -114,7 +114,13 @@
         (if (expr:member? (expr:array-ref-expr src))
             (list*
              'profiling-access
-             (string-append "\"" (number->string (random 100000000))  "\"")
+             (string-append
+              "\""
+              (symbol->string
+               (kernel-translator
+                (expr:member-expr
+                 (expr:array-ref-expr src))))
+              "\"")
              (kernel-translator (expr:member-label (expr:array-ref-expr src)))
              (kernel-translator (expr:array-ref-offset src))
              (map (lambda (x) (convert-var x)) (string-split vars)))

@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -175,7 +176,10 @@ public class ExpressionExamples {
 	
 	@Test
 	public void testSynth() {
+		File current_dir = new File(".");
+		System.out.println(current_dir.getAbsolutePath());
 		File profile = new File("/Users/akira/masuhara-lab/Kani-CUDA/Synthesizer/profiles");	
+		System.out.println();
 		Synthesizer psysha = new Synthesizer();		
 		psysha.synthesizeFrom(profile);
 	}

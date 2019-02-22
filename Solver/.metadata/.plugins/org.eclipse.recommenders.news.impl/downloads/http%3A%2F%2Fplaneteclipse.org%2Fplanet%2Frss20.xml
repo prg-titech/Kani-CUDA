@@ -8,10 +8,140 @@
 	<description>Planet Eclipse - http://planeteclipse.org/planet/</description>
 
 <item>
+	<title>Jens Reimann: Integrating Eclipse IoT</title>
+	<guid isPermaLink="false">https://dentrassi.de/?p=4107</guid>
+	<link>https://dentrassi.de/2019/02/20/integrating-eclipse-iot/</link>
+	<description>&lt;p&gt;The Eclipse IoT project is a top level project at the Eclipse Foundation. It currently consists of around 40 projects, which focus on different aspects of IoT. This may either be complete solutions, like the &lt;a href=&quot;https://www.eclipse.org/smarthome/&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;Eclipse SmartHome&lt;/a&gt; project, the PLC runtime and IDE, &lt;a href=&quot;https://www.eclipse.org/4diac/&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;Eclipse 4DIAC&lt;/a&gt;. Or it may be building block projects, like the MQTT libraries of &lt;a href=&quot;https://www.eclipse.org/paho/&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;Eclipse Paho&lt;/a&gt;, or the cloud scale IoT messaging infrastructure of &lt;a href=&quot;https://www.eclipse.org/hono/&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;Eclipse Hono&lt;/a&gt;. I can only encourage you to have a look at the &lt;a href=&quot;https://iot.eclipse.org/projects/&quot;&gt;list of projects&lt;/a&gt; and do a bit of exploring.&lt;/p&gt;
+
+
+
+&lt;p&gt;And while it is great to a have a diverse set of projects, covering &lt;a href=&quot;https://iot.eclipse.org/white-papers/iot-architectures/&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;the three tiers of IoT &lt;/a&gt;(Device, Gateway and Cloud), it can be a challenge to explain people, how all of those projects can create something, which is bigger than the individual projects. Because having 40 different IoT projects is great, but imagine the possibilities of having a whole IoT ecosystem of projects. Mixing and matching, building your IoT solution as you see fit.&lt;/p&gt;
+
+
+
+&lt;span id=&quot;more-4107&quot;&gt;&lt;/span&gt;
+
+
+
+&lt;h3&gt;IoT means different things to different people&lt;/h3&gt;
+
+
+
+&lt;p&gt;Everyone sees something different in the “Internet of Things”. Looking at the introduction on Wikipedia, you may understand why:&lt;/p&gt;
+
+
+
+&lt;blockquote class=&quot;wp-block-quote&quot;&gt;&lt;p&gt;The Internet of things (IoT) is the network of devices such as vehicles, and home appliances that contain electronics, software, sensors, actuators, and connectivity which allows these things to connect, interact and exchange data&lt;/p&gt;&lt;cite&gt;Wikipedia – “Internet of Things”&lt;/cite&gt;&lt;/blockquote&gt;
+
+
+
+&lt;p&gt;While it is absolutely valid, it is also rather vague and covers quite a few use cases. This is also being reflected by the different projects of Eclipse IoT. Different projects cover different areas, sometimes they overlap, but sometimes they don’t. Sometimes to follow similar principles, and sometimes they don’t. Most people are caught up in their daily work, contributing to the projects you focus on. But it might be beneficial for everyone, to look a bit over the fence and try to establish a common ground, creating a more integrated Eclipse IoT experience&lt;/p&gt;
+
+
+
+&lt;h3&gt;Let’s draw a map&lt;/h3&gt;
+
+
+
+&lt;p&gt;One of the biggest problems, and not only when you are a newcomer to Eclipse IoT, is to understand what is already there, and how it works together. Because, yes it does work together! Finding out “how” can however be challenging. Many projects already have some kind of documentation on how to set up project X with project Y. In most cases such information stored in the project’s Git repository, some blog post or only lives in a forum or mailing list.&lt;/p&gt;
+
+
+
+&lt;p&gt;So we tried to find a format on how to bring this all together, and also motivate projects to actively contribute to that format. A single person cannot know and understand how all those different projects work together, but the committers on each project know their projects and existing integration points best. And they can also easily point you to the necessary documentation. The result, that resonated quite well with people is a simple, interactive map of the integrated projects:&lt;/p&gt;
+
+
+
+&lt;figure class=&quot;wp-block-image is-resized&quot;&gt;&lt;a href=&quot;https://ctron.github.io/eclipse-iot-integration-map/&quot; rel=&quot;&quot; target=&quot;_blank&quot;&gt;&lt;img alt=&quot;&quot; class=&quot;wp-image-4121&quot; height=&quot;647&quot; src=&quot;https://dentrassi.de/wp-content/uploads/Selection_583.png&quot; width=&quot;824&quot; /&gt;&lt;/a&gt;Eclipse IoT integration map – &lt;a href=&quot;https://ctron.github.io/eclipse-iot-integration-map/&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;https://ctron.github.io/eclipse-iot-integration-map/&lt;/a&gt;&lt;/figure&gt;
+
+
+
+&lt;p&gt;This map represents a condensed view on the current state of &lt;a href=&quot;https://ctron.github.io/eclipse-iot-integration-map/&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;Eclipse IoT integration&lt;/a&gt;, to the best of my knowledge. But please fix that latter part, by using the “&lt;a href=&quot;https://github.com/ctron/eclipse-iot-integration-map&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;Fork me!&lt;/a&gt;” button. Adding a new project to that map is only one pull request away. And if you are new to Eclipse IoT, then go ahead and explore the map.&lt;/p&gt;
+
+
+
+&lt;h3&gt;Get started quickly&lt;/h3&gt;
+
+
+
+&lt;p&gt;Getting started still is hard. Yes, most projects do have some kind of “quick start” tutorial, which gets you started within a few minutes. However, the more components and projects you add, the more complex and time consuming it gets. Mostly because you need to figure out the integration part yourself:&lt;/p&gt;
+
+
+
+&lt;blockquote class=&quot;wp-block-quote&quot;&gt;&lt;p&gt;Getting us started with Eclipse IoT took us four months. On the other hand we don’t want to reinvent the wheel, especially when it comes to a complex piece of infrastructure like an IoT platform. Our target market requires being able to run on-premise, ruling out the majority of IoT platforms offered in the cloud. Using and actively participating in an open source IoT platform and exposing open API’s to our customers for integrating the IoT platform aligns perfectly with our vision.&lt;/p&gt;&lt;cite&gt;Bob Claerhout – &lt;a href=&quot;http://www.aloxy.io/&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;Aloxy&lt;/a&gt;&lt;/cite&gt;&lt;/blockquote&gt;
+
+
+
+&lt;p&gt;I was really glad that I joined the &lt;a href=&quot;https://wiki.eclipse.org/IoT/M2MIWG/Weekly_call_minutes&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;bi-weekly Eclipse IoT community call&lt;/a&gt; that day. Because hearing that feedback, from someone who just started to look into the ecosystem, confirmed two things: Eclipse IoT can be a pretty valuable asset for the IoT solution you are building. But I think we should make it way easier to consume those projects, or at least to get people started quicker. Just a little bit later, a first, small PR from Bob landed in the Eclipse Hono project, proving that the open source approach works just fine.&lt;/p&gt;
+
+
+
+&lt;p&gt;But not everyone is that persistent and keeps trying that hard. What we need is good starting point, a super-opinionated deployment. Showing the basics of each of the projects, in some kind of integrated deployment. You will never take this out into production, but it should help you to get started, and allow you to explore what is already there. See how it works, let you play around with a running instance of the components you chose to deploy.&lt;/p&gt;
+
+
+
+&lt;h3&gt;We are close&lt;/h3&gt;
+
+
+
+&lt;p&gt;And actually we are pretty close to that target. It just needs a bit of polish, and we have a nice starting point. Over the last year or so, we have built a kind of “example”, “demo setup”, whatever you will call it. It all started with a simple deployment of Eclipe Hono, including an IoT gateway simulator and a “Demo Gauge”, which acts as a web frontend, showing the simulated data in a web browser.&lt;/p&gt;
+
+
+
+&lt;p&gt;Over the time we extended this and now have an example of telemetry data ingestion, using &lt;a href=&quot;https://www.eclipse.org/kura/&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;Eclipse Kura&lt;/a&gt; as an IoT gateway, connecting to &lt;a href=&quot;https://eclipse.org/hono/&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;Eclipse Hono&lt;/a&gt; and &lt;a href=&quot;http://enmasse.io/&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;EnMasse&lt;/a&gt; as the IoT messaging layer. Pushing data via &lt;a href=&quot;https://camel.apache.org/&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;Apache Camel&lt;/a&gt; to &lt;a href=&quot;https://kafka.apache.org/&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;Apache Kafka&lt;/a&gt;, and then running the “&lt;a href=&quot;https://github.com/ctron/hono-example-demo-gauge&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;Demo Gauge&lt;/a&gt;” application to show the data. Alongside we deploy &lt;a href=&quot;https://www.eclipse.org/che/&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;Eclipse Che&lt;/a&gt;, to show how you can start developing on the same cloud infrastructure that the IoT stack is deployed to. All of that is running on Kubernetes based &lt;a href=&quot;https://www.okd.io/&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;OKD&lt;/a&gt;, using a source-to-image, devops style deployment model.&lt;/p&gt;
+
+
+
+&lt;p&gt;Like the integration map, it is right here on GitHub: &lt;a href=&quot;https://github.com/redhat-iot/iot-cloud-stack-ece2018&quot;&gt;https://github.com/redhat-iot/iot-cloud-stack-ece2018&lt;/a&gt;. A hand full of people already contributes to that effort over time. But, compared to the integration map, this “Tutorial” repository needs a bit of cleanup. And instead of running through it sequentially, it might be better to approach this from a feature based perspective. Deploying a core infrastructure, and then allowing for a few choices, of what you would like to deploy in addition.&lt;/p&gt;
+
+
+
+&lt;h3&gt;Gathering recipes&lt;/h3&gt;
+
+
+
+&lt;p&gt;So let’s simply start with a fresh repository. Name it “&lt;a href=&quot;https://github.com/ctron/eclipse-iot-recipes&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;Eclipse IoT recipes&lt;/a&gt;“, for the time being, and re-organize the content a little bit: &lt;a href=&quot;https://github.com/ctron/eclipse-iot-recipes&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;https://github.com/ctron/eclipse-iot-recipes&lt;/a&gt; … that wasn’t too difficult &lt;img alt=&quot;🙂&quot; class=&quot;wp-smiley&quot; src=&quot;https://s.w.org/images/core/emoji/11/72x72/1f642.png&quot; style=&quot;height: 1em;&quot; /&gt;&lt;/p&gt;
+
+
+
+&lt;p&gt;The goal should be, that within a few hours, you have a system up and running. A system which allows you to play at least with the basics. And everyone who would like to add something, can easily do that with a PR. And “adding” might also be to provide an alternative path. Replace the IoT gateway, replace the messaging layer, … whatever you have in mind.&lt;/p&gt;
+
+
+
+&lt;p&gt;I still think it is helpful to have some manual steps, with a little bit of explanation, rather than a fully automated script. From my experience, you learn a lot more when you do things yourself, rather than watching a script doing things for you.&lt;/p&gt;
+
+
+
+&lt;h3&gt;Play with it … and contribute!&lt;/h3&gt;
+
+
+
+&lt;p&gt;Now it is up to you, to test this, play with it, and contribute. Provide feedback, make suggestions, or fork it and turn it upside down.&lt;/p&gt;
+
+
+
+&lt;p&gt;Or just explore what Eclipse IoT has to offer.&lt;/p&gt;
+&lt;p&gt;The post &lt;a href=&quot;https://dentrassi.de/2019/02/20/integrating-eclipse-iot/&quot; rel=&quot;nofollow&quot;&gt;Integrating Eclipse IoT&lt;/a&gt; appeared first on &lt;a href=&quot;https://dentrassi.de&quot; rel=&quot;nofollow&quot;&gt;ctron's blog&lt;/a&gt;.&lt;/p&gt;</description>
+	<pubDate>Wed, 20 Feb 2019 12:28:51 +0000</pubDate>
+</item>
+<item>
+	<title>InfoQ Eclipse feed: Eclipse Releases GlassFish 5.1 Certified as Compatible with Java EE 8</title>
+	<guid isPermaLink="true">https://www.infoq.com/news/2019/02/eclipse-releases-glassfish-5.1?utm_campaign=infoq_content&amp;utm_source=infoq&amp;utm_medium=feed&amp;utm_term=Eclipse</guid>
+	<link>https://www.infoq.com/news/2019/02/eclipse-releases-glassfish-5.1?utm_campaign=infoq_content&amp;utm_source=infoq&amp;utm_medium=feed&amp;utm_term=Eclipse</link>
+	<description>&lt;img src=&quot;https://www.infoq.com/styles/i/logo_bigger.jpg&quot; /&gt;&lt;p&gt;Eclipse has achieved another GlassFish milestone with the anticipated GA release of version 5.1. A year in the making, this milestone included previous GlassFish milestones such as the full migration of source code and open-sourcing the Java EE TCK (September 2018), the RC1 release of GlassFish 5.1 (October 2018), and the integration of EclipseLink and Eclipse Jersey in GlassFish (December 2018).&lt;/p&gt; &lt;i&gt;By Michael Redlich&lt;/i&gt;</description>
+	<pubDate>Tue, 19 Feb 2019 09:00:00 +0000</pubDate>
+</item>
+<item>
+	<title>Donald Raab: As a matter of Factory — Part 3 (Method Chaining)</title>
+	<guid isPermaLink="false">https://medium.com/p/224217074d31</guid>
+	<link>https://medium.com/@donraab/as-a-matter-of-factory-part-3-method-chaining-224217074d31?source=rss-df39b86e9f04------2</link>
+	<description>&lt;h3&gt;As a matter of Factory — Part 3 (Method Chaining)&lt;/h3&gt;&lt;p&gt;Learn how to add or remove elements from Java collections fluently by leveraging a few lesser known APIs in &lt;a href=&quot;https://github.com/eclipse/eclipse-collections&quot;&gt;Eclipse Collections&lt;/a&gt;.&lt;/p&gt;&lt;figure&gt;&lt;img alt=&quot;&quot; src=&quot;https://cdn-images-1.medium.com/max/1024/1*4L89DAN4fMUKpj8TdwLV7Q.jpeg&quot; /&gt;Let’s take a look under the hood at some lesser known APIs in Eclipse Collections.&lt;/figure&gt;&lt;h3&gt;Static Factories&lt;/h3&gt;&lt;p&gt;In the &lt;a href=&quot;https://medium.com/@donraab/as-a-matter-of-factory-part-1-mutable-75cc2c5d72d9&quot;&gt;first&lt;/a&gt; and &lt;a href=&quot;https://medium.com/@donraab/as-a-matter-of-factory-part-2-immutable-8cb72ff897ee&quot;&gt;second&lt;/a&gt; installment of the “As a matter of Factory” blog series, I described how to use the methods available on the &lt;em&gt;Lists&lt;/em&gt;, &lt;em&gt;Sets&lt;/em&gt;, and &lt;em&gt;Maps&lt;/em&gt; classes to create and initialize mutable and immutable collections. For example, there are static instances of &lt;em&gt;MutableListFactory&lt;/em&gt; and &lt;em&gt;ImmutableListFactory&lt;/em&gt; on the Lists class, stored in the public static final variables named &lt;em&gt;mutable&lt;/em&gt; and &lt;em&gt;immutable&lt;/em&gt;.&lt;/p&gt;&lt;pre&gt;MutableList&amp;lt;String&amp;gt; list = &lt;br /&gt;    Lists.&lt;strong&gt;&lt;em&gt;mutable&lt;/em&gt;&lt;/strong&gt;.with(&quot;1&quot;, &quot;2&quot;, &quot;3&quot;);&lt;/pre&gt;&lt;pre&gt;ImmutableList&amp;lt;String&amp;gt; list = &lt;br /&gt;    Lists.&lt;strong&gt;&lt;em&gt;immutable&lt;/em&gt;&lt;/strong&gt;.with(&quot;1&quot;, &quot;2&quot;, &quot;3&quot;);&lt;/pre&gt;&lt;p&gt;The method &lt;em&gt;with&lt;/em&gt; is overloaded on the &lt;em&gt;MutableListFactory&lt;/em&gt; class. One version of the &lt;em&gt;with&lt;/em&gt; method takes no parameters, and returns an empty &lt;em&gt;MutableList&lt;/em&gt;. The other version of the method takes a &lt;em&gt;varargs&lt;/em&gt; parameter which will construct a &lt;em&gt;MutableList&lt;/em&gt; with the parameters specified.&lt;/p&gt;&lt;h3&gt;Fluent Mutable Interfaces&lt;/h3&gt;&lt;p&gt;The static factory methods are not the only way you can initialize a &lt;em&gt;List&lt;/em&gt;, &lt;em&gt;Set&lt;/em&gt;, &lt;em&gt;Bag&lt;/em&gt; or &lt;em&gt;Map&lt;/em&gt;. There are methods available directly on the mutable interfaces that can be used to mutate collections fluently. Each method will mutate the underlying collection by adding or removing an element and then returning the same collection.&lt;/p&gt;&lt;figure&gt;&lt;img alt=&quot;&quot; src=&quot;https://cdn-images-1.medium.com/max/1024/1*hxgYPl7zUiZAhysHAw4dKQ.png&quot; /&gt;Fluent methods available on Mutable interfaces for mutating collections&lt;/figure&gt;&lt;h4&gt;Equivalent Methods from JDK interfaces&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;with -&amp;gt; add&lt;/li&gt;&lt;li&gt;without -&amp;gt; remove&lt;/li&gt;&lt;li&gt;withAll -&amp;gt; addAll&lt;/li&gt;&lt;li&gt;withoutAll -&amp;gt; removeAll&lt;/li&gt;&lt;li&gt;withKeyValue -&amp;gt; put&lt;/li&gt;&lt;li&gt;withoutKey -&amp;gt; removeKey&lt;/li&gt;&lt;/ul&gt;&lt;h3&gt;Fluently building Maps&lt;/h3&gt;&lt;p&gt;The &lt;em&gt;with&lt;/em&gt; method on &lt;em&gt;MutableListFactory&lt;/em&gt; can construct a &lt;em&gt;MutableList&lt;/em&gt; with a variable number of items, but the same is not true for &lt;em&gt;MutableMapFactory&lt;/em&gt;. The &lt;em&gt;with&lt;/em&gt; method on &lt;em&gt;MutableMapFactory&lt;/em&gt; is overloaded five times.&lt;/p&gt;&lt;pre&gt;&amp;lt;K, V&amp;gt; MutableMap&amp;lt;K, V&amp;gt; with();&lt;/pre&gt;&lt;pre&gt;&amp;lt;K, V&amp;gt; MutableMap&amp;lt;K, V&amp;gt; with(K key, V value);&lt;/pre&gt;&lt;pre&gt;&amp;lt;K, V&amp;gt; MutableMap&amp;lt;K, V&amp;gt; with(K key1, V value1, K key2, V value2);&lt;/pre&gt;&lt;pre&gt;&amp;lt;K, V&amp;gt; MutableMap&amp;lt;K, V&amp;gt; with(K key1, V value1, K key2, V value2, K key3, V value3);&lt;/pre&gt;&lt;pre&gt;&amp;lt;K, V&amp;gt; MutableMap&amp;lt;K, V&amp;gt; with(K key1, V value1, K key2, V value2, K key3, V value3, K key4, V value4);&lt;/pre&gt;&lt;p&gt;You can only use the &lt;em&gt;with&lt;/em&gt; method method to create a &lt;em&gt;MutableMap&lt;/em&gt; with up to four keys and values.&lt;/p&gt;&lt;pre&gt;MutableMap&amp;lt;Integer, String&amp;gt; map =&lt;br /&gt;        Maps.&lt;strong&gt;&lt;em&gt;mutable&lt;/em&gt;&lt;/strong&gt;.with(&lt;br /&gt;                1, &lt;strong&gt;&quot;One&quot;&lt;/strong&gt;,&lt;br /&gt;                2, &lt;strong&gt;&quot;Two&quot;&lt;/strong&gt;,&lt;br /&gt;                3, &lt;strong&gt;&quot;Three&quot;&lt;/strong&gt;,&lt;br /&gt;                4, &lt;strong&gt;&quot;Four&quot;&lt;/strong&gt;);&lt;/pre&gt;&lt;h4&gt;What do you do if you need more than four keys and values?&lt;/h4&gt;&lt;p&gt;There is a method named &lt;em&gt;withKeyValue&lt;/em&gt; on &lt;em&gt;MutableMap&lt;/em&gt; which can be used to fluently add an unlimited number of key and value pairs by leveraging method chaining.&lt;/p&gt;&lt;h4&gt;Fluently building a MutableMap using withKeyValue&lt;/h4&gt;&lt;pre&gt;MutableMap&amp;lt;Integer, String&amp;gt; numbers =&lt;br /&gt;        Maps.&lt;strong&gt;&lt;em&gt;mutable&lt;/em&gt;&lt;/strong&gt;.&amp;lt;Integer, String&amp;gt;empty()&lt;br /&gt;                .withKeyValue(0, &lt;strong&gt;&quot;Zero&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(1, &lt;strong&gt;&quot;One&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(2, &lt;strong&gt;&quot;Two&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(3, &lt;strong&gt;&quot;Three&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(4, &lt;strong&gt;&quot;Four&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(5, &lt;strong&gt;&quot;Five&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(6, &lt;strong&gt;&quot;Six&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(7, &lt;strong&gt;&quot;Seven&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(8, &lt;strong&gt;&quot;Eight&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(9, &lt;strong&gt;&quot;Nine&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(10, &lt;strong&gt;&quot;Ten&quot;&lt;/strong&gt;);&lt;/pre&gt;&lt;pre&gt;Assert.&lt;em&gt;assertEquals&lt;/em&gt;(&lt;strong&gt;&quot;Zero&quot;&lt;/strong&gt;, numbers.get(0));&lt;br /&gt;Assert.&lt;em&gt;assertEquals&lt;/em&gt;(&lt;strong&gt;&quot;One&quot;&lt;/strong&gt;, numbers.get(1));&lt;br /&gt;Assert.&lt;em&gt;assertEquals&lt;/em&gt;(&lt;strong&gt;&quot;Ten&quot;&lt;/strong&gt;, numbers.get(10));&lt;/pre&gt;&lt;h4&gt;The withKeyValue method&lt;/h4&gt;&lt;pre&gt;public MutableMap&amp;lt;K, V&amp;gt; withKeyValue(K key, V value)&lt;br /&gt;{&lt;br /&gt;    this.put(key, value);&lt;br /&gt;    return this;&lt;br /&gt;}&lt;/pre&gt;&lt;h4&gt;Fluently building an ImmutableMap&lt;/h4&gt;&lt;pre&gt;ImmutableMap&amp;lt;Integer, String&amp;gt; numbers =&lt;br /&gt;        Maps.&lt;strong&gt;&lt;em&gt;mutable&lt;/em&gt;&lt;/strong&gt;.&amp;lt;Integer, String&amp;gt;empty()&lt;br /&gt;                .withKeyValue(0, &lt;strong&gt;&quot;Zero&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(1, &lt;strong&gt;&quot;One&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(2, &lt;strong&gt;&quot;Two&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(3, &lt;strong&gt;&quot;Three&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(4, &lt;strong&gt;&quot;Four&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(5, &lt;strong&gt;&quot;Five&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(6, &lt;strong&gt;&quot;Six&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(7, &lt;strong&gt;&quot;Seven&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(8, &lt;strong&gt;&quot;Eight&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(9, &lt;strong&gt;&quot;Nine&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(10, &lt;strong&gt;&quot;Ten&quot;&lt;/strong&gt;)&lt;br /&gt;                .toImmutable();&lt;/pre&gt;&lt;pre&gt;Assert.&lt;em&gt;assertEquals&lt;/em&gt;(&lt;strong&gt;&quot;Zero&quot;&lt;/strong&gt;, numbers.get(0));&lt;br /&gt;Assert.&lt;em&gt;assertEquals&lt;/em&gt;(&lt;strong&gt;&quot;One&quot;&lt;/strong&gt;, numbers.get(1));&lt;br /&gt;Assert.&lt;em&gt;assertEquals&lt;/em&gt;(&lt;strong&gt;&quot;Ten&quot;&lt;/strong&gt;, numbers.get(10));&lt;/pre&gt;&lt;h4&gt;Fluently building an Immutable object / primitive Map&lt;/h4&gt;&lt;pre&gt;ObjectIntMap&amp;lt;String&amp;gt; numbers =&lt;br /&gt;        ObjectIntMaps.&lt;strong&gt;&lt;em&gt;mutable&lt;/em&gt;&lt;/strong&gt;.&amp;lt;String&amp;gt;empty()&lt;br /&gt;                .withKeyValue(&lt;strong&gt;&quot;Zero&quot;&lt;/strong&gt;, 0)&lt;br /&gt;                .withKeyValue(&lt;strong&gt;&quot;One&quot;&lt;/strong&gt;, 1)&lt;br /&gt;                .withKeyValue(&lt;strong&gt;&quot;Two&quot;&lt;/strong&gt;, 2)&lt;br /&gt;                .withKeyValue(&lt;strong&gt;&quot;Three&quot;&lt;/strong&gt;, 3)&lt;br /&gt;                .withKeyValue(&lt;strong&gt;&quot;Four&quot;&lt;/strong&gt;, 4)&lt;br /&gt;                .withKeyValue(&lt;strong&gt;&quot;Five&quot;&lt;/strong&gt;, 5)&lt;br /&gt;                .withKeyValue(&lt;strong&gt;&quot;Six&quot;&lt;/strong&gt;, 6)&lt;br /&gt;                .withKeyValue(&lt;strong&gt;&quot;Seven&quot;&lt;/strong&gt;, 7)&lt;br /&gt;                .withKeyValue(&lt;strong&gt;&quot;Eight&quot;&lt;/strong&gt;, 8)&lt;br /&gt;                .withKeyValue(&lt;strong&gt;&quot;Nine&quot;&lt;/strong&gt;, 9)&lt;br /&gt;                .withKeyValue(&lt;strong&gt;&quot;Ten&quot;&lt;/strong&gt;, 10)&lt;br /&gt;                .toImmutable();&lt;/pre&gt;&lt;pre&gt;Assert.&lt;em&gt;assertEquals&lt;/em&gt;(0, numbers.get(&lt;strong&gt;&quot;Zero&quot;&lt;/strong&gt;));&lt;br /&gt;Assert.&lt;em&gt;assertEquals&lt;/em&gt;(1, numbers.get(&lt;strong&gt;&quot;One&quot;&lt;/strong&gt;));&lt;br /&gt;Assert.&lt;em&gt;assertEquals&lt;/em&gt;(10, numbers.get(&lt;strong&gt;&quot;Ten&quot;&lt;/strong&gt;));&lt;/pre&gt;&lt;h4&gt;Fluently building an Immutable primitive / object Map&lt;/h4&gt;&lt;pre&gt;IntObjectMap&amp;lt;String&amp;gt; numbers =&lt;br /&gt;        IntObjectMaps.&lt;strong&gt;&lt;em&gt;mutable&lt;/em&gt;&lt;/strong&gt;.&amp;lt;String&amp;gt;empty()&lt;br /&gt;                .withKeyValue(0, &lt;strong&gt;&quot;Zero&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(1, &lt;strong&gt;&quot;One&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(2, &lt;strong&gt;&quot;Two&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(3, &lt;strong&gt;&quot;Three&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(4, &lt;strong&gt;&quot;Four&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(5, &lt;strong&gt;&quot;Five&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(6, &lt;strong&gt;&quot;Six&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(7, &lt;strong&gt;&quot;Seven&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(8, &lt;strong&gt;&quot;Eight&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(9, &lt;strong&gt;&quot;Nine&quot;&lt;/strong&gt;)&lt;br /&gt;                .withKeyValue(10, &lt;strong&gt;&quot;Ten&quot;&lt;/strong&gt;)&lt;br /&gt;                .toImmutable();&lt;/pre&gt;&lt;pre&gt;Assert.&lt;em&gt;assertEquals&lt;/em&gt;(&lt;strong&gt;&quot;Zero&quot;&lt;/strong&gt;, numbers.get(0));&lt;br /&gt;Assert.&lt;em&gt;assertEquals&lt;/em&gt;(&lt;strong&gt;&quot;One&quot;&lt;/strong&gt;, numbers.get(1));&lt;br /&gt;Assert.&lt;em&gt;assertEquals&lt;/em&gt;(&lt;strong&gt;&quot;Ten&quot;&lt;/strong&gt;, numbers.get(10));&lt;/pre&gt;&lt;h4&gt;Fluently building an Immutable primitive / primitive Map&lt;/h4&gt;&lt;pre&gt;IntCharMap numbers = IntCharMaps.&lt;strong&gt;&lt;em&gt;mutable&lt;/em&gt;&lt;/strong&gt;.empty()&lt;br /&gt;        .withKeyValue(0, &lt;strong&gt;'0'&lt;/strong&gt;)&lt;br /&gt;        .withKeyValue(1, &lt;strong&gt;'1'&lt;/strong&gt;)&lt;br /&gt;        .withKeyValue(2, &lt;strong&gt;'2'&lt;/strong&gt;)&lt;br /&gt;        .withKeyValue(3, &lt;strong&gt;'3'&lt;/strong&gt;)&lt;br /&gt;        .withKeyValue(4, &lt;strong&gt;'4'&lt;/strong&gt;)&lt;br /&gt;        .withKeyValue(5, &lt;strong&gt;'5'&lt;/strong&gt;)&lt;br /&gt;        .withKeyValue(6, &lt;strong&gt;'6'&lt;/strong&gt;)&lt;br /&gt;        .withKeyValue(7, &lt;strong&gt;'7'&lt;/strong&gt;)&lt;br /&gt;        .withKeyValue(8, &lt;strong&gt;'8'&lt;/strong&gt;)&lt;br /&gt;        .withKeyValue(9, &lt;strong&gt;'9'&lt;/strong&gt;)&lt;br /&gt;        .toImmutable();&lt;/pre&gt;&lt;pre&gt;Assert.&lt;em&gt;assertEquals&lt;/em&gt;(&lt;strong&gt;'0'&lt;/strong&gt;, numbers.get(0));&lt;br /&gt;Assert.&lt;em&gt;assertEquals&lt;/em&gt;(&lt;strong&gt;'1'&lt;/strong&gt;, numbers.get(1));&lt;br /&gt;Assert.&lt;em&gt;assertEquals&lt;/em&gt;(&lt;strong&gt;'9'&lt;/strong&gt;, numbers.get(9));&lt;/pre&gt;&lt;h3&gt;Fluently building Lists, Sets and Bags&lt;/h3&gt;&lt;p&gt;Fluently building a &lt;em&gt;Map&lt;/em&gt; using method chaining is often more useful than fluently building a &lt;em&gt;List&lt;/em&gt;, &lt;em&gt;Set&lt;/em&gt;, or &lt;em&gt;Bag&lt;/em&gt;. Still the functionality exists if and when you need it.&lt;/p&gt;&lt;h4&gt;Fluently building a List&lt;/h4&gt;&lt;pre&gt;ImmutableList&amp;lt;Integer&amp;gt; numbers =&lt;br /&gt;        Lists.&lt;strong&gt;&lt;em&gt;mutable&lt;/em&gt;&lt;/strong&gt;.with(1)&lt;br /&gt;                .with(2)&lt;br /&gt;                .with(3)&lt;br /&gt;                .with(4)&lt;br /&gt;                .withAll(Interval.&lt;em&gt;fromTo&lt;/em&gt;(5, 10))&lt;br /&gt;                .toImmutable();&lt;br /&gt;Assert.&lt;em&gt;assertEquals&lt;/em&gt;(Interval.&lt;em&gt;oneTo&lt;/em&gt;(10), numbers);&lt;/pre&gt;&lt;p&gt;Notice that I used two methods to fluently build the &lt;em&gt;MutableList&lt;/em&gt;. The method &lt;em&gt;with&lt;/em&gt; takes a single argument and the method &lt;em&gt;withAll&lt;/em&gt; takes an &lt;em&gt;Iterable&lt;/em&gt;.&lt;/p&gt;&lt;h4&gt;The with method&lt;/h4&gt;&lt;pre&gt;public MutableList&amp;lt;T&amp;gt; with(T element)&lt;br /&gt;{&lt;br /&gt;    this.add(element);&lt;br /&gt;    return this;&lt;br /&gt;}&lt;/pre&gt;&lt;h4&gt;The withAll method&lt;/h4&gt;&lt;pre&gt;public MutableList&amp;lt;T&amp;gt; withAll(Iterable&amp;lt;? extends T&amp;gt; elements)&lt;br /&gt;{&lt;br /&gt;    this.addAllIterable(elements);&lt;br /&gt;    return this;&lt;br /&gt;}&lt;/pre&gt;&lt;h4&gt;Fluently building a Set&lt;/h4&gt;&lt;pre&gt;ImmutableSet&amp;lt;Integer&amp;gt; numbers =&lt;br /&gt;        Sets.&lt;strong&gt;&lt;em&gt;mutable&lt;/em&gt;&lt;/strong&gt;.with(1)&lt;br /&gt;                .with(2)&lt;br /&gt;                .with(3)&lt;br /&gt;                .with(4)&lt;br /&gt;                .withAll(Interval.&lt;em&gt;fromTo&lt;/em&gt;(5, 10))&lt;br /&gt;                .toImmutable();&lt;br /&gt;Assert.&lt;em&gt;assertEquals&lt;/em&gt;(Interval.&lt;em&gt;oneTo&lt;/em&gt;(10).toSet(), numbers);&lt;/pre&gt;&lt;h4&gt;Fluently building a Bag&lt;/h4&gt;&lt;pre&gt;ImmutableBag&amp;lt;Integer&amp;gt; numbers =&lt;br /&gt;        Bags.&lt;strong&gt;&lt;em&gt;mutable&lt;/em&gt;&lt;/strong&gt;.with(1)&lt;br /&gt;                .with(2)&lt;br /&gt;                .with(3)&lt;br /&gt;                .with(4)&lt;br /&gt;                .withAll(Interval.&lt;em&gt;fromTo&lt;/em&gt;(5, 10))&lt;br /&gt;                .toImmutable();&lt;br /&gt;Assert.&lt;em&gt;assertEquals&lt;/em&gt;(Interval.&lt;em&gt;oneTo&lt;/em&gt;(10).toBag(), numbers);&lt;/pre&gt;&lt;h4&gt;Fluently building primitive Lists, Sets and Bags&lt;/h4&gt;&lt;pre&gt;ImmutableIntList list =&lt;br /&gt;        IntLists.&lt;strong&gt;&lt;em&gt;mutable&lt;/em&gt;&lt;/strong&gt;.with(1)&lt;br /&gt;                .with(2)&lt;br /&gt;                .with(3)&lt;br /&gt;                .with(4)&lt;br /&gt;                .withAll(IntInterval.&lt;em&gt;fromTo&lt;/em&gt;(5, 10))&lt;br /&gt;                .toImmutable();&lt;br /&gt;Assert.&lt;em&gt;assertEquals&lt;/em&gt;(IntInterval.&lt;em&gt;oneTo&lt;/em&gt;(10), list);&lt;/pre&gt;&lt;pre&gt;ImmutableIntSet set =&lt;br /&gt;        IntSets.&lt;strong&gt;&lt;em&gt;mutable&lt;/em&gt;&lt;/strong&gt;.with(1)&lt;br /&gt;                .with(2)&lt;br /&gt;                .with(3)&lt;br /&gt;                .with(4)&lt;br /&gt;                .withAll(IntInterval.&lt;em&gt;fromTo&lt;/em&gt;(5, 10))&lt;br /&gt;                .toImmutable();&lt;br /&gt;Assert.&lt;em&gt;assertEquals&lt;/em&gt;(IntInterval.&lt;em&gt;oneTo&lt;/em&gt;(10).toSet(), set);&lt;/pre&gt;&lt;pre&gt;ImmutableIntBag bag =&lt;br /&gt;        IntBags.&lt;strong&gt;&lt;em&gt;mutable&lt;/em&gt;&lt;/strong&gt;.with(1)&lt;br /&gt;                .with(2)&lt;br /&gt;                .with(3)&lt;br /&gt;                .with(4)&lt;br /&gt;                .withAll(IntInterval.&lt;em&gt;fromTo&lt;/em&gt;(5, 10))&lt;br /&gt;                .toImmutable();&lt;br /&gt;Assert.&lt;em&gt;assertEquals&lt;/em&gt;(IntInterval.&lt;em&gt;oneTo&lt;/em&gt;(10).toBag(), bag);&lt;/pre&gt;&lt;h3&gt;Using withAll in Collectors2&lt;/h3&gt;&lt;p&gt;The &lt;em&gt;withAll&lt;/em&gt; method is very useful for building Collectors which return collections. The &lt;em&gt;withAll&lt;/em&gt; method is used repeatedly as a method reference in the &lt;em&gt;Collectors2&lt;/em&gt; class of Eclipse Collections.&lt;/p&gt;&lt;h4&gt;Collectors2.toList()&lt;/h4&gt;&lt;pre&gt;public static &amp;lt;T&amp;gt; Collector&amp;lt;T, ?, MutableList&amp;lt;T&amp;gt;&amp;gt; toList()&lt;br /&gt;{&lt;br /&gt;    return Collector.&lt;em&gt;of&lt;/em&gt;(&lt;br /&gt;            Lists.&lt;strong&gt;&lt;em&gt;mutable&lt;/em&gt;&lt;/strong&gt;::empty,&lt;br /&gt;            MutableList::add,&lt;br /&gt;            MutableList::withAll,&lt;br /&gt;            &lt;strong&gt;&lt;em&gt;EMPTY_CHARACTERISTICS&lt;/em&gt;&lt;/strong&gt;);&lt;br /&gt;}&lt;/pre&gt;&lt;h4&gt;Collectors2.toImmutableList()&lt;/h4&gt;&lt;pre&gt;public static &amp;lt;T&amp;gt; Collector&amp;lt;T, ?, ImmutableList&amp;lt;T&amp;gt;&amp;gt; toImmutableList()&lt;br /&gt;{&lt;br /&gt;    return Collector.&amp;lt;T, MutableList&amp;lt;T&amp;gt;, ImmutableList&amp;lt;T&amp;gt;&amp;gt;&lt;em&gt;of&lt;/em&gt;(&lt;br /&gt;            Lists.&lt;strong&gt;&lt;em&gt;mutable&lt;/em&gt;&lt;/strong&gt;::empty,&lt;br /&gt;            MutableList::add,&lt;br /&gt;            MutableList::withAll,&lt;br /&gt;            MutableList::toImmutable,&lt;br /&gt;            &lt;strong&gt;&lt;em&gt;EMPTY_CHARACTERISTICS&lt;/em&gt;&lt;/strong&gt;);&lt;br /&gt;}&lt;/pre&gt;&lt;h4&gt;Collectors2.countBy(Function)&lt;/h4&gt;&lt;pre&gt;public static &amp;lt;T, K&amp;gt; Collector&amp;lt;T, ?, MutableBag&amp;lt;K&amp;gt;&amp;gt; countBy(Function&amp;lt;? super T, ? extends K&amp;gt; function)&lt;br /&gt;{&lt;br /&gt;    return Collector.&lt;em&gt;of&lt;/em&gt;(&lt;br /&gt;            Bags.&lt;strong&gt;&lt;em&gt;mutable&lt;/em&gt;&lt;/strong&gt;::empty,&lt;br /&gt;            (bag, each) -&amp;gt; bag.with(&lt;em&gt;function&lt;/em&gt;.valueOf(each)),&lt;br /&gt;            MutableBag::withAll,&lt;br /&gt;            &lt;strong&gt;&lt;em&gt;EMPTY_CHARACTERISTICS&lt;/em&gt;&lt;/strong&gt;);&lt;br /&gt;}&lt;/pre&gt;&lt;h3&gt;With or Without&lt;/h3&gt;&lt;p&gt;We like to provide good symmetry in Eclipse Collections. If you can fluently add items to a collection, then it would make sense to be be able to remove items from a collection fluently.&lt;/p&gt;&lt;h4&gt;The without method on UnifiedSet&lt;/h4&gt;&lt;pre&gt;public UnifiedSet&amp;lt;T&amp;gt; without(T element)&lt;br /&gt;{&lt;br /&gt;    this.remove(element);&lt;br /&gt;    return this;&lt;br /&gt;}&lt;/pre&gt;&lt;p&gt;Here’s an example combining some of the fluent aspects of the Eclipse Collections factories.&lt;/p&gt;&lt;pre&gt;ImmutableSet&amp;lt;String&amp;gt; strings =&lt;br /&gt;        Sets.&lt;strong&gt;&lt;em&gt;mutable&lt;/em&gt;&lt;/strong&gt;.with(&lt;strong&gt;&quot;or&quot;&lt;/strong&gt;, &lt;strong&gt;&quot;without&quot;&lt;/strong&gt;, &lt;strong&gt;&quot;you&quot;&lt;/strong&gt;)&lt;br /&gt;                .with(&lt;strong&gt;&quot;or&quot;&lt;/strong&gt;)&lt;br /&gt;                .without(&lt;strong&gt;&quot;you&quot;&lt;/strong&gt;)&lt;br /&gt;                .toImmutable();&lt;br /&gt;Assert.&lt;em&gt;assertEquals&lt;/em&gt;(Sets.&lt;strong&gt;&lt;em&gt;mutable&lt;/em&gt;&lt;/strong&gt;.with(&lt;strong&gt;&quot;or&quot;&lt;/strong&gt;, &lt;strong&gt;&quot;without&quot;&lt;/strong&gt;), strings);&lt;/pre&gt;&lt;h3&gt;Final Thoughts&lt;/h3&gt;&lt;p&gt;Hopefully you found the information and examples in this blog useful. This blog was inspired by a recent &lt;a href=&quot;https://github.com/eclipse/eclipse-collections/pull/699&quot;&gt;pull request&lt;/a&gt; submitted to Eclipse Collections. There are a lot of hidden gems inside of Eclipse Collections. I like to write about them when it becomes clear they are not so easily discovered.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/eclipse/eclipse-collections&quot;&gt;&lt;em&gt;Eclipse Collections&lt;/em&gt;&lt;/a&gt;&lt;em&gt; is open for &lt;/em&gt;&lt;a href=&quot;https://github.com/eclipse/eclipse-collections/blob/master/CONTRIBUTING.md&quot;&gt;&lt;em&gt;contributions&lt;/em&gt;&lt;/a&gt;&lt;em&gt;. If you like the library, you can let us know by starring it on GitHub.&lt;/em&gt;&lt;/p&gt;&lt;img height=&quot;1&quot; src=&quot;https://medium.com/_/stat?event=post.clientViewed&amp;amp;referrerSource=full_rss&amp;amp;postId=224217074d31&quot; width=&quot;1&quot; /&gt;</description>
+	<pubDate>Tue, 19 Feb 2019 03:52:43 +0000</pubDate>
+</item>
+<item>
 	<title>InfoQ Eclipse feed: Presentation: Getting Super Productive with Spring Tools 4 and Spring Boot 2</title>
 	<guid isPermaLink="true">https://www.infoq.com/presentations/spring-tools-5-boot-2?utm_campaign=infoq_content&amp;utm_source=infoq&amp;utm_medium=feed&amp;utm_term=Eclipse</guid>
 	<link>https://www.infoq.com/presentations/spring-tools-5-boot-2?utm_campaign=infoq_content&amp;utm_source=infoq&amp;utm_medium=feed&amp;utm_term=Eclipse</link>
-	<description>&lt;img src=&quot;https://res.infoq.com/presentations/spring-tools-5-boot-2/en/headerimage/Alexbig-1550020694881.JPG&quot; /&gt;&lt;p&gt;Alex Boyko, Martin Lippert show how to use the Spring Tools 4 in Eclipse and Visual Studio Code when working on Spring Boot 2 applications.&lt;/p&gt; &lt;i&gt;By Alex Boyko, Martin Lippert&lt;/i&gt;</description>
+	<description>&lt;img src=&quot;https://res.infoq.com/presentations/spring-tools-5-boot-2/en/headerimage/Alexbig-1550020694881.JPG&quot; /&gt;&lt;p&gt;Alex Boyko and Martin Lippert show how to use the Spring Tools 4 in Eclipse and Visual Studio Code when working on Spring Boot 2 applications.&lt;/p&gt; &lt;i&gt;By Alex Boyko, Martin Lippert&lt;/i&gt;</description>
 	<pubDate>Wed, 13 Feb 2019 04:14:00 +0000</pubDate>
 </item>
 <item>
@@ -237,150 +367,6 @@ data object support.&lt;/p&gt;
 	<link>http://feedproxy.google.com/~r/eclipse/fnews/~3/om--jv9Up6M/eclipse-specification-process-iv-specification-committee-votes</link>
 	<description>One key difference between Eclipse open source software projects and open source specification projects is that specification projects must be aligned with exactly one specification committee&lt;img alt=&quot;&quot; height=&quot;1&quot; src=&quot;http://feeds.feedburner.com/~r/eclipse/fnews/~4/om--jv9Up6M&quot; width=&quot;1&quot; /&gt;</description>
 	<pubDate>Mon, 21 Jan 2019 19:00:00 +0000</pubDate>
-</item>
-<item>
-	<title>Wayne Beaton: EFSP: The Specification Committee Votes</title>
-	<guid isPermaLink="false">http://waynebeaton.wordpress.com/?p=5482</guid>
-	<link>https://waynebeaton.wordpress.com/2019/01/21/eclipse-specification-process-iv-the-specification-committee-votes/</link>
-	<description>&lt;p&gt;One key difference between Eclipse open source &lt;em&gt;software&lt;/em&gt; projects as defined by the &lt;a href=&quot;https://www.eclipse.org/projects/dev_process/&quot;&gt;Eclipse Development Process&lt;/a&gt; (EDP), and open source &lt;em&gt;specification&lt;/em&gt; projects as defined by the &lt;a href=&quot;https://www.eclipse.org/projects/efsp/&quot;&gt;Eclipse Foundation Specification Process&lt;/a&gt; (EFSP) is that specification projects must be aligned with exactly one &lt;em&gt;specification committee&lt;/em&gt;. More generally, specification projects are aligned with an Eclipse &lt;em&gt;&lt;a href=&quot;https://www.eclipse.org/org/workinggroups/&quot;&gt;working group&lt;/a&gt;&lt;/em&gt; and are governed (in part) by the working group’s specification committee.&lt;/p&gt;
-&lt;p&gt;The specification committee is required to vote to approve key milestones in the lifecycle of their specification projects:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Specification project creation;&lt;/li&gt;
-&lt;li&gt;Release plan;&lt;/li&gt;
-&lt;li&gt;Revision to the scope;&lt;/li&gt;
-&lt;li&gt;Progress and release reviews;&lt;/li&gt;
-&lt;li&gt;Service releases; and&lt;/li&gt;
-&lt;li&gt;Designation of a profile or platform.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The most frequent votes occur when specification projects engage in the reviews that occur during the development cycle (highlighted in bold).&lt;/p&gt;
-&lt;p&gt;&lt;img alt=&quot;efsp&quot; class=&quot;alignnone size-full wp-image-5483 aligncenter&quot; src=&quot;https://waynebeaton.files.wordpress.com/2019/01/efsp.png?w=640&quot; /&gt;&lt;/p&gt;
-&lt;p&gt;To succeed, a vote requires positive responses from a super-majority (defined as two-thirds) of the members of the specification committee. Votes to designate a specification as a &lt;em&gt;profile&lt;/em&gt; or &lt;em&gt;platform&lt;/em&gt; require positive responses from a super-majority of the specification committee members who represent the interests of &lt;a href=&quot;https://www.eclipse.org/membership/&quot;&gt;Strategic Members&lt;/a&gt; of the Eclipse Foundation. It’s worth noting that there is no veto.&lt;/p&gt;
-&lt;p&gt;The criteria by which representatives decide how they’re going to vote varies by individual and according to the values of the individual and the organization that they represent (if applicable). Minimally, the specification committee is expected to use their vote to ensure that specification projects stay within scope. In the case of a progress review, the voters will need to consider whether or not the project is progressing in a manner that will eventually result in a successful vote on the eventual release review that gates the ratification of the final specification.&lt;/p&gt;
-&lt;p&gt;The EFSP is silent on what happens in the event of a failed vote. In the event of a failure, we expect that feedback regarding the reason for the failure will be provided to the project team, who will work to mitigate issues and then re-engage.&lt;/p&gt;
-&lt;p&gt;Please see:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;https://waynebeaton.wordpress.com/2018/11/07/eclipse-foundation-specification-process-part-i-the-edp/&quot;&gt;The EDP&lt;/a&gt;;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://waynebeaton.wordpress.com/2018/11/26/eclipse-foundation-specification-process-part-ii-the-efsp/&quot;&gt;The EFSP&lt;/a&gt;;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://waynebeaton.wordpress.com/2018/11/28/eclipse-foundation-specification-process-part-iii-creation/&quot;&gt;Creating a Specification Project;&lt;/a&gt; and&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://waynebeaton.wordpress.com/2019/01/21/eclipse-specification-process-iv-the-specification-committee-votes/&quot;&gt;Specification Committee Votes&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</description>
-	<pubDate>Mon, 21 Jan 2019 17:40:50 +0000</pubDate>
-</item>
-<item>
-	<title>JBoss Tools Team: We are hiring</title>
-	<guid isPermaLink="true">https://tools.jboss.org/blog/we-are-hiring - again.html</guid>
-	<link>https://tools.jboss.org/blog/we-are-hiring - again.html</link>
-	<description>&lt;div&gt;&lt;div class=&quot;paragraph&quot;&gt;
-      &lt;p&gt;The Developer Experience and Tooling group, of which JBoss Tools team is part,
-      is looking for an awesome developer. We are looking to continue
-      improving the usability for developers around various IDEs including Eclipse, VSCode and IntelliJ and around the Red Hat product line, including JBoss Middleware.&lt;/p&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;paragraph&quot;&gt;
-      &lt;p&gt;Topics range from Java to JavaScript, application servers to containers, source code tinkering to full blown CI/CD setups.&lt;/p&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;paragraph&quot;&gt;
-      &lt;p&gt;If you are into making developers life easier and like to be able to get involved in many different technologies and get them to work great together then do apply.&lt;/p&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;paragraph&quot;&gt;
-      &lt;p&gt;You can also ping me (&lt;a href=&quot;mailto:jeffmaury@redhat.com&quot;&gt;jeffmaury@redhat.com&lt;/a&gt;) for questions.&lt;/p&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;paragraph&quot;&gt;
-      &lt;p&gt;The current list of openings are:&lt;/p&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;ulist&quot;&gt;
-      &lt;ul&gt;
-      &lt;li&gt;
-      &lt;p&gt;&lt;a href=&quot;https://global-redhat.icims.com/jobs/66514/software-engineer---jboss-and-openshift-tooling/job&quot;&gt;Sofware engineer&lt;/a&gt;&lt;/p&gt;
-      &lt;/li&gt;
-      &lt;/ul&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;paragraph&quot;&gt;
-      &lt;p&gt;Note: the job postings do list a specific location, but for the right candidate we are happy to consider many locations worldwide (anywhere there is a Red Hat office), as well as working from home.&lt;/p&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;paragraph&quot;&gt;
-      &lt;p&gt;Have fun!&lt;br /&gt;
-      Jeff Maury&lt;br /&gt;
-      &lt;a href=&quot;http://twitter.com/jeffmaury&quot;&gt;@jeffmaury&lt;/a&gt;
-      &lt;a href=&quot;http://twitter.com/jbosstools&quot;&gt;@jbosstools&lt;/a&gt;&lt;/p&gt;
-      &lt;/div&gt;&lt;/div&gt;</description>
-	<pubDate>Thu, 17 Jan 2019 13:31:32 +0000</pubDate>
-</item>
-<item>
-	<title>PapyrusUML: Papyrus UML Light users</title>
-	<guid isPermaLink="false">http://papyrusuml.wordpress.com/?p=1152</guid>
-	<link>https://papyrusuml.wordpress.com/2019/01/16/papyrus-uml-light-users/</link>
-	<description>&lt;p&gt;In my previous post, I did mention that we had some users in mind that would benefit from using Papyrus UML Light.&lt;/p&gt;
-
-
-
-&lt;p&gt;I should have given you a hint as to who they are…&lt;/p&gt;
-
-
-
-&lt;h3&gt;&lt;strong&gt;Nicole – a Papyrus Novice&lt;/strong&gt;&lt;/h3&gt;
-
-
-
-&lt;p&gt;Nicole is already knowledgeable in UML at or above the OMG’s &lt;a href=&quot;https://www.omg.org/ocup-2/coveragemap-found.htm&quot;&gt;OCUP2 Foundation&lt;/a&gt; or intermediate level contents.&lt;/p&gt;
-
-
-
-&lt;p&gt;As the project on which ze worked was completed, ze is being moved to a new team that uses Papyrus, a tool with which ze is not familiar.&lt;/p&gt;
-
-
-
-&lt;p&gt;Nicole’s goal in using
-Papyrus UML Light is to quickly get familiar
-with Papyrus UML Light and how it supports UML-based modeling.
-Ze
-appreciates and benefits from
-Papyrus UML Light’s streamlined editor with the most common concepts of UML, so
-that
-ze
-can focus on getting to know the Papyrus UML Light
-user interface and way of working without
-being exposed
-to the full
-spectrum of UML model elements.&lt;/p&gt;
-
-
-
-&lt;h3&gt;&lt;strong&gt;Steve – a UML Novice and Student&lt;/strong&gt;&lt;/h3&gt;
-
-
-
-&lt;p&gt;Steve is new to the modeling world and has no familiarity with the UML.&lt;/p&gt;
-
-
-
-&lt;p&gt;Ze is starting to learn about UML and faces the dual tasks of learning to use UML at the same time as learning to use a UML modeling tool.&lt;/p&gt;
-
-
-
-&lt;p&gt;Using Papyrus
-UML Light, Steve will be exposed to fewer language and
-tool concepts
-at
-a
-time, wich
-results in a lowering of the learning curve. &lt;/p&gt;
-
-
-
-&lt;p&gt;In addition, the alignment of Papyrus UML Light to OCUP2 (Foundational) is beneficial, as it ensures that ze first deals with the most most important concepts of UML before tackling the more complex aspects.&lt;/p&gt;
-
-
-
-&lt;h3&gt;Brisha – a Basic UML User&lt;/h3&gt;
-
-
-
-&lt;p&gt;Brisha only uses UML from time to time and then only for basic purposes such as documentation, presentations, discussions, etc. Ze is not interested in a full model-based engineering tool or method and rather uses it to “sketch” using UML to ensure common understanding of the graphics. As such, ze only needs the basic concepts of UML. In this context, an easy to use UML modeling tool such as Papyrus UML Light, which provides a reduces user interface an ease of use is easiest to get and adopt.&lt;/p&gt;
-
-
-
-&lt;p&gt;So, what do you think of our typical users for Papyrus UML Light?&lt;/p&gt;</description>
-	<pubDate>Wed, 16 Jan 2019 20:45:46 +0000</pubDate>
 </item>
 
 </channel>
