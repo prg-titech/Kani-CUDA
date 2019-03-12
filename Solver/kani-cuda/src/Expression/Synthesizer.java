@@ -306,7 +306,7 @@ public class Synthesizer {
 	public void synthesizeFrom(File profiles){	
 		long start = System.currentTimeMillis();
 		
-		File fr = new File("/Users/akira/masuhara-lab/Kani-CUDA/Synthesizer/__ir.cu");
+		File fr = new File("__ir.cu");
 		ExpressionWriter writer = new ExpressionWriter();
 		writer.input(fr);
 		

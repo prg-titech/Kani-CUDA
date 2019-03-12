@@ -31,7 +31,7 @@ public class ExpressionWriter {
 	}
 	
 	public void output(){
-		File out = new File("/Users/akira/masuhara-lab/Kani-CUDA/Synthesizer/synthesized.cu");
+		File out = new File("synthesized.cu");
 		try {
 			out.createNewFile();
 			FileWriter fw = new FileWriter(out);
