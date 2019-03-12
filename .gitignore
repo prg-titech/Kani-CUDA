@@ -1,0 +1,7 @@
+*.dep
+*.zo
+*#
+*~
+Emulator/compiled
+Solver/Kani-cuda/.*
+Solver/.*
