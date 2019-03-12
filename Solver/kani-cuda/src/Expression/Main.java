@@ -25,9 +25,9 @@ public class Main {
 //		
 //		System.out.println("time: " + (end - start) + "ms");
 		
-		File current_dir = new File(".");
-		System.out.println(current_dir.getAbsolutePath());
-		File profile = new File("/Users/akira/masuhara-lab/Kani-CUDA/Synthesizer/profiles");	
+		File currentDir = new File(".");
+		System.out.println(currentDir.getAbsolutePath());
+		File profile = new File(currentDir.getAbsolutePath() + "/../../Synthesizer/profiles");	
 		System.out.println();
 		Synthesizer psysha = new Synthesizer();		
 		psysha.synthesizeFrom(profile);
