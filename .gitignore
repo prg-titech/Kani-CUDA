@@ -1,6 +1,5 @@
 *.dep
 *.zo
 *#
-Solver/kani-cuda/bin/*
 Solver/Kani-cuda/.*
 Solver/.*
