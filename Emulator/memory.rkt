@@ -4,10 +4,10 @@
 
 (provide make-memory make-shared-memory memory-contents memory-allocate! global-memory shared-memory shared-memory-allocate!)
 
-;; DONE use list
 ;; Model of memory for global memory and shared memory.
-(struct memory ([contents #:mutable] ; list of array
-                ))
+(struct memory
+  ([contents #:mutable] ; list of array
+   ))
 
 ;; Create a freash, empty memory
 (define (make-memory)

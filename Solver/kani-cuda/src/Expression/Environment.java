@@ -163,17 +163,17 @@ public class Environment {
 			return res;
 		} else {
 			List<Expression> temp = terms;
-			for (Expression t : terms) {
+			for (Expression term : terms) {
 				for (Expression e : lst){
-					if (!t.equals(e)) {
+					if (!term.equals(e)) {
 						//t.add(e).print();
-						if(e.contain(1, t)==1){
-							res.add(e.add(t));
-						}else if(e.contain(-1, t)==1){
-							res.add(e.subtract(t));
+						if(e.contain(1, term)>0){
+							res.add(e.add(term));
+						}else if(e.contain(-1, term)>0){
+							res.add(e.subtract(term));
 						}else{
-							res.add(e.add(t));
-							res.add(e.subtract(t));
+							res.add(e.add(term));
+							res.add(e.subtract(term));
 						}
 					}
 				}

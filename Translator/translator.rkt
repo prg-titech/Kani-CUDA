@@ -23,7 +23,7 @@
      name
      (string-append word name))))
 
-(define (assign-opt-id line)
+(define (assign-opt-id-line line)
   (if
    (string-contains? line "__opt__")
    (string-replace
@@ -56,7 +56,7 @@
   (define ir (open-output-file "__ir.cu" #:exists 'truncate))
   (define line (read-line in 'any))
   (while (not (eof-object? line))
-         (fprintf ir (assign-opt-id line))
+         (fprintf ir (assign-opt-id-line line))
          (fprintf ir "\n")
          (set! line (read-line in 'any)))
   (close-input-port in)

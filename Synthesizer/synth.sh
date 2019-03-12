@@ -1,6 +1,6 @@
 #!/bin/bash
 
 racket main.rkt $1
-java -classpath ~/masuhara-lab/Kani-CUDA/Solver/kani-cuda/bin Expression.Main
-
-
+racket out.rkt
+echo Synthesizing...
+java -classpath ../Solver/kani-cuda/bin Expression.Main

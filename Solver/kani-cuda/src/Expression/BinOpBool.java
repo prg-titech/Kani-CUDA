@@ -13,8 +13,7 @@ public class BinOpBool extends ABoolExpression {
 	
 	public String toStringExp(){
 		return "(" + this.left.toStringExp() + op + this.right.toStringExp() + ")";
-	}
-	
+	}	
 	
 	public boolean eval(Environment env){
 		if (op.equals("&&")) {

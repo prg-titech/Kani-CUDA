@@ -311,9 +311,9 @@ public class Synthesizer {
 		writer.input(fr);
 		
 		this.input(profiles);
-		for(File f : this.profiles){
-			String exp = this.synthMemExp(f);
-			writer.assignExp(exp, f.getName());	
+		for(File file : this.profiles){
+			String exp = this.synthMemExp(file);
+			writer.assignExp(exp, file.getName());	
 		}
 		
 		long end = System.currentTimeMillis();		

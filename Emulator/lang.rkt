@@ -1,7 +1,7 @@
 #lang rosette
 
 (require "array.rkt" "control.rkt" "work.rkt"
-         "real.rkt" "operators.rkt" "barrier.rkt"
+         "type.rkt" "operators.rkt" "barrier.rkt"
          "memory.rkt"
          rosette/lib/synthax ;rosette/lib/angelic
          (rename-in rosette/lib/synthax [choose ?])
@@ -242,13 +242,18 @@
   (parameterize* ([grid-dimension gdim]
                   [block-dimension bdim]
                   [shared-memory (make-shared-memory (grid-size))])
-    (for ([b (in-range (grid-size))])
+    (for ([b (grid-size)])
       (parameterize* ([bid b]
-                      [block-index (to-bid b)]
+                      [bid-3d (to-bid-3d b)]
                       [mask (make-vector (block-size) #t)])
         (apply kernel arg)
         (barrier)
         (barrier/B)))))
+
+
+
+
+;;========================================================
 
 (define (generate-synth-arith depth)
   (define out-file (open-output-file "synth-arith.rkt" #:exists 'truncate))
@@ -369,7 +374,7 @@
                   [shared-memory (make-shared-memory (grid-size))])
     (for ([b (in-range (grid-size))])
       (parameterize* ([bid b]
-                      [block-index (to-bid b)]
+                      [bid-3d (to-bid-3d b)]
                       [mask (make-vector (block-size) #t)])
         (apply kernel arg)
         (barrier)
