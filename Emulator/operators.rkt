@@ -5,7 +5,7 @@
 
 (provide +/LS -/LS */LS //LS
          eq?/LS　!/LS &&/LS ||/LS </LS >/LS
-         sin/LS cos/LS neq?/LS
+         sin/LS cos/LS neq?/LS ==/LS
          quotient/LS modulo/LS %/LS
          ?:/LS min/LS max/LS &/LS)
 
@@ -117,6 +117,7 @@
 ;(define //LS (LSop-many /))
 (define (//LS a b) ((LSop1 exact->inexact) ((LSop2 /) a b)))
 (define eq?/LS (LSop2 eq?))
+(define ==/LS (LSop2 eq?))
 (define !/LS (LSop1 !))
 (define sin/LS (LSop1 sin))
 (define cos/LS (LSop1 cos))

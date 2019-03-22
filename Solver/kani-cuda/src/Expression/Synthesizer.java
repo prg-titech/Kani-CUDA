@@ -295,7 +295,7 @@ public class Synthesizer {
 			System.out.println("Not synthesized from " + profile.toString());
 		} else {
 			System.out.println("Expression synthesized from " + profile.toString() + ":");
-			return bexp.toStringExp() + " ? " + exp.toStringExp() + " : ";
+			return bexp.toStringExp() + " ? sb[" + exp.toStringExp() + "] : ";
 		}
 		
 		end = System.currentTimeMillis();

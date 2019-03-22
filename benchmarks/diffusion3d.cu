@@ -1,11 +1,11 @@
 #include<stdio.h>
 #include "stopwatch.h"
 
-#define BLOCK_X 3
-#define BLOCK_Y 4
-#define GRID_X 3
-#define GRID_Y 3
-#define M_PI (3.1415926535897932384626)
+#define BLOCK_X 5
+#define BLOCK_Y 3
+#define GRID_X 6
+#define GRID_Y 2
+//#define M_PI (3.1415926535897932384626)
 
 __global__ void diffusion_kernel(float* in,
                                  float* out,
@@ -29,10 +29,10 @@ __global__ void diffusion_kernel(float* in,
     int t = (k == nz-1)     ? c : c + xy;
     out[c] = 
         cc * in[c] 
-      + cw * __opt__377683.in[w] 
-      + ce * __opt__518027.in[e] 
-      + cs * __opt__495834.in[s]
-      + cn * __opt__435594.in[n] 
+      + cw * __opt__.in[w] 
+      + ce * __opt__.in[e] 
+      + cs * __opt__.in[s]
+      + cn * __opt__.in[n] 
       + cb * in[b] 
       + ct * in[t];   
     c += xy;
@@ -60,7 +60,7 @@ void initialize(float *buff, const int nx, const int ny, const int nz,
           *(1.0 - ax*cos(kx*x))
           *(1.0 - ay*cos(ky*y))
           *(1.0 - az*cos(kz*z));
-        buff[j] = __symbol();//f0;
+        buff[j] = f0;
       }
     }
   }
@@ -68,7 +68,7 @@ void initialize(float *buff, const int nx, const int ny, const int nz,
 
 
 int main(){
-  int count = 3;
+  int count = 5;
   int nx, ny, nz;
   nx = BLOCK_X*GRID_X;
   ny = BLOCK_Y*GRID_Y;
@@ -121,8 +121,8 @@ int main(){
   }
   */
 
-  //Stopwatch st;
-  //StopwatchStart(&st);
+  Stopwatch st;
+  StopwatchStart(&st);
 
   for(int i = 0; i < count; i++){
     diffusion_kernel<<<grid, block>>>(
@@ -134,10 +134,10 @@ int main(){
   }
   cudaMemcpy(in, dev_in, s, cudaMemcpyDeviceToHost);
 
-  //float elapsed_time = StopwatchStop(&st);
+  float elapsed_time = StopwatchStop(&st);
 
-  printf("pass\n");
-  //printf("kernel time: %f\n", elapsed_time);
+  printf("pass\n", elapsed_time);
+  printf("kernel time: %f\n", elapsed_time);
   /*
   for(int k=0; k<nz; k++){
     for(int j=0; j<ny; j++){

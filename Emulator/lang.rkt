@@ -30,7 +30,7 @@
  grid-size grid-dim
  ;; Arithmetic/Boolean operators
  ;; /LS is for avoiding naming conflicts
- +/LS -/LS */LS //LS ++ +=
+ +/LS -/LS */LS //LS ++ += ==/LS
  eq?/LS !/LS &&/LS ||/LS </LS >/LS
  sin/LS cos/LS neq?/LS &/LS
  quotient/LS modulo/LS
@@ -52,7 +52,8 @@
  ;; Function/procedure for host
  array-ref-host array-set-host! array-ref-test
  make-element make-array shared-memory
- 
+
+ __symbol
  optimize-barrier
  ?
  write-synth-result
@@ -197,6 +198,10 @@
   (syntax-case stx ()
     [(_ var)
      #'(var)]))
+
+(define (__symbol)
+  (define-symbolic* f real?)
+  f)
 
 ;; TODO array for +=
 ;(define-syntax (= stx)
