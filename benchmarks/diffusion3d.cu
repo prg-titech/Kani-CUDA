@@ -1,10 +1,10 @@
 #include<stdio.h>
 #include "stopwatch.h"
 
-#define BLOCK_X 5
-#define BLOCK_Y 3
-#define GRID_X 6
-#define GRID_Y 2
+#define BLOCK_X 3
+#define BLOCK_Y 4
+#define GRID_X 3
+#define GRID_Y 3
 //#define M_PI (3.1415926535897932384626)
 
 __global__ void diffusion_kernel(float* in,
@@ -29,10 +29,10 @@ __global__ void diffusion_kernel(float* in,
     int t = (k == nz-1)     ? c : c + xy;
     out[c] = 
         cc * in[c] 
-      + cw * __opt__.in[w] 
-      + ce * __opt__.in[e] 
-      + cs * __opt__.in[s]
-      + cn * __opt__.in[n] 
+      + cw * in[w] 
+      + ce * in[e] 
+      + cs * in[s]
+      + cn * in[n] 
       + cb * in[b] 
       + ct * in[t];   
     c += xy;
