@@ -318,13 +318,18 @@
               cont))
         'masked-value)))
 
-(define (profiling-access3 file arr ixs sb six . arg)
-  (for*/all ([ixs ixs]
-             [m (mask)]
-             [arr arr])
-    (parameterize ([mask m])
-      (profiling-ref-const3! file arr ixs sb six arg)
-      )))
+(define (profiling-access3 suffix arr ixs sarr sixs . arg)
+  (define path (string-append "profiles/" suffix))
+  (define out (open-output-file path #:exists 'append))
+  (define val
+    (for*/all ([ixs ixs]
+               [m (mask)]
+               [arr arr])
+      (parameterize ([mask m])
+        (profiling-ref-const3! out arr ixs sarr sixs arg)
+        )))
+  (close-output-port out)
+  val)
 
 (define (synth-memory-access file arr ixs depth)
   ;(define out-file (open-output-file "profile.rkt" #:exists 'truncate))

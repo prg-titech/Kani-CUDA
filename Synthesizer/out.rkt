@@ -23,11 +23,19 @@
  (begin (:= int j (+/LS (*/LS (block-dim 1) (block-idx 1)) (thread-idx 1))))
  (begin (:= int c (+/LS i (*/LS j nx))))
  (begin (:= int xy (*/LS nx ny)))
- (begin (:shared float (sb (*/LS 3 4))))
- (begin (:= int csb (+/LS (thread-idx 0) (*/LS (thread-idx 1) (block-dim 0)))))
+ (begin (:shared float (sb (*/LS (+/LS 3 2) (+/LS 4 2)))))
+ (begin
+   (:=
+    int
+    csb
+    (+/LS
+     (+/LS (thread-idx 0) 1)
+     (*/LS (+/LS (thread-idx 1) 1) (+/LS (block-dim 0) 2)))))
  (for-
   ((begin (:= int k 0)) : (</LS k nz) : (++/LS k))
   (= (sb csb) (in c))
+  (__insert)
+  (syncthreads)
   (begin (:= int w (?: (==/LS i 0) c (-/LS c 1))))
   (begin (:= int e (?: (==/LS i (-/LS nx 1)) c (+/LS c 1))))
   (begin (:= int n (?: (==/LS j 0) c (-/LS c nx))))
@@ -42,13 +50,15 @@
       (+/LS
        (+/LS
         (+/LS
-         (*/LS cc (in c))
+         (*/LS cc (sb csb))
          (*/LS
           cw
-          (profiling-access
-           "__opt__377683"
+          (profiling-access3
+           "forMemCopyExp__opt__135373"
            in
            w
+           sb
+           (-/LS csb 1)
            (thread-idx 0)
            (thread-idx 1)
            (block-dim 0)
@@ -59,10 +69,12 @@
            j)))
         (*/LS
          ce
-         (profiling-access
-          "__opt__518027"
+         (profiling-access3
+          "forMemCopyExp__opt__674310"
           in
           e
+          sb
+          (+/LS csb 1)
           (thread-idx 0)
           (thread-idx 1)
           (block-dim 0)
@@ -73,10 +85,12 @@
           j)))
        (*/LS
         cs
-        (profiling-access
-         "__opt__495834"
+        (profiling-access3
+         "forMemCopyExp__opt__536140"
          in
-         s
+         n
+         sb
+         (-/LS (-/LS csb (block-dim 0)) 2)
          (thread-idx 0)
          (thread-idx 1)
          (block-dim 0)
@@ -87,10 +101,12 @@
          j)))
       (*/LS
        cn
-       (profiling-access
-        "__opt__435594"
+       (profiling-access3
+        "forMemCopyExp__opt__742510"
         in
-        n
+        s
+        sb
+        (+/LS (+/LS csb (block-dim 0)) 2)
         (thread-idx 0)
         (thread-idx 1)
         (block-dim 0)

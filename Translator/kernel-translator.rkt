@@ -128,8 +128,22 @@
              [(unquote (kernel-translator (expr:array-ref-expr src)))
               (unquote (kernel-translator (expr:array-ref-offset src)))]))]
        [(expr:call? src)
-        (let ([name (kernel-translator (expr:call-function src))])
+        (let* ([name (kernel-translator (expr:call-function src))]
+               [args (expr:call-arguments src)])
           (cond
+            [(string-contains? (symbol->string name) "__opt__")
+             (list*
+              'profiling-access3
+              (string-append
+               "\""
+               "forMemCopyExp"
+               (symbol->string name)
+               "\"")
+              (kernel-translator (expr:array-ref-expr (list-ref args 0)))
+              (kernel-translator (expr:array-ref-offset (list-ref args 0)))
+              (kernel-translator (expr:array-ref-expr (list-ref args 1)))
+              (kernel-translator (expr:array-ref-offset (list-ref args 1)))
+              (map (lambda (x) (convert-var x)) (string-split vars)))]
             [(eq? '__syncthreads name)
              '(syncthreads)]
             [(eq? 'profile name)

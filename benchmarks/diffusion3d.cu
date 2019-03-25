@@ -17,8 +17,6 @@ __global__ void diffusion_kernel(float* in,
   int j = blockDim.y * blockIdx.y + threadIdx.y;
   int c = i + j * nx;
   int xy = nx * ny;
-  __shared__ float sb[BLOCK_X * BLOCK_Y];
-  int csb = threadIdx.x + threadIdx.y * blockDim.x;
   for (int k = 0; k < nz; ++k) {
     sb[csb] = in[c];
     int w = (i == 0)        ? c : c - 1;
@@ -109,7 +107,6 @@ int main(){
   dim3 block(BLOCK_X, BLOCK_Y, 1);
   dim3 grid(GRID_X, GRID_Y, 1);
 
-  /*
   for(int k=0; k<nz; k++){
     for(int j=0; j<ny; j++){
       for(int i=0; i<nx; i++){
@@ -119,7 +116,6 @@ int main(){
     }
     printf("\n");
   }
-  */
 
   Stopwatch st;
   StopwatchStart(&st);
@@ -138,7 +134,7 @@ int main(){
 
   printf("pass\n", elapsed_time);
   printf("kernel time: %f\n", elapsed_time);
-  /*
+  
   for(int k=0; k<nz; k++){
     for(int j=0; j<ny; j++){
       for(int i=0; i<nx; i++){
@@ -148,7 +144,7 @@ int main(){
     }
     printf("\n");
   }
-  */
+  
   
   return(0);
 }

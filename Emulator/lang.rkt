@@ -54,6 +54,7 @@
  make-element make-array shared-memory
 
  __symbol
+ __insert
  optimize-barrier
  ?
  write-synth-result

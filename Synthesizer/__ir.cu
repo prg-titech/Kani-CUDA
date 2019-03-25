@@ -17,10 +17,12 @@ __global__ void diffusion_kernel(float* in,
   int j = blockDim.y * blockIdx.y + threadIdx.y;
   int c = i + j * nx;
   int xy = nx * ny;
-  __shared__ float sb[BLOCK_X * BLOCK_Y];
-  int csb = threadIdx.x + threadIdx.y * blockDim.x;
+  __shared__ float sb[(BLOCK_X + 2) * (BLOCK_Y + 2)];
+  int csb = threadIdx.x + 1 + (threadIdx.y + 1) * (blockDim.x + 2);
   for (int k = 0; k < nz; ++k) {
     sb[csb] = in[c];
+    __insert();
+    __syncthreads();
     int w = (i == 0)        ? c : c - 1;
     int e = (i == nx-1)     ? c : c + 1;
     int n = (j == 0)        ? c : c - nx;
@@ -28,11 +30,11 @@ __global__ void diffusion_kernel(float* in,
     int b = (k == 0)        ? c : c - xy;
     int t = (k == nz-1)     ? c : c + xy;
     out[c] = 
-        cc * in[c] 
-      + cw * __opt__377683.in[w] 
-      + ce * __opt__518027.in[e] 
-      + cs * __opt__495834.in[s]
-      + cn * __opt__435594.in[n] 
+        cc * sb[csb] 
+      + cw * __opt__135373(in[w], sb[csb-1])
+      + ce * __opt__674310(in[e], sb[csb+1]) 
+      + cs * __opt__536140(in[n], sb[csb-blockDim.x-2])
+      + cn * __opt__742510(in[s], sb[csb+blockDim.x+2])
       + cb * in[b] 
       + ct * in[t];   
     c += xy;

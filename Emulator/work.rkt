@@ -6,7 +6,7 @@
           bid bid-3d block-idx block-size mask thread-idx vecfy to-bid-3d
           tid barrier-count mask incl-bc clear-bc get-bc
           env clear-env add-env profiled-vars set-profiled-vars!
-          profile-vars puts cudaDeviceSynchronize)
+          profile-vars puts cudaDeviceSynchronize __insert)
 
 (define barrier-count (make-parameter 0))
 
@@ -74,6 +74,12 @@
           [(vector? x) x]
           [else (raise "vecfy: expected an integer/boolean or a vector")])))
 
+(define (cudaDeviceSynchronize)
+  0)
+
+(define (__insert)
+  0)
+
 
 ;==========================
 (define barrier-counter 0)
@@ -110,9 +116,6 @@
 (define (puts x)
   (println x)
   x)
-
-(define (cudaDeviceSynchronize)
-  0)
 
 
 

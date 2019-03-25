@@ -273,9 +273,37 @@ public class Synthesizer {
 		return new None();
 	}
 	
+	public String synthMemCopyExp(File profile){
+		long start = System.currentTimeMillis();
+		this.inputData(profile);
+		
+		List<BoolExpression> exps = env.generateBool(1);
+		
+		Iterator<BoolExpression> it = exps.iterator();
+		int size = this.data.size();
+		loop : while(it.hasNext()){
+			BoolExpression e = it.next();
+			boolean temp = false;
+			for(int i = 0; i < size; i++){
+				env.setVal(vars, Arrays.asList(data.get(i).split(" ")));
+				temp = (env.getSmIdx() == 0);
+				if (e.eval(env) != temp) {
+					break;
+				}
+				if (i == size-1) {
+					return e.toStringExp();
+				}
+			}
+		}
+
+		long end = System.currentTimeMillis();
+		System.out.println("time: " + (end - start) + "ms");
+		
+		return "";	
+	}
+	
 	public String synthMemExp(File profile){				
-		long start;
-		long end;
+		long start, end;
 		BoolExpression bnone = new BNone();
 		Expression none = new None();
 		BoolExpression bexp = bnone;
@@ -312,8 +340,14 @@ public class Synthesizer {
 		
 		this.input(profiles);
 		for(File file : this.profiles){
-			String exp = this.synthMemExp(file);
-			writer.assignExp(exp, file.getName());	
+			String exp;
+			if(file.getName().contains("forMemCopyExp")){
+				exp = this.synthMemCopyExp(file);
+				writer.assignMemCopyExp(exp, file.getName().substring("forMemCopyExp".length()));
+			}else{
+				exp = this.synthMemExp(file);
+				writer.assignMemExp(exp, file.getName());
+			}	
 		}
 		
 		long end = System.currentTimeMillis();		
