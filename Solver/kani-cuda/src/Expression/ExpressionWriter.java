@@ -76,7 +76,7 @@ public class ExpressionWriter {
 		int end = start;
 		
 		bc++;
-		System.out.println(this.code.charAt(end));
+		//System.out.println(this.code.charAt(end));
 		while(bc!=0){
 			++end;
 			if (this.code.charAt(end) == '(') {

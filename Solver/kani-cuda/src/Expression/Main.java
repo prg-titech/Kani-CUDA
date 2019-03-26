@@ -27,8 +27,11 @@ public class Main {
 		
 		File currentDir = new File(".");
 		System.out.println(currentDir.getAbsolutePath());
-		File profile = new File("profiles");	
+		
+		// Input a path of profilese
+		File profile = new File("profiles");
 		System.out.println();
+		
 		Synthesizer psysha = new Synthesizer();	
 		psysha.synthesizeFrom(profile);
 	}
