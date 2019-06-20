@@ -341,8 +341,8 @@ public class Synthesizer {
 		this.input(profiles);
 		for(File file : this.profiles){
 			String exp;
-			//PearsonCorrelation pc = new PearsonCorrelation(file, vars);
-			//pc.process();
+			PearsonCorrelation pc = new PearsonCorrelation(file, vars);
+			pc.process();
 			if(file.getName().contains("forMemCopyExp")){
 				exp = this.synthMemCopyExp(file);
 				writer.assignMemCopyExp(exp, file.getName().substring("forMemCopyExp".length()));
