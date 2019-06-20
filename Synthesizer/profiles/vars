@@ -1,0 +1,1 @@
+tid bid id smid threadIdx.x threadIdx.y blockDim.x blockDim.y csb c i j
