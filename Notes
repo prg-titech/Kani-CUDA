@@ -1,0 +1,51 @@
+?: unsolved
+!: solved
+//: failed
+->: in progress
+
+? verify synthesis
+-> Apply PearsonCorrelation before generate arith expressions 
+	! implement PearsonCorrelation
+	-> need to change var list for generateArith. need to add a var parameter.
+
+? pre-generated expressions
+
+Synthesizer.java:
+	synthesizeArith():
+ 		? test at most 50 lines of profiles.
+
+ 	?synthMemExp():
+
+ 	inputData():
+ 		! don't need to call this.env.setVal(...)
+
+
+Environment.java:
+
+	generateBoolAux():	
+		[vars, 0, 1, vars - 1] -> add [==, !==, <] in between
+		!  j < i for == and !==
+
+	generateBool():		
+		add && || between expressions
+		! don't need lst2
+		! res.add(exp1.unOp(!)) don't need this
+		! j < i
+
+	generateArith():
+		! don't need list2;
+		? this function is not used except in generateBoolAux()
+
+	generateArith2(int num):
+		? too simple
+		num == 0 -> return empty ArrList
+		
+		terms := [vars] -> [vars, [vars, 2] * [vars, 2], 1]  ? add constants
+		return generateArith2Aux(num - 1, terms, terms)
+
+	generateArith2Aux(num, lst, terms)
+		res = lst
+		num == 0 -> return res
+		add ([lst += terms]) to res
+		return generateArith2Aux(num-1, res, terms)
+

@@ -136,20 +136,28 @@ public class Environment {
 		}
 	}
 	
-	public List<Expression> generateArith2(int num){
+	public List<Expression> generateArith2(int num, List<String> relvars){
 		if(num > 0){
-			List<Expression> vars = this.getVars();
-			List<Expression> terms = this.getVars();
+			Iterator<String> it = relvars.iterator();
+			List<Expression> vars = new ArrayList<Expression>();
+			List<Expression> terms = new ArrayList<Expression>();
+			while(it.hasNext()){
+				Expression exp1 = new Variable(it.next());
+				vars.add(exp1);
+				terms.add(exp1);
+			}
 			Expression two = new Constant<Integer>(2);
+			Expression three = new Constant<Integer>(3);
 			vars.add(two);
+			vars.add(three);
 			int size = vars.size();
 			for (int i = 0; i < size; i++) {
 				for (int j = 0; j < i; j++) {
-					terms.add(vars.get(i).multiple(vars.get(j)));
+					if (!vars.get(i).isConstant() || !vars.get(j).isConstant()) {
+						terms.add(vars.get(i).multiple(vars.get(j)));
+					}
 				}
 			}
-			Expression one = new Constant<Integer>(1);
-			terms.add(one);
 			
 			return this.generateArith2Aux(num-1, terms, terms);
 		} else {
@@ -159,28 +167,43 @@ public class Environment {
 	
 	public List<Expression> generateArith2Aux(int num, List<Expression> lst, List<Expression> terms){
 		List<Expression> res = new ArrayList<Expression>(lst);
-
 		if (num == 0) {
+			for (Expression e: lst) {
+				for (int i = 1; i < 7; i++) {
+					res.add(e.add((Expression) new Constant<Integer>(i)));
+					res.add(e.subtract((Expression) new Constant<Integer>(i)));
+				}
+			}
 			return res;
-		} else {
-			//List<Expression> temp = terms;
-			for (Expression term : terms) {
-				for (Expression e : lst){
-					if (!term.equals(e)) {
-						//t.add(e).print();
-						if(e.contain(1, term)>0){
-							res.add(e.add(term));
-						}else if(e.contain(-1, term)>0){
-							res.add(e.subtract(term));
-						}else{
-							res.add(e.add(term));
-							res.add(e.subtract(term));
-						}
-					}
+		}
+		//List<Expression> temp = terms;
+		if (num == 2) {
+			for (int i = 0; i < terms.size(); i++) {
+				for (int j = 0; j <= i; j++) {
+					Expression term = terms.get(i);
+					Expression e = lst.get(j);
+					res.add(e.add(term));
+					res.add(e.subtract(term));
 				}
 			}
 			return this.generateArith2Aux(num-1, res, terms);
 		}
+		for (Expression term : terms) {
+			for (Expression e : lst){
+				if (!term.equals(e)) {
+					//t.add(e).print();
+					if(e.contain(1, term)>0){
+						res.add(e.add(term));
+					}else if(e.contain(-1, term)>0){
+						res.add(e.subtract(term));
+					}else{							
+						res.add(e.add(term));
+						res.add(e.subtract(term));
+					}
+				}
+			}
+		}
+			return this.generateArith2Aux(num-1, res, terms);
 	}
 		
 	public List<BoolExpression> generateBoolAux(int depth){

@@ -17,7 +17,7 @@ public interface Expression {
 	boolean isVariable();
 	
 	// Boolean value as to this expression is a constant
-	boolean isConsatnt();
+	boolean isConstant();
 	
 	// Evaluate this expression in env
 	int eval(Environment env);

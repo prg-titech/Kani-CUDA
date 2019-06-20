@@ -33,7 +33,7 @@ public class None implements Expression {
 	}
 
 	@Override
-	public boolean isConsatnt() {
+	public boolean isConstant() {
 		// TODO Auto-generated method stub
 		return false;
 	}

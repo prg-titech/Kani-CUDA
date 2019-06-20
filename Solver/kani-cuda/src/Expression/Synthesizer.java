@@ -8,6 +8,7 @@ public class Synthesizer {
 	List<String> vars;
 	List<File> profiles;
 	List<String> data;
+	List<String> relvars;
 	int limit = 0;
 	
 
@@ -17,6 +18,7 @@ public class Synthesizer {
 		this.vars = new ArrayList<String>();
 		this.profiles = new ArrayList<File>();
 		this.data = new ArrayList<String>();
+		this.relvars = new ArrayList<String>();
 	}
 	
 	public void inputVars(File file){
@@ -74,10 +76,18 @@ public class Synthesizer {
 
 
 	public Expression synthesizeArith(int num){
-		List<Expression> exps = env.generateArith2(num);
-//		for(Expression ex : exps){
-//			ex.print();
-//		}
+		List<Expression> exps = env.generateArith2(num, this.relvars);
+		File write = new File("Expressions");
+		try {
+			write.createNewFile();
+			FileWriter writer = new FileWriter(write);
+			for(Expression ex : exps){
+				writer.write(ex.toStringExp() + "\n");
+			}
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		Iterator<Expression> it = exps.iterator();
 		int size = this.data.size();
 		loop : while(it.hasNext()){
@@ -152,7 +162,7 @@ public class Synthesizer {
 		int error = 0;
 		
 		loop : for (int k = 0; k < 3; k++){
-			List<Expression> exps = env.generateArith2(k);
+			List<Expression> exps = env.generateArith2(k, relvars);
 			Iterator<Expression> it = exps.iterator();
 
 			while(it.hasNext()){
@@ -195,7 +205,7 @@ public class Synthesizer {
 		int sizee = elss.size();
 		
 		loop : for (int h = 0; h < 2; h++) {
-			List<Expression> exps2 = env.generateArith2(h);
+			List<Expression> exps2 = env.generateArith2(h, relvars);
 			Iterator<Expression> it2 = exps2.iterator();
 			
 			while(it2.hasNext()){
@@ -342,7 +352,7 @@ public class Synthesizer {
 		for(File file : this.profiles){
 			String exp;
 			PearsonCorrelation pc = new PearsonCorrelation(file, vars);
-			pc.process();
+			this.relvars = pc.process();
 			if(file.getName().contains("forMemCopyExp")){
 				exp = this.synthMemCopyExp(file);
 				writer.assignMemCopyExp(exp, file.getName().substring("forMemCopyExp".length()));

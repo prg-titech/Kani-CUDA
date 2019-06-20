@@ -96,15 +96,15 @@ public class ExpressionExamples {
 		
 		// Generate arbitrary expression of depth 3
 		//List<BoolExpression> lst = env.generateBool(1);
-		List<Expression> lst = env.generateArith2(5);
-		int size = lst.size();
+		//List<Expression> lst = env.generateArith2(5);
+		//int size = lst.size();
 		// the number of variable = 5
 		// not optimized 71794821
 		// optimized     55717221		
 		// not optimized 5185404
 		// optimized 4582900
 		
-		System.out.println(size);
+		//System.out.println(size);
 //		for(int i = 0; i < size; i++){
 //			lst.get(i).print();
 //		}

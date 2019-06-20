@@ -47,7 +47,7 @@ public abstract class AExpression implements Expression{
 		return false;
 	}
 
-	public boolean isConsatnt() {
+	public boolean isConstant() {
 		return false;
 	}
 	
