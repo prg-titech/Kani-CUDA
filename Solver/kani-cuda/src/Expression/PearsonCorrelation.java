@@ -1,32 +1,36 @@
 package Expression;
 
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+import org.apache.commons.math3.stat.descriptive.moment.Variance;
 import java.io.*;
 import java.util.*;
 
 
 public class PearsonCorrelation {
-	public File profile;
-	public List<String> vars;
+	private File profile; 
+	private List<String> vars;
+	private Map<String, double[]> arrMap;
+	private int smidIndex;
 	
 	public PearsonCorrelation(File profile, List<String> vars) {
 		this.profile = profile;
 		this.vars = vars;
+		this.arrMap = new HashMap<>();
+		this.smidIndex = -1;
 	}
 	
-	public List<String> process() {
-		List<String> result = new ArrayList<String>();
-		int smidIndex = -1;
+	public void process() {
+		// hard coded this size
 		int size = 800;
 		for (int i = 0; i < vars.size(); i++) {
 			if (vars.get(i).equals("smid")) {
-				smidIndex = i;
+				this.smidIndex = i;
 			}
 		}
 		if (smidIndex == -1) {
-			return vars;
+			return;
 		}
-		HashMap<String, double[]> arrMap = new HashMap<>();
+		//HashMap<String, double[]> arrMap = new HashMap<>();
 		for (int i = smidIndex; i < vars.size(); i++) {
 			arrMap.put(vars.get(i), new double[size]);
 		}
@@ -51,6 +55,10 @@ public class PearsonCorrelation {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public List<String> getRelVars() {
+		List<String> result = new ArrayList<String>();
 		double[] smidList = arrMap.get(vars.get(smidIndex));
 		for (int i = smidIndex + 1; i < vars.size(); i++) {
 			double corr = new PearsonsCorrelation().correlation(smidList, arrMap.get(vars.get(i)));
@@ -58,6 +66,18 @@ public class PearsonCorrelation {
 			if (corr > 0.5 || corr < -0.5) {
 				result.add(vars.get(i));
 				//System.out.println(vars.get(i));
+			}
+		}
+		return result;
+	}
+	
+	public List<String> getConstants() {
+		List<String> result = new ArrayList<String>();
+		Variance v = new Variance();
+		for (int i = smidIndex + 1; i < vars.size(); i++) {
+			if (v.evaluate(arrMap.get(vars.get(i))) == 0) {
+				//System.out.println(vars.get(i));
+				result.add(vars.get(i));
 			}
 		}
 		return result;

@@ -2,7 +2,9 @@
 #include<stdio.h>
 #include<sys/time.h>
 
+/*
 #define BLOCKSIZEX 5
+*/
 #define BLOCKSIZEY 4
 #define BLOCKSIZE BLOCKSIZEX * BLOCKSIZEY
 #define GRIDSIZEX 2
@@ -107,18 +109,18 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 			sb[csb] = p[c];
 			__syncthreads();
 			s0 = a0[i*jmax*kmax+j*kmax+k] * p[(i+1)*jmax*kmax+j*kmax+k]
-			+ a1[i*jmax*kmax+j*kmax+k] * (!((blockDim.y - 1)==threadIdx.y) ? sb[(csb + 5)] : p[i*jmax*kmax+(j+1)*kmax+k])
-			+ a2[i*jmax*kmax+j*kmax+k] * (!(blockDim.y==threadIdx.x) ? sb[(csb + 1)] : p[i*jmax*kmax+j*kmax+(k+1)])
+			+ a1[i*jmax*kmax+j*kmax+k] * (!((blockDim.y - 1)==threadIdx.y) ? sb[(csb + blockDim.x)] : p[i*jmax*kmax+(j+1)*kmax+k])
+			+ a2[i*jmax*kmax+j*kmax+k] * (!(blockDim.y==threadIdx.x) ? sb[((blockDim.x - blockDim.y) + csb)] : p[i*jmax*kmax+j*kmax+(k+1)])
 			+ b0[i*jmax*kmax+j*kmax+k] * ( 
 				p[(i+1)*jmax*kmax+(j+1)*kmax+k] 
 				- p[(i+1)*jmax*kmax+(j-1)*kmax+k]
 				- p[(i-1)*jmax*kmax+(j+1)*kmax+k] 
 				+ p[(i-1)*jmax*kmax+(j-1)*kmax+k] )
 			+ b1[i*jmax*kmax+j*kmax+k] *(
-				((!((blockDim.y - 1)==threadIdx.y)&&!(blockDim.y==threadIdx.x)) ? sb[(csb + 6)] : p[i*jmax*kmax+(j+1)*kmax+(k+1)])
-				- ((!(blockDim.y==threadIdx.x)&&!(csb==threadIdx.x)) ? sb[(csb - 4)] : p[i*jmax*kmax+(j-1)*kmax+(k+1)])
-				- ((!(0==threadIdx.x)&&!(csb==threadIdx.x)) ? sb[(csb - 6)] : p[i*jmax*kmax+(j-1)*kmax+(k-1)])
-				+ ((!((blockDim.y - 1)==threadIdx.y)&&!(0==threadIdx.x)) ? sb[(csb + 4)] : p[i*jmax*kmax+(j+1)*kmax+(k-1)]))
+				((!((blockDim.y - 1)==threadIdx.y)&&!(blockDim.y==threadIdx.x)) ? sb[((csb + blockDim.x) + 1)] : p[i*jmax*kmax+(j+1)*kmax+(k+1)])
+				- ((!(blockDim.y==threadIdx.x)&&!(csb==threadIdx.x)) ? sb[(csb - blockDim.y)] : p[i*jmax*kmax+(j-1)*kmax+(k+1)])
+				- ((!(0==threadIdx.x)&&!(csb==threadIdx.x)) ? sb[((csb - blockDim.x) - 1)] : p[i*jmax*kmax+(j-1)*kmax+(k-1)])
+				+ ((!((blockDim.y - 1)==threadIdx.y)&&!(0==threadIdx.x)) ? sb[(csb + blockDim.y)] : p[i*jmax*kmax+(j+1)*kmax+(k-1)]))
 			+ b2[i*jmax*kmax+j*kmax+k] * ( 
 				p[(i+1)*jmax*kmax+j*kmax+(k+1)] 
 				- p[(i-1)*jmax*kmax+j*kmax+(k+1)]
@@ -146,6 +148,8 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 	}
 
 	int main(){
+		//int BLOCKSIZEX = atoi(Argv[1]);
+		int BLOCKSIZEX = 5;
 		int i, j, k;
 		float final_gosa;
 		double cpu0, cpu1, nflop, xmflops2, score;

@@ -28,16 +28,18 @@
 
 
 
+
+
 static int imax, jmax, kmax, mimax, mjmax, mkmax;
 static float omega;
 
 
 
-# 65 "__cp.cu"
+# 67 "__cp.cu"
 
 
 
-# 87 "__cp.cu"
+# 89 "__cp.cu"
 
 
 __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, float *b1, float *b2, float *c0, float *c1, float *c2, float *p, float *wrk1, float *wrk2, float *bnd, int nn, int imax, int jmax, int kmax, float omega, float *gosa){
@@ -58,18 +60,18 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 			sb[csb] = p[c];
 			__syncthreads();
 			s0 = a0[i*jmax*kmax+j*kmax+k] * p[(i+1)*jmax*kmax+j*kmax+k]
-			+ a1[i*jmax*kmax+j*kmax+k] * __opt__835914.p[i*jmax*kmax+(j+1)*kmax+k]
-			+ a2[i*jmax*kmax+j*kmax+k] * __opt__738147.p[i*jmax*kmax+j*kmax+(k+1)]
+			+ a1[i*jmax*kmax+j*kmax+k] * __opt__35371.p[i*jmax*kmax+(j+1)*kmax+k]
+			+ a2[i*jmax*kmax+j*kmax+k] * __opt__300682.p[i*jmax*kmax+j*kmax+(k+1)]
 			+ b0[i*jmax*kmax+j*kmax+k] * ( 
 				p[(i+1)*jmax*kmax+(j+1)*kmax+k] 
 				- p[(i+1)*jmax*kmax+(j-1)*kmax+k]
 				- p[(i-1)*jmax*kmax+(j+1)*kmax+k] 
 				+ p[(i-1)*jmax*kmax+(j-1)*kmax+k] )
 			+ b1[i*jmax*kmax+j*kmax+k] *(
-				__opt__724492.p[i*jmax*kmax+(j+1)*kmax+(k+1)]
-				- __opt__797948.p[i*jmax*kmax+(j-1)*kmax+(k+1)]
-				- __opt__664248.p[i*jmax*kmax+(j-1)*kmax+(k-1)]
-				+ __opt__74428.p[i*jmax*kmax+(j+1)*kmax+(k-1)])
+				__opt__650273.p[i*jmax*kmax+(j+1)*kmax+(k+1)]
+				- __opt__789409.p[i*jmax*kmax+(j-1)*kmax+(k+1)]
+				- __opt__786206.p[i*jmax*kmax+(j-1)*kmax+(k-1)]
+				+ __opt__294097.p[i*jmax*kmax+(j+1)*kmax+(k-1)])
 			+ b2[i*jmax*kmax+j*kmax+k] * ( 
 				p[(i+1)*jmax*kmax+j*kmax+(k+1)] 
 				- p[(i-1)*jmax*kmax+j*kmax+(k+1)]
@@ -97,11 +99,13 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 	}
 
 	int main(){
+		//int BLOCKSIZEX = atoi(Argv[1]);
+		int BLOCKSIZEX = 5;
 		int i, j, k;
 		float final_gosa;
 		double cpu0, cpu1, nflop, xmflops2, score;
 
-		float gosa[5 * 4 * 2 * 3];
+		float gosa[BLOCKSIZEX * 4 * 2 * 3];
 
 	
 		float *p;
@@ -114,11 +118,11 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 	
 		mimax = 4;
 		mjmax = 3 * 4 + 2;
-		mkmax = 2 * 5 + 2;
+		mkmax = 2 * BLOCKSIZEX + 2;
 		imax = 4 -1;
 		jmax = 3 * 4 + 2 -1;
-		kmax = 2 * 5 + 2 -1;
-	//int N_IJK = 4*3 * 4 + 2*2 * 5 + 2;
+		kmax = 2 * BLOCKSIZEX + 2 -1;
+	//int N_IJK = 4*3 * 4 + 2*2 * BLOCKSIZEX + 2;
 		int N_IJK = mimax*mjmax*mkmax;
 	
 		float *dev_p;
@@ -180,7 +184,7 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 		cudaMalloc((void**)&dev_wrk1, N_IJK*sizeof(float));
 		cudaMalloc((void**)&dev_wrk2, N_IJK*sizeof(float));
 
-		cudaMalloc((void**)&dev_gosa, sizeof(float)*5 * 4 * 2 * 3);
+		cudaMalloc((void**)&dev_gosa, sizeof(float)*BLOCKSIZEX * 4 * 2 * 3);
 	
 
 	
@@ -246,12 +250,12 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 	//cudaMemcpy(dev_gosa, gosa, sizeof(float), cudaMemcpyHostToDevice);
 	
 
-		printf("mimax = %d mjmax = %d mkmax = %d\n", 4, 3 * 4 + 2, 2 * 5 + 2);
+		printf("mimax = %d mjmax = %d mkmax = %d\n", 4, 3 * 4 + 2, 2 * BLOCKSIZEX + 2);
 		printf("imax = %d jmax = %d kmax = %d\n", imax, jmax, kmax);
 
 	//cpu0 = second(); 
 
-		dim3 block(5, 4, 1);
+		dim3 block(BLOCKSIZEX, 4, 1);
 		dim3 grid(2, 3, 1);
 
 		jacobi<<<grid, block>>>(dev_a0, dev_a1, dev_a2, dev_a3, dev_b0, dev_b1, dev_b2, dev_c0, dev_c1, dev_c2, dev_p, dev_wrk1, dev_wrk2, dev_bnd, 3, mimax, mjmax, mkmax, omega, dev_gosa);
@@ -260,7 +264,7 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 
 	//cpu1 = second();
 
-		cudaMemcpy(&gosa, dev_gosa, sizeof(float)*5 * 4 * 2 * 3, cudaMemcpyDeviceToHost);
+		cudaMemcpy(&gosa, dev_gosa, sizeof(float)*BLOCKSIZEX * 4 * 2 * 3, cudaMemcpyDeviceToHost);
 
 	
 		cudaFree(dev_a0);
@@ -282,7 +286,7 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 	
 
 	
-		for(int gosa_index=0; gosa_index<5 * 4 * 2 * 3; gosa_index++){
+		for(int gosa_index=0; gosa_index<BLOCKSIZEX * 4 * 2 * 3; gosa_index++){
 			final_gosa += gosa[gosa_index];
 		//printf("Gosa%d: %e \n", gosa_index, gosa[gosa_index]);
 		}

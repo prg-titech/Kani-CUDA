@@ -1,7 +1,9 @@
 #include<stdio.h>
 #include<sys/time.h>
 
+/*
 #define BLOCKSIZEX 5
+*/
 #define BLOCKSIZEY 4
 #define BLOCKSIZE BLOCKSIZEX * BLOCKSIZEY
 #define GRIDSIZEX 2
@@ -145,6 +147,8 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 	}
 
 	int main(){
+		//int BLOCKSIZEX = atoi(Argv[1]);
+		int BLOCKSIZEX = 5;
 		int i, j, k;
 		float final_gosa;
 		double cpu0, cpu1, nflop, xmflops2, score;

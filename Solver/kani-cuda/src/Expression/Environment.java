@@ -136,30 +136,40 @@ public class Environment {
 		}
 	}
 	
-	public List<Expression> generateArith2(int num, List<String> relvars){
+	public List<Expression> generateArith2(int num, List<String> relVars, List<String> constantVars){
 		if(num > 0){
-			Iterator<String> it = relvars.iterator();
-			List<Expression> vars = new ArrayList<Expression>();
-			List<Expression> terms = new ArrayList<Expression>();
-			while(it.hasNext()){
-				Expression exp1 = new Variable(it.next());
+			List<Expression> vars = new ArrayList<>();
+			List<Expression> terms = new ArrayList<>();
+			List<Expression> res = new ArrayList<>();
+			for (String s: relVars){
+				Expression exp1 = new Variable(s);
 				vars.add(exp1);
-				terms.add(exp1);
+			}
+			for (String s : constantVars) {
+				Expression exp2 = new Variable(s);
+				terms.add(exp2);
 			}
 			Expression two = new Constant<Integer>(2);
-			Expression three = new Constant<Integer>(3);
-			vars.add(two);
-			vars.add(three);
-			int size = vars.size();
-			for (int i = 0; i < size; i++) {
+			//Expression three = new Constant<Integer>(3);
+			for (int i = 0; i < vars.size(); i++) {
+				res.add(vars.get(i));
 				for (int j = 0; j < i; j++) {
-					if (!vars.get(i).isConstant() || !vars.get(j).isConstant()) {
-						terms.add(vars.get(i).multiple(vars.get(j)));
-					}
+					res.add(vars.get(i).multiple(vars.get(j)));
 				}
 			}
-			
-			return this.generateArith2Aux(num-1, terms, terms);
+			for (int i = 0; i < terms.size(); i++) {
+				res.add(terms.get(i));
+				for (int j = 0; j < vars.size(); j++) {
+					res.add(vars.get(j).multiple(terms.get(i)));
+				}
+			}
+			/*
+			int size = res.size();
+			for (int i = 0; i < size; i++) {
+				res.add(res.get(i).multiple(two));
+			}
+			*/
+			return this.generateArith2Aux(num-1, res, res);
 		} else {
 			return new ArrayList<Expression>();
 		}
@@ -169,7 +179,7 @@ public class Environment {
 		List<Expression> res = new ArrayList<Expression>(lst);
 		if (num == 0) {
 			for (Expression e: lst) {
-				for (int i = 1; i < 7; i++) {
+				for (int i = 1; i < 3; i++) {
 					res.add(e.add((Expression) new Constant<Integer>(i)));
 					res.add(e.subtract((Expression) new Constant<Integer>(i)));
 				}

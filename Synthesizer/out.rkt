@@ -79,7 +79,7 @@
              (*/LS
               (a1 (+/LS (+/LS (*/LS (*/LS i jmax) kmax) (*/LS j kmax)) k))
               (profiling-access
-               "__opt__835914"
+               "__opt__35371"
                p
                (+/LS (+/LS (*/LS (*/LS i jmax) kmax) (*/LS (+/LS j 1) kmax)) k)
                (thread-idx 0)
@@ -93,7 +93,7 @@
             (*/LS
              (a2 (+/LS (+/LS (*/LS (*/LS i jmax) kmax) (*/LS j kmax)) k))
              (profiling-access
-              "__opt__738147"
+              "__opt__300682"
               p
               (+/LS (+/LS (*/LS (*/LS i jmax) kmax) (*/LS j kmax)) (+/LS k 1))
               (thread-idx 0)
@@ -137,7 +137,7 @@
             (-/LS
              (-/LS
               (profiling-access
-               "__opt__724492"
+               "__opt__650273"
                p
                (+/LS
                 (+/LS (*/LS (*/LS i jmax) kmax) (*/LS (+/LS j 1) kmax))
@@ -151,7 +151,7 @@
                i
                j)
               (profiling-access
-               "__opt__797948"
+               "__opt__789409"
                p
                (+/LS
                 (+/LS (*/LS (*/LS i jmax) kmax) (*/LS (-/LS j 1) kmax))
@@ -165,7 +165,7 @@
                i
                j))
              (profiling-access
-              "__opt__664248"
+              "__opt__786206"
               p
               (+/LS
                (+/LS (*/LS (*/LS i jmax) kmax) (*/LS (-/LS j 1) kmax))
@@ -179,7 +179,7 @@
               i
               j))
             (profiling-access
-             "__opt__74428"
+             "__opt__294097"
              p
              (+/LS
               (+/LS (*/LS (*/LS i jmax) kmax) (*/LS (+/LS j 1) kmax))
@@ -249,6 +249,7 @@
  int
  main
  ()
+ (begin (define BLOCKSIZEX 5))
  (begin (define i 0) (define j 0) (define k 0))
  (begin (define final_gosa 0))
  (begin
@@ -257,7 +258,7 @@
    (define nflop 0)
    (define xmflops2 0)
    (define score 0))
- (begin (: float (gosa (* (* (* 5 4) 2) 3))))
+ (begin (: float (gosa (* (* (* BLOCKSIZEX 4) 2) 3))))
  (begin (:* float p))
  (begin (:* float a0) (:* float a1) (:* float a2) (:* float a3))
  (begin (:* float b0) (:* float b1) (:* float b2))
@@ -266,10 +267,10 @@
  (begin (:* float wrk1) (:* float wrk2))
  (set! mimax 4)
  (set! mjmax (+ (* 3 4) 2))
- (set! mkmax (+ (* 2 5) 2))
+ (set! mkmax (+ (* 2 BLOCKSIZEX) 2))
  (set! imax (- 4 1))
  (set! jmax (- (+ (* 3 4) 2) 1))
- (set! kmax (- (+ (* 2 5) 2) 1))
+ (set! kmax (- (+ (* 2 BLOCKSIZEX) 2) 1))
  (begin (define N_IJK (* (* mimax mjmax) mkmax)))
  (begin (:* float dev_p))
  (begin
@@ -311,7 +312,7 @@
  (cudaMalloc dev_bnd (* N_IJK 1))
  (cudaMalloc dev_wrk1 (* N_IJK 1))
  (cudaMalloc dev_wrk2 (* N_IJK 1))
- (cudaMalloc dev_gosa (* (* (* (* 1 5) 4) 2) 3))
+ (cudaMalloc dev_gosa (* (* (* (* 1 BLOCKSIZEX) 4) 2) 3))
  (for-
   ((set! i 0) : (< i mimax) : (++ i))
   (for-
@@ -370,7 +371,7 @@
  (cudaMemcpy dev_wrk2 wrk2 (* N_IJK 1) 1)
  (cudaMemcpy dev_bnd bnd (* N_IJK 1) 1)
  (cudaMemcpy dev_p p (* N_IJK 1) 1)
- (define block (list 5 4 1))
+ (define block (list BLOCKSIZEX 4 1))
  (define grid (list 2 3 1))
  (invoke-kernel
   __global__jacobi
@@ -397,7 +398,7 @@
   omega
   dev_gosa)
  (cudaDeviceSynchronize)
- (cudaMemcpy gosa dev_gosa (* (* (* (* 1 5) 4) 2) 3) 0)
+ (cudaMemcpy gosa dev_gosa (* (* (* (* 1 BLOCKSIZEX) 4) 2) 3) 0)
  (cudaFree dev_a0)
  (cudaFree dev_a1)
  (cudaFree dev_a2)
@@ -416,7 +417,7 @@
  (for-
   ((begin (define gosa_index 0))
    :
-   (< gosa_index (* (* (* 5 4) 2) 3))
+   (< gosa_index (* (* (* BLOCKSIZEX 4) 2) 3))
    :
    (++ gosa_index))
   (+= final_gosa (array-ref-host gosa gosa_index)))

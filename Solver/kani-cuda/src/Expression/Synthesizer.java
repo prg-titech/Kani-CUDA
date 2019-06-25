@@ -8,7 +8,8 @@ public class Synthesizer {
 	List<String> vars;
 	List<File> profiles;
 	List<String> data;
-	List<String> relvars;
+	List<String> relVars;
+	List<String> constantVars;
 	int limit = 0;
 	
 
@@ -18,7 +19,8 @@ public class Synthesizer {
 		this.vars = new ArrayList<String>();
 		this.profiles = new ArrayList<File>();
 		this.data = new ArrayList<String>();
-		this.relvars = new ArrayList<String>();
+		this.relVars = new ArrayList<String>();
+		this.constantVars = new ArrayList<String>();
 	}
 	
 	public void inputVars(File file){
@@ -76,7 +78,7 @@ public class Synthesizer {
 
 
 	public Expression synthesizeArith(int num){
-		List<Expression> exps = env.generateArith2(num, this.relvars);
+		List<Expression> exps = env.generateArith2(num, relVars, constantVars);
 		File write = new File("Expressions");
 		try {
 			write.createNewFile();
@@ -88,6 +90,7 @@ public class Synthesizer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 		Iterator<Expression> it = exps.iterator();
 		int size = this.data.size();
 		loop : while(it.hasNext()){
@@ -162,7 +165,7 @@ public class Synthesizer {
 		int error = 0;
 		
 		loop : for (int k = 0; k < 3; k++){
-			List<Expression> exps = env.generateArith2(k, relvars);
+			List<Expression> exps = env.generateArith2(k, relVars, constantVars);
 			Iterator<Expression> it = exps.iterator();
 
 			while(it.hasNext()){
@@ -205,7 +208,7 @@ public class Synthesizer {
 		int sizee = elss.size();
 		
 		loop : for (int h = 0; h < 2; h++) {
-			List<Expression> exps2 = env.generateArith2(h, relvars);
+			List<Expression> exps2 = env.generateArith2(h, relVars, constantVars);
 			Iterator<Expression> it2 = exps2.iterator();
 			
 			while(it2.hasNext()){
@@ -352,7 +355,9 @@ public class Synthesizer {
 		for(File file : this.profiles){
 			String exp;
 			PearsonCorrelation pc = new PearsonCorrelation(file, vars);
-			this.relvars = pc.process();
+			pc.process();
+			this.relVars = pc.getRelVars();
+			this.constantVars = pc.getConstants();
 			if(file.getName().contains("forMemCopyExp")){
 				exp = this.synthMemCopyExp(file);
 				writer.assignMemCopyExp(exp, file.getName().substring("forMemCopyExp".length()));
