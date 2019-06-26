@@ -6,15 +6,19 @@
 ? verify synthesis
 -> Apply PearsonCorrelation before generate arith expressions 
 	! implement PearsonCorrelation
-	-> need to change var list for generateArith. need to add a var parameter.
+	! need to change var list for generateArith. need to add a var parameter.
 
-? pre-generated expressions
+-> expressions represented by arrays
+
+-> Multiple profiles for each function
+	! two profiles for each function
+	? read parameters from user in cuda files and out.rkt
 
 Synthesizer.java:
 	synthesizeArith():
  		? test at most 50 lines of profiles.
 
- 	?synthMemExp():
+ 	? synthMemExp():
 
  	inputData():
  		! don't need to call this.env.setVal(...)
