@@ -60,18 +60,18 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 			sb[csb] = p[c];
 			__syncthreads();
 			s0 = a0[i*jmax*kmax+j*kmax+k] * p[(i+1)*jmax*kmax+j*kmax+k]
-			+ a1[i*jmax*kmax+j*kmax+k] * __opt__624128.p[i*jmax*kmax+(j+1)*kmax+k]
-			+ a2[i*jmax*kmax+j*kmax+k] * __opt__629042.p[i*jmax*kmax+j*kmax+(k+1)]
+			+ a1[i*jmax*kmax+j*kmax+k] * __opt__186057.p[i*jmax*kmax+(j+1)*kmax+k]
+			+ a2[i*jmax*kmax+j*kmax+k] * __opt__996456.p[i*jmax*kmax+j*kmax+(k+1)]
 			+ b0[i*jmax*kmax+j*kmax+k] * ( 
 				p[(i+1)*jmax*kmax+(j+1)*kmax+k] 
 				- p[(i+1)*jmax*kmax+(j-1)*kmax+k]
 				- p[(i-1)*jmax*kmax+(j+1)*kmax+k] 
 				+ p[(i-1)*jmax*kmax+(j-1)*kmax+k] )
 			+ b1[i*jmax*kmax+j*kmax+k] *(
-				__opt__947527.p[i*jmax*kmax+(j+1)*kmax+(k+1)]
-				- __opt__337362.p[i*jmax*kmax+(j-1)*kmax+(k+1)]
-				- __opt__767162.p[i*jmax*kmax+(j-1)*kmax+(k-1)]
-				+ __opt__440125.p[i*jmax*kmax+(j+1)*kmax+(k-1)])
+				__opt__639257.p[i*jmax*kmax+(j+1)*kmax+(k+1)]
+				- __opt__355953.p[i*jmax*kmax+(j-1)*kmax+(k+1)]
+				- __opt__38402.p[i*jmax*kmax+(j-1)*kmax+(k-1)]
+				+ __opt__488639.p[i*jmax*kmax+(j+1)*kmax+(k-1)])
 			+ b2[i*jmax*kmax+j*kmax+k] * ( 
 				p[(i+1)*jmax*kmax+j*kmax+(k+1)] 
 				- p[(i-1)*jmax*kmax+j*kmax+(k+1)]
