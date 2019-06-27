@@ -26,11 +26,11 @@ public class arrExpression {
 	
 	public void gen(int index, int depth, CallBack cb) {
 		if (depth == 0) { return; }
+		if (depth == 2) { gen_multiply(index, depth, cb); }
 		gen_const(index, cb);
 		gen_var(index, cb);
 		gen_add(index, depth, cb);
 		gen_minus(index, depth, cb);
-		gen_multiply(index, depth, cb);
 	}
 	
 	public void gen_const(int index, CallBack cb) {
@@ -67,5 +67,26 @@ public class arrExpression {
 		arr[index] = 5;
 		CallBack tcb = new TwoCallBack(depth, cb);
 		gen(index + 1, depth - 1, tcb);
+	}
+	
+	public int evaluate(Cursor cursor) {
+		int idx = cursor.getIndex();
+		int result;
+		switch(arr[idx]) {
+		case 1: cursor.setIndex(idx + 2);
+				return arr[idx + 1];
+		case 2: cursor.setIndex(idx + 2);
+				return arr[idx + 1];
+		case 3: cursor.setIndex(idx + 1);
+				result = evaluate(cursor);
+				return result + evaluate(cursor);
+		case 4: cursor.setIndex(idx + 1);
+				result = evaluate(cursor);
+				return result - evaluate(cursor);
+		case 5: cursor.setIndex(idx + 1);
+				result = evaluate(cursor);
+				return result * evaluate(cursor);
+		}
+		return 0;
 	}
 }
