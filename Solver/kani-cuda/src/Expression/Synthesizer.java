@@ -10,7 +10,9 @@ public class Synthesizer {
 	List<String> data;
 	List<String> relVars;
 	List<String> constantVars;
-	int limit = 0;
+	int[][] arr;
+	int line_count;
+	int limit;
 	
 
 	public Synthesizer() {
@@ -62,6 +64,36 @@ public class Synthesizer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		//TODO: input the data as 2-d array
+		try {
+			if(file.exists()) {
+				FileReader fr = new FileReader(file);
+				BufferedReader br = new BufferedReader(fr);
+				String line;
+				
+				limit = 0;
+				line_count = 0;
+				
+				while ((line = br.readLine()) != null) {
+					List<String> lst = Arrays.asList(line.split(" "));
+					if (lst.contains("N") || lst.contains("T") || lst.contains("F")) {
+						continue;
+					}
+					for (int i = 0; i < vars.size(); i++) {
+						arr[line_count][i] = Integer.parseInt(lst.get(i));
+					}
+					line_count++;
+				}
+				//System.out.println(Arrays.toString(arr));
+				
+				fr.close();
+				
+				this.limit = (int) (this.limit * 0.2);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void input(File profile){
@@ -74,6 +106,7 @@ public class Synthesizer {
 				this.profiles.add(file);
 			}
 		}
+		arr = new int[3000][this.vars.size()];
 	}
 
 
