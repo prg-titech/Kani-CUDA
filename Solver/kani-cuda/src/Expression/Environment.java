@@ -229,6 +229,7 @@ public class Environment {
 			//lst2.add(zero);
 			for(Expression e : vars){
 				lst1.add(e.subtract(one));
+				lst1.add(e.add(one));
 				//lst2.add(e.subtract(one));
 			}
 			List<BoolExpression> res = new ArrayList<BoolExpression>();

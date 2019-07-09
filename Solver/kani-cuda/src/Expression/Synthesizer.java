@@ -91,6 +91,7 @@ public class Synthesizer {
 			e.printStackTrace();
 		}
 		
+		System.out.println(exps.size());
 		Iterator<Expression> it = exps.iterator();
 		int size = this.data.size();
 		loop : while(it.hasNext()){
@@ -134,6 +135,7 @@ public class Synthesizer {
 		}		
 		exps = env.generateBool(1);
 		it = exps.iterator();
+		System.out.println(exps.size());
 		while(it.hasNext()){
 			BoolExpression e = it.next();
 			boolean temp = false;
