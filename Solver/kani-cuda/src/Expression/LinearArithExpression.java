@@ -73,6 +73,7 @@ public class LinearArithExpression {
 	
 	public void gen_unit(int index, int[] limit, CallBack cb) {
 		for (int i = 0; i <= Math.min(limit[1], cSize - 1); i++) {
+			if (consts[i] == 1 && limit[3] != 0) { continue; }
 			int[] lim_cpy = copy(limit);
 			lim_cpy[3] = lim_cpy[3] * M + i + 1;
 			if (lim_cpy[3] >= lim_cpy[0]) { return; }
