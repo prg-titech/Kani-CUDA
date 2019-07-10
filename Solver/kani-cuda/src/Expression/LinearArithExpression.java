@@ -7,18 +7,26 @@ public class LinearArithExpression {
 	
 	/*
 	 * limit = [term, unit, op_rm, value]
+	 * 2 : *	3 : + 	4 : -
 	 */
 	
 	public int[] arr;
 	private int[] consts;
 	private int[] vars;
+	private int[][] profile;
 	private int cSize;
 	private int vSize;
 	private int M;
+	private int smidIndex;
+	private int lineCount;
 	
-	public LinearArithExpression(int[] consts, int[] vars) {
+	public LinearArithExpression(int[] consts, int[] vars,
+			int[][] profile, int smidIndex, int lineCount) {
 		this.consts = consts;
 		this.vars = vars;
+		this.profile = profile;
+		this.smidIndex = smidIndex;
+		this.lineCount = lineCount;
 		cSize = consts.length;
 		vSize = vars.length;
 		M = cSize + vSize + 1;
@@ -99,42 +107,56 @@ public class LinearArithExpression {
 		return M;
 	}
 	
-	public int evaluate(int end) {
+	public boolean test(int end) {
+		int x;
+		//System.out.print(Arrays.toString(arr));
+		for (int line = 0; line < lineCount; line++) {
+			//System.out.println(profile[line][smidIndex] + " " + evaluate(end, line));
+			if ((x = profile[line][smidIndex]) != -1) {
+				if (x != evaluate(end, line)) {
+					return false;
+				}
+			}
+		}System.out.println(Arrays.toString(arr) + " " + end);
+		return true;
+	}
+	
+	public int evaluate(int end, int line) {
 		Cursor cursor = new Cursor();
-		int result = evalTerm(cursor, end);
+		int result = evalTerm(cursor, end, line);
 		while(cursor.getIndex() < end) {
 			switch (arr[cursor.getIndex()]) {
 			case 3: cursor.addIndex(1);
-					result += evalTerm(cursor, end);
+					result += evalTerm(cursor, end, line);
 					break;
 			case 4: cursor.addIndex(1);
-					result -= evalTerm(cursor, end);
+					result -= evalTerm(cursor, end, line);
 					break;
 			}
 		}
 		return result;
 	}
 	
-	public int evalTerm(Cursor cursor, int end) {
+	public int evalTerm(Cursor cursor, int end, int line) {
 		int index = cursor.getIndex();
 		//if (index >= end) { return 1; }
-		int term = read(index);
+		int term = read(index, line);
 		cursor.addIndex(2);
 		if (cursor.getIndex() >= end) { return term; }
 		while(cursor.getIndex() < end 
 				&& arr[cursor.getIndex()] == 5) {
 			cursor.addIndex(1);
-			term *= evalTerm(cursor, end);
+			term *= evalTerm(cursor, end, line);
 		}
 		return term;
 	}
 	
-	public int read(int index) {
+	public int read(int index, int line) {
 		if (arr[index] == 1) {
 			return arr[index + 1];
 		} else if (arr[index] == 2) {
 			//TODO: this should be the variable value
-			return arr[index + 1];
+			return profile[line][arr[index + 1]];
 		}
 		return 0;
 	}

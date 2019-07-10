@@ -9,14 +9,17 @@ import java.util.*;
 public class PearsonCorrelation {
 	private File profile; 
 	private List<String> vars;
+	private int[] arr;
 	private Map<String, double[]> arrMap;
 	private int smidIndex;
+	int count = 0;
 	
 	public PearsonCorrelation(File profile, List<String> vars) {
 		this.profile = profile;
 		this.vars = vars;
 		this.arrMap = new HashMap<>();
 		this.smidIndex = -1;
+		arr = new int[vars.size()];
 	}
 	
 	public void process() {
@@ -65,6 +68,7 @@ public class PearsonCorrelation {
 			//System.out.println(corr);
 			if (corr > 0.5 || corr < -0.5) {
 				result.add(vars.get(i));
+				arr[count++] = i;
 				//System.out.println(vars.get(i));
 			}
 		}
@@ -78,8 +82,19 @@ public class PearsonCorrelation {
 			if (v.evaluate(arrMap.get(vars.get(i))) == 0) {
 				//System.out.println(vars.get(i));
 				result.add(vars.get(i));
+				arr[count++] = i;
 			}
 		}
 		return result;
+	}
+	
+	public int[] getVarIndex() {
+		int[] varIndex = new int[count];
+		System.arraycopy(arr, 0, varIndex, 0, count);
+		return varIndex;
+	}
+	
+	public int getSmid() {
+		return smidIndex;
 	}
 }

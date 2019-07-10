@@ -11,8 +11,10 @@ public class Synthesizer {
 	List<String> relVars;
 	List<String> constantVars;
 	int[][] arr;
+	int[] varIndex;
 	int line_count;
 	int limit;
+	int smidIndex;
 	
 
 	public Synthesizer() {
@@ -77,10 +79,16 @@ public class Synthesizer {
 				
 				while ((line = br.readLine()) != null) {
 					List<String> lst = Arrays.asList(line.split(" "));
+					/*
 					if (lst.contains("N") || lst.contains("T") || lst.contains("F")) {
 						continue;
 					}
+					*/
 					for (int i = 0; i < vars.size(); i++) {
+						if (lst.get(i).equals("N")) {
+							arr[line_count][i] = -1;
+							continue;
+						}
 						arr[line_count][i] = Integer.parseInt(lst.get(i));
 					}
 					line_count++;
@@ -111,7 +119,11 @@ public class Synthesizer {
 
 
 	public Expression synthesizeArith(int num){
+		LinearArithExpression exp = new LinearArithExpression(new int[] {1, 2},
+				varIndex, arr, smidIndex, line_count);
+		exp.generate(3);
 		List<Expression> exps = env.generateArith2(num, relVars, constantVars);
+		/*
 		File write = new File("Expressions");
 		try {
 			write.createNewFile();
@@ -123,8 +135,7 @@ public class Synthesizer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		System.out.println(exps.size());
+		*/
 		Iterator<Expression> it = exps.iterator();
 		int size = this.data.size();
 		loop : while(it.hasNext()){
@@ -168,7 +179,6 @@ public class Synthesizer {
 		}		
 		exps = env.generateBool(1);
 		it = exps.iterator();
-		System.out.println(exps.size());
 		while(it.hasNext()){
 			BoolExpression e = it.next();
 			boolean temp = false;
@@ -391,8 +401,10 @@ public class Synthesizer {
 			String exp;
 			PearsonCorrelation pc = new PearsonCorrelation(file, vars);
 			pc.process();
-			this.relVars = pc.getRelVars();
-			this.constantVars = pc.getConstants();
+			relVars = pc.getRelVars();
+			constantVars = pc.getConstants();
+			varIndex = pc.getVarIndex();
+			smidIndex = pc.getSmid();
 			if(file.getName().contains("forMemCopyExp")){
 				exp = this.synthMemCopyExp(file);
 				writer.assignMemCopyExp(exp, file.getName().substring("forMemCopyExp".length()));
