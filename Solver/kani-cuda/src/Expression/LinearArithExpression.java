@@ -125,7 +125,7 @@ public class LinearArithExpression {
 			}
 		}
 		//System.out.println(Arrays.toString(arr) + end);
-		System.out.println(arithToString(end));
+		//System.out.println(arithToString(end));
 		count++;
 		return true;
 	}

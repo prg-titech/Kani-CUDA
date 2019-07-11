@@ -1,7 +1,6 @@
 package Expression;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 /*
  * 0 : pass		-4 : !=
@@ -22,16 +21,18 @@ public class LinearLogicExpression {
 	public ArrayList<int[]> lst;
 	private int smidIndex;
 	private int lineCount;
+	private List<String> varNames;
 	
 	int count = 0;
 	
 	public LinearLogicExpression(int[] consts, int[] vars,
-			int[][] profile, int smidIndex, int lineCount) {
+			int[][] profile, int smidIndex, int lineCount, List<String> names) {
 		this.consts = consts;
 		this.vars = vars;
 		this.profile = profile;
 		this.smidIndex = smidIndex;
 		this.lineCount = lineCount;
+		this.varNames = names;
 		cSize = consts.length;
 		vSize = vars.length;
 		M = cSize + vSize + 1;
@@ -124,6 +125,7 @@ public class LinearLogicExpression {
 		}
 		count++;
 		//System.out.println(Arrays.toString(arr) + " " + index);
+		//System.out.println(logicToString());
 		return true;
 	}
 	
@@ -169,5 +171,47 @@ public class LinearLogicExpression {
 		}
 		return 0;
 	}
+	
+	public String logicToString() {
+		return helper(new Cursor());
+	}
  	
+	public String helper(Cursor cursor) {
+		String result = "";
+		int index = cursor.getIndex();
+		cursor.addIndex(1);
+		switch (arr[index]) {
+		case -1:
+			result = "( " + helper(cursor);
+			return result += "&& " + helper(cursor) + ") ";
+		case -2:
+			result = "( " + helper(cursor);
+			return result += "|| " + helper(cursor) + ") ";
+		case -3:
+			result = "( " + helper(cursor);
+			return result += "== " + helper(cursor) + ") ";
+		case -4:
+			result = "( " + helper(cursor);
+			return result += "!= " + helper(cursor) + ") ";
+		case -5:
+			result = "( " + helper(cursor);
+			return result += "< " + helper(cursor) + ") ";
+		case -6:
+			result = "( " + helper(cursor);
+			return result += "> " + helper(cursor) + ") ";
+		case 1:
+			cursor.addIndex(1);
+			return result += arr[index + 1] + " ";
+		case 2:
+			cursor.addIndex(1);
+			return result += varNames.get(arr[index + 1]) + " ";
+		case 3:
+			result = "( " + helper(cursor);
+			return result += "+ " + helper(cursor) + ") ";
+		case 4:
+			result = "( " + helper(cursor);
+			return result += "- " + helper(cursor) + ") ";
+		}
+		return result;
+	}
 }

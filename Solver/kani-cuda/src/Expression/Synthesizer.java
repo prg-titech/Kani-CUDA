@@ -157,7 +157,7 @@ public class Synthesizer {
 			allVar[i - smidIndex] = i;
 		}
 		LinearLogicExpression exp = new LinearLogicExpression(new int[] {1}, allVar,
-				arr, smidIndex, line_count);
+				arr, smidIndex, line_count, vars);
 		exp.generate();
 		
 		// The following are old codes
