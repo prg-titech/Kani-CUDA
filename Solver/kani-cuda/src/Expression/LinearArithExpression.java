@@ -1,13 +1,13 @@
 package Expression;
 
 import java.lang.Math;
-import java.util.Arrays;
+import java.util.*;
 
 public class LinearArithExpression {
 	
 	/*
 	 * limit = [term, unit, op_rm, value]
-	 * 2 : *	3 : + 	4 : -
+	 * 3 : +	4 : - 	5 : *
 	 */
 	
 	public int[] arr;
@@ -19,16 +19,18 @@ public class LinearArithExpression {
 	private int M;
 	private int smidIndex;
 	private int lineCount;
+	private List<String> varNames;
 	
 	int count = 0;
 	
 	public LinearArithExpression(int[] consts, int[] vars,
-			int[][] profile, int smidIndex, int lineCount) {
+			int[][] profile, int smidIndex, int lineCount, List<String> names) {
 		this.consts = consts;
 		this.vars = vars;
 		this.profile = profile;
 		this.smidIndex = smidIndex;
 		this.lineCount = lineCount;
+		this.varNames = names;
 		cSize = consts.length;
 		vSize = vars.length;
 		M = cSize + vSize + 1;
@@ -122,7 +124,8 @@ public class LinearArithExpression {
 				}
 			}
 		}
-		//System.out.println(Arrays.toString(arr) + " " + end);
+		//System.out.println(Arrays.toString(arr) + end);
+		System.out.println(arithToString(end));
 		count++;
 		return true;
 	}
@@ -165,6 +168,36 @@ public class LinearArithExpression {
 			return profile[line][arr[index + 1]];
 		}
 		return 0;
+	}
+	
+	public String arithToString(int end) {
+		String result = "";
+		int index = 0;
+		while (index < end) {
+			switch(arr[index]) {
+			case 1:
+				result += arr[index + 1] + " ";
+				index += 2;
+				break;
+			case 2:
+				result += varNames.get(arr[index + 1]) + " ";
+				index += 2;
+				break;
+			case 3:
+				result += "+ ";
+				index++;
+				break;
+			case 4:
+				result += "- ";
+				index++;
+				break;
+			case 5:
+				result += "* ";
+				index++;
+				break;
+			}
+		}
+		return result;
 	}
 	
 }

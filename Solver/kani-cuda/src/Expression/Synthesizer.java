@@ -116,11 +116,11 @@ public class Synthesizer {
 	public Expression synthesizeArith(int num){
 
 		LinearArithExpression exp = new LinearArithExpression(new int[] {1, 2},
-				varIndex, arr, smidIndex, line_count);
+				varIndex, arr, smidIndex, line_count, vars);
 		exp.generate(3);
-		List<Expression> exps = env.generateArith2(num, relVars, constantVars);
 		
-		// The following are old codes: 
+		// The following are old codes
+		List<Expression> exps = env.generateArith2(num, relVars, constantVars);
 		/*
 		File write = new File("Expressions");
 		try {
