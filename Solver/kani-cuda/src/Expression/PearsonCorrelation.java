@@ -45,9 +45,7 @@ public class PearsonCorrelation {
 				int index = 0;
 				while ((read = br.readLine()) != null && index < size) {
 					List<String> sList = Arrays.asList(read.split(" "));
-					if (sList.contains("N") || sList.contains("T") || sList.contains("F")) {
-						continue;
-					}
+					if (sList.contains("N")) { continue; }
 					for (int i = smidIndex; i < vars.size(); i++) {
 						arrMap.get(vars.get(i))[index] = Integer.parseInt(sList.get(i));
 					}
@@ -65,7 +63,7 @@ public class PearsonCorrelation {
 		double[] smidList = arrMap.get(vars.get(smidIndex));
 		for (int i = smidIndex + 1; i < vars.size(); i++) {
 			double corr = new PearsonsCorrelation().correlation(smidList, arrMap.get(vars.get(i)));
-			//System.out.println(corr);
+			//System.out.println(corr + vars.get(i));
 			if (corr > 0.5 || corr < -0.5) {
 				result.add(vars.get(i));
 				arr[count++] = i;

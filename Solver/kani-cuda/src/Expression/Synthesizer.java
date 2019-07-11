@@ -15,7 +15,7 @@ public class Synthesizer {
 	int line_count;
 	int limit;
 	int smidIndex;
-	
+	int[] allVarIndex;
 
 	public Synthesizer() {
 		super();
@@ -42,6 +42,37 @@ public class Synthesizer {
 	}
 	
 	public void inputData(File file){
+		
+		try {
+			if(file.exists()) {
+				FileReader fr = new FileReader(file);
+				BufferedReader br = new BufferedReader(fr);
+				String line;
+				
+				limit = 0;
+				line_count = 0;
+				
+				while ((line = br.readLine()) != null) {
+					List<String> lst = Arrays.asList(line.split(" "));
+					for (int i = 0; i < vars.size(); i++) {
+						if (lst.get(i).equals("N")) {
+							arr[line_count][i] = -1;
+							continue;
+						}
+						arr[line_count][i] = Integer.parseInt(lst.get(i));
+					}
+					line_count++;
+				}
+				
+				fr.close();
+				
+				this.limit = (int) (this.limit * 0.2);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		// The following codes are old ones
 		this.data = new ArrayList<String>();
 		try{
 			if(file.exists()){
@@ -51,7 +82,6 @@ public class Synthesizer {
 				
 				limit = 0;
 				
-				// TODO Add datum when env.existsSmIdx() is true.
 				while ((datum = br.readLine()) != null) {
 					this.data.add(datum);
 					this.env.setVal(vars, Arrays.asList(datum.split(" ")));
@@ -66,42 +96,7 @@ public class Synthesizer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		//TODO: input the data as 2-d array
-		try {
-			if(file.exists()) {
-				FileReader fr = new FileReader(file);
-				BufferedReader br = new BufferedReader(fr);
-				String line;
-				
-				limit = 0;
-				line_count = 0;
-				
-				while ((line = br.readLine()) != null) {
-					List<String> lst = Arrays.asList(line.split(" "));
-					/*
-					if (lst.contains("N") || lst.contains("T") || lst.contains("F")) {
-						continue;
-					}
-					*/
-					for (int i = 0; i < vars.size(); i++) {
-						if (lst.get(i).equals("N")) {
-							arr[line_count][i] = -1;
-							continue;
-						}
-						arr[line_count][i] = Integer.parseInt(lst.get(i));
-					}
-					line_count++;
-				}
-				//System.out.println(Arrays.toString(arr));
-				
-				fr.close();
-				
-				this.limit = (int) (this.limit * 0.2);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+
 	}
 	
 	public void input(File profile){
@@ -119,10 +114,13 @@ public class Synthesizer {
 
 
 	public Expression synthesizeArith(int num){
+
 		LinearArithExpression exp = new LinearArithExpression(new int[] {1, 2},
 				varIndex, arr, smidIndex, line_count);
 		exp.generate(3);
 		List<Expression> exps = env.generateArith2(num, relVars, constantVars);
+		
+		// The following are old codes: 
 		/*
 		File write = new File("Expressions");
 		try {
@@ -146,8 +144,6 @@ public class Synthesizer {
 					break;
 				}
 				if (i == size-1) {
-					//System.out.printf("The number of variables: %d%n", this.vars.size()-2);
-					//System.out.printf("The number of datum: %d%n", size);
 					return e;
 				}
 			}
@@ -156,6 +152,15 @@ public class Synthesizer {
 	}
 	
 	public BoolExpression synthesizeBool(){
+		int[] allVar = new int[vars.size() - smidIndex];
+		for (int i = smidIndex; i < vars.size(); i++) {
+			allVar[i - smidIndex] = i;
+		}
+		LinearLogicExpression exp = new LinearLogicExpression(new int[] {1}, allVar,
+				arr, smidIndex, line_count);
+		exp.generate();
+		
+		// The following are old codes
 		List<BoolExpression> exps = env.generateBoolAux(1);
 		Iterator<BoolExpression> it = exps.iterator();
 		int size = this.data.size();

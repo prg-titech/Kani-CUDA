@@ -20,6 +20,8 @@ public class LinearArithExpression {
 	private int smidIndex;
 	private int lineCount;
 	
+	int count = 0;
+	
 	public LinearArithExpression(int[] consts, int[] vars,
 			int[][] profile, int smidIndex, int lineCount) {
 		this.consts = consts;
@@ -42,7 +44,8 @@ public class LinearArithExpression {
 		limit[3] = 0;
 		TestCallBack tcb = new TestCallBack();
 		gen(0, limit, tcb);
-		System.out.println(tcb.count);
+		System.out.println(count + " arith expressions are correct");
+		//System.out.println(tcb.count);
 	}
 	
 	public void gen(int index, int[] limit, CallBack cb) {
@@ -118,7 +121,9 @@ public class LinearArithExpression {
 					return false;
 				}
 			}
-		}System.out.println(Arrays.toString(arr) + " " + end);
+		}
+		//System.out.println(Arrays.toString(arr) + " " + end);
+		count++;
 		return true;
 	}
 	
