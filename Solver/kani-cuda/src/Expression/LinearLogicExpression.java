@@ -125,7 +125,7 @@ public class LinearLogicExpression {
 		}
 		count++;
 		//System.out.println(Arrays.toString(arr) + " " + index);
-		//System.out.println(logicToString());
+		// System.out.println(logicToString());
 		return true;
 	}
 	
