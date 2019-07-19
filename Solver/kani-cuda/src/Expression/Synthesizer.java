@@ -438,7 +438,7 @@ public class Synthesizer {
 		
 		long end = System.currentTimeMillis();		
 		
-		System.out.println(writer.getCode());
+		//System.out.println(writer.getCode());
 		System.out.println("Synthesis time: " + (end - start) + "ms");
 		
 		writer.output();

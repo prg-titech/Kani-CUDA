@@ -81,6 +81,11 @@ public class LinearLogicExpression {
 	}
 	
 	public void gen_arith() {
+		int[] zero = new int[2];
+		zero[0] = 1;
+		zero[1] = 0;
+		lst.add(zero);
+		
 		for (int i = 0; i < vSize; i++) {
 			int[] curr = new int[2];
 			curr[0] = 2;
