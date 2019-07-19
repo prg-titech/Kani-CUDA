@@ -10,9 +10,11 @@ public class Synthesizer {
 	List<String> data;
 	List<String> relVars;
 	List<String> constantVars;
-	int[][] arr;
+	int[][] avail_arr;
+	int[][] all_arr;
 	int[] varIndex;
-	int line_count;
+	int avail_line_count;
+	int all_line_count;
 	int limit;
 	int smidIndex;
 	int[] allVarIndex;
@@ -41,6 +43,24 @@ public class Synthesizer {
 		}
 	}
 	
+	public void addAllArr(List<String> lst) {
+		for (int i = 0; i < vars.size(); i++) {
+			if (lst.get(i).equals("N")) {
+				all_arr[all_line_count][i] = -1;
+				continue;
+			}
+			all_arr[all_line_count][i] = Integer.parseInt(lst.get(i));
+		}
+		all_line_count++;
+	}
+	
+	public void addAvailArr(List<String> lst) {
+		for (int i = 0; i < vars.size(); i++) {
+			avail_arr[avail_line_count][i] = Integer.parseInt(lst.get(i));
+		}
+		avail_line_count++;
+	}
+
 	public void inputData(File file){
 		
 		try {
@@ -50,24 +70,21 @@ public class Synthesizer {
 				String line;
 				
 				limit = 0;
-				line_count = 0;
+				avail_line_count = 0;
+				all_line_count = 0;
 				
 				while ((line = br.readLine()) != null) {
 					List<String> lst = Arrays.asList(line.split(" "));
-					for (int i = 0; i < vars.size(); i++) {
-						if (lst.get(i).equals("N")) {
-							arr[line_count][i] = -1;
-							continue;
-						}
-						arr[line_count][i] = Integer.parseInt(lst.get(i));
+					if (!lst.contains("N")) {
+						addAvailArr(lst);
 					}
-					line_count++;
+					addAllArr(lst);
 				}
-				
+
 				fr.close();
-				
-				this.limit = (int) (this.limit * 0.2);
+
 			}
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -109,15 +126,18 @@ public class Synthesizer {
 				this.profiles.add(file);
 			}
 		}
-		arr = new int[3000][this.vars.size()];
+		//TODO hardcoded this size
+		all_arr = new int[3000][this.vars.size()];
+		avail_arr = new int[3000][this.vars.size()];
 	}
 
 
 	public Expression synthesizeArith(int num){
 
 		LinearArithExpression exp = new LinearArithExpression(new int[] {1, 2},
-				varIndex, arr, smidIndex, line_count, vars);
+				varIndex, avail_arr, smidIndex, avail_line_count, vars);
 		exp.generate(3);
+
 		
 		// The following are old codes
 		List<Expression> exps = env.generateArith2(num, relVars, constantVars);
@@ -152,12 +172,13 @@ public class Synthesizer {
 	}
 	
 	public BoolExpression synthesizeBool(){
-		int[] allVar = new int[vars.size() - smidIndex];
-		for (int i = smidIndex; i < vars.size(); i++) {
-			allVar[i - smidIndex] = i;
+
+		int[] allVar = new int[vars.size() - smidIndex - 1];
+		for (int i = smidIndex + 1; i < vars.size(); i++) {
+			allVar[i - smidIndex - 1] = i;
 		}
 		LinearLogicExpression exp = new LinearLogicExpression(new int[] {1}, allVar,
-				arr, smidIndex, line_count, vars);
+				all_arr, smidIndex, all_line_count, vars);
 		exp.generate();
 		
 		// The following are old codes
@@ -249,7 +270,7 @@ public class Synthesizer {
 				thns.add(data.get(i));
 			} else if (env.exsitsSmIdx()) {
 				elss.add(data.get(i));
-			}
+			} 
 		}
 		//System.out.println(thns.size());
 		//System.out.println(elss.size());
@@ -373,9 +394,8 @@ public class Synthesizer {
 		Expression exp = none;
 		this.inputData(profile);
 		
-		start = System.currentTimeMillis();
 		bexp = this.synthesizeBool();
-		
+
 		if(!bexp.equals(bnone)){
 			exp = this.synthesizeArith(3);
 		}
@@ -388,9 +408,6 @@ public class Synthesizer {
 			System.out.println("Expression synthesized from " + profile.toString() + ":");
 			return bexp.toStringExp() + " ? sb[" + exp.toStringExp() + "] : ";
 		}
-		
-		end = System.currentTimeMillis();
-		System.out.println("time: " + (end - start) + "ms");
 		return "";
 	}	
 	

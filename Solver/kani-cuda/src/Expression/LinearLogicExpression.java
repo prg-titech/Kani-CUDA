@@ -40,6 +40,15 @@ public class LinearLogicExpression {
 	}
 	
 	public void generate() {
+		try {
+			gen();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return;
+		}
+	}
+	
+	public void gen() {
 		//TODO
 		arr = new int[25];
 		gen_arith();
@@ -49,7 +58,7 @@ public class LinearLogicExpression {
 		gen_bool(1, Integer.MAX_VALUE, new LogicCallBack(tcb));
 		arr[0] = -2;
 		gen_bool(1, Integer.MAX_VALUE, new LogicCallBack(tcb));
-		System.out.println(count + " logic expressions are correct");
+		//System.out.println(count + " logic expressions are correct");
 		//System.out.println(tcb.count_logic);
 	}
 	
@@ -126,7 +135,7 @@ public class LinearLogicExpression {
 		count++;
 		//System.out.println(Arrays.toString(arr) + " " + index);
 		// System.out.println(logicToString());
-		return true;
+		throw new RuntimeException(logicToString());
 	}
 	
 	public boolean evaluate(Cursor cursor, int line) {

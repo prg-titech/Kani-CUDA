@@ -45,8 +45,12 @@ public class LinearArithExpression {
 		limit[2] = op_max;
 		limit[3] = 0;
 		TestCallBack tcb = new TestCallBack();
-		gen(0, limit, tcb);
-		System.out.println(count + " arith expressions are correct");
+		try {
+			gen(0, limit, tcb);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return;
+		}
 		//System.out.println(tcb.count);
 	}
 	
@@ -127,7 +131,7 @@ public class LinearArithExpression {
 		//System.out.println(Arrays.toString(arr) + end);
 		//System.out.println(arithToString(end));
 		count++;
-		return true;
+		throw new RuntimeException(arithToString(end));
 	}
 	
 	public int evaluate(int end, int line) {
