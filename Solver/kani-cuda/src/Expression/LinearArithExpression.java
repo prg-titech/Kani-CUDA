@@ -25,8 +25,6 @@ public class LinearArithExpression {
 	private int lineCount;
 	private List<String> varNames;
 	
-	int count = 0;
-	
 	public LinearArithExpression(int[] consts, int[] vars,
 			int[][] profile, int smidIndex, int lineCount, List<String> names) {
 		this.consts = consts;
@@ -40,6 +38,22 @@ public class LinearArithExpression {
 		M = cSize + vSize + 1;
 	}
 	
+	public String generate_partial(int op_max, int max_error) {
+		arr = new int[3 * op_max + 2];
+		int[] limit = new int[4];
+		limit[0] = Integer.MAX_VALUE;
+		limit[1] = M - 2;
+		limit[2] = op_max;
+		limit[3] = 0;
+		PartialCallBack tcb = new PartialCallBack(max_error);
+		try {
+			gen(0, limit, tcb);
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+		return "f";
+	}
+	
 	public String generate(int op_max) {
 		arr = new int[3 * op_max + 2];
 		int[] limit = new int[4];
@@ -47,7 +61,7 @@ public class LinearArithExpression {
 		limit[1] = M - 2;
 		limit[2] = op_max;
 		limit[3] = 0;
-		TestCallBack tcb = new TestCallBack();
+		CallBack tcb = new TestCallBack();
 		try {
 			gen(0, limit, tcb);
 		} catch (Exception e) {
@@ -119,16 +133,29 @@ public class LinearArithExpression {
 		return M;
 	}
 	
-	public boolean test(int end) {
+	public void test(int end) {
 		int x;
 		for (int line = 0; line < lineCount; line++) {
 			if ((x = profile[line][smidIndex]) != -1) {
 				if (x != evaluate(end, line)) {
-					return false;
+					return;
 				}
 			}
 		}
-		count++;
+		throw new RuntimeException(arithToString(end));
+	}
+	
+	public void test_partial(int end, int max_error) {
+		int x;
+		int count = 0;
+		for (int line = 0; line < lineCount; line++) {
+			if ((x = profile[line][smidIndex]) != -1) {
+				if (x != evaluate(end, line)) {
+					count++;
+				}
+				if (count > max_error) { return; }
+			}
+		}
 		throw new RuntimeException(arithToString(end));
 	}
 	

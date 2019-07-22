@@ -188,40 +188,40 @@ public class LinearLogicExpression {
 	}
  	
 	public String helper(Cursor cursor) {
-		String result = " ";
+		String result = "";
 		int index = cursor.getIndex();
 		cursor.addIndex(1);
 		switch (arr[index]) {
 		case -1:
-			result = "( " + helper(cursor);
-			return result += "&& " + helper(cursor) + ") ";
+			result = "(" + helper(cursor);
+			return result += "&&" + helper(cursor) + ")";
 		case -2:
-			result = "( " + helper(cursor);
-			return result += "|| " + helper(cursor) + ") ";
+			result = "(" + helper(cursor);
+			return result += "||" + helper(cursor) + ")";
 		case -3:
-			result = "( " + helper(cursor);
-			return result += "== " + helper(cursor) + ") ";
+			result = "(" + helper(cursor);
+			return result += "==" + helper(cursor) + ")";
 		case -4:
-			result = "( " + helper(cursor);
-			return result += "!= " + helper(cursor) + ") ";
+			result = "(" + helper(cursor);
+			return result += "!=" + helper(cursor) + ")";
 		case -5:
-			result = "( " + helper(cursor);
-			return result += "< " + helper(cursor) + ") ";
+			result = "(" + helper(cursor);
+			return result += "<" + helper(cursor) + ")";
 		case -6:
-			result = "( " + helper(cursor);
-			return result += "> " + helper(cursor) + ") ";
+			result = "(" + helper(cursor);
+			return result += ">" + helper(cursor) + ")";
 		case 1:
 			cursor.addIndex(1);
-			return result += arr[index + 1] + " ";
+			return result += arr[index + 1] + "";
 		case 2:
 			cursor.addIndex(1);
-			return result += varNames.get(arr[index + 1]) + " ";
+			return result += varNames.get(arr[index + 1]) + "";
 		case 3:
-			result = "( " + helper(cursor);
-			return result += "+ " + helper(cursor) + ") ";
+			result = "(" + helper(cursor);
+			return result += " + " + helper(cursor) + ")";
 		case 4:
-			result = "( " + helper(cursor);
-			return result += "- " + helper(cursor) + ") ";
+			result = "(" + helper(cursor);
+			return result += " - " + helper(cursor) + ")";
 		}
 		return result;
 	}

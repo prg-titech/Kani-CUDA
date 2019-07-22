@@ -10,15 +10,19 @@ public class PearsonCorrelation {
 	private File profile; 
 	private List<String> vars;
 	private int[] arr;
+	private int[][] avail_arr;
 	private Map<String, double[]> arrMap;
 	private int smidIndex;
 	int count = 0;
+	private int avail_line_count;
 	
-	public PearsonCorrelation(File profile, List<String> vars) {
+	public PearsonCorrelation(File profile, List<String> vars, int[][] avail, int avail_line_count) {
 		this.profile = profile;
 		this.vars = vars;
 		this.arrMap = new HashMap<>();
 		this.smidIndex = -1;
+		this.avail_arr = avail;
+		this.avail_line_count = avail_line_count;
 		arr = new int[vars.size()];
 	}
 	
@@ -33,10 +37,10 @@ public class PearsonCorrelation {
 		if (smidIndex == -1) {
 			return;
 		}
-		//HashMap<String, double[]> arrMap = new HashMap<>();
 		for (int i = smidIndex; i < vars.size(); i++) {
 			arrMap.put(vars.get(i), new double[size]);
 		}
+		/*
 		try {
 			if(profile.exists()) {
 				FileReader fr = new FileReader(profile);
@@ -56,6 +60,14 @@ public class PearsonCorrelation {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		*/
+		for (int i = 0; i < avail_line_count; i++) {
+			int index = 0;
+			for (int j = smidIndex; j < vars.size(); j++) {
+				arrMap.get(vars.get(j))[index] = avail_arr[i][j];
+			}
+			index++;
+		}
 	}
 	
 	public List<String> getRelVars() {
@@ -63,11 +75,9 @@ public class PearsonCorrelation {
 		double[] smidList = arrMap.get(vars.get(smidIndex));
 		for (int i = smidIndex + 1; i < vars.size(); i++) {
 			double corr = new PearsonsCorrelation().correlation(smidList, arrMap.get(vars.get(i)));
-			//System.out.println(corr + vars.get(i));
 			if (corr > 0.5 || corr < -0.5) {
 				result.add(vars.get(i));
 				arr[count++] = i;
-				//System.out.println(vars.get(i));
 			}
 		}
 		return result;

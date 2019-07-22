@@ -109,18 +109,18 @@ __global__ void jacobi(float *a0, float *a1, float *a2, float *a3, float *b0, fl
 			sb[csb] = p[c];
 			__syncthreads();
 			s0 = a0[i*jmax*kmax+j*kmax+k] * p[(i+1)*jmax*kmax+j*kmax+k]
-			+ a1[i*jmax*kmax+j*kmax+k] * (( (  threadIdx.y +  1 ) !=  blockDim.y )  ? sb[ blockDim.x + csb ] : p[i*jmax*kmax+(j+1)*kmax+k])
-			+ a2[i*jmax*kmax+j*kmax+k] * ((  blockDim.y !=  threadIdx.x )  ? sb[ csb + 1 ] : p[i*jmax*kmax+j*kmax+(k+1)])
+			+ a1[i*jmax*kmax+j*kmax+k] * (p[i*jmax*kmax+(j+1)*kmax+k])
+			+ a2[i*jmax*kmax+j*kmax+k] * (p[i*jmax*kmax+j*kmax+(k+1)])
 			+ b0[i*jmax*kmax+j*kmax+k] * ( 
 				p[(i+1)*jmax*kmax+(j+1)*kmax+k] 
 				- p[(i+1)*jmax*kmax+(j-1)*kmax+k]
 				- p[(i-1)*jmax*kmax+(j+1)*kmax+k] 
 				+ p[(i-1)*jmax*kmax+(j-1)*kmax+k] )
 			+ b1[i*jmax*kmax+j*kmax+k] *(
-				(( ( (  threadIdx.y +  1 ) !=  blockDim.y ) && (  blockDim.y !=  threadIdx.x ) )  ? sb[ blockDim.x + csb + 1 ] : p[i*jmax*kmax+(j+1)*kmax+(k+1)])
-				- (( (  blockDim.y !=  threadIdx.x ) && (  threadIdx.y !=  0 ) )  ? sb[ csb + 1 - blockDim.x ] : p[i*jmax*kmax+(j-1)*kmax+(k+1)])
-				- (( (  threadIdx.y !=  0 ) && (  threadIdx.x !=  0 ) )  ? sb[ csb + 1 - blockDim.x - 2 ] : p[i*jmax*kmax+(j-1)*kmax+(k-1)])
-				+ (( ( (  threadIdx.y +  1 ) !=  blockDim.y ) && (  threadIdx.x !=  0 ) )  ? sb[ blockDim.x + csb + 1 - 2 ] : p[i*jmax*kmax+(j+1)*kmax+(k-1)]))
+				(p[i*jmax*kmax+(j+1)*kmax+(k+1)])
+				- (p[i*jmax*kmax+(j-1)*kmax+(k+1)])
+				- (p[i*jmax*kmax+(j-1)*kmax+(k-1)])
+				+ (p[i*jmax*kmax+(j+1)*kmax+(k-1)]))
 			+ b2[i*jmax*kmax+j*kmax+k] * ( 
 				p[(i+1)*jmax*kmax+j*kmax+(k+1)] 
 				- p[(i-1)*jmax*kmax+j*kmax+(k+1)]
