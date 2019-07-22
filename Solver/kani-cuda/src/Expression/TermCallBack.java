@@ -16,7 +16,6 @@ public class TermCallBack implements CallBack {
 		exp.gen_term(index + 1, limit, cb);
 	}
 	
-	public void call(int index, int limit, LinearLogicExpression exp) {
-		return;
-	}
+	public void call(int index, int limit, LinearLogicExpression exp) {}
+	
 }

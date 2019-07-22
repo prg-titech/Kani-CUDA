@@ -5,6 +5,23 @@ import org.apache.commons.math3.stat.descriptive.moment.Variance;
 import java.io.*;
 import java.util.*;
 
+/*
+ * For quick search
+ * Use statistical techniques to eliminate unrelated variables
+ * 
+ * pearsoncorrelation (-1.0 ~ 1.0):
+ * 		tests the correlation between two variables
+ * 		0 : no correlation
+ * 		-0.3 ~ 0.3 : weak correlation
+ * 		-0.6 ~ -0.3 / 0.3 ~ 0.6 : fair correlation
+ * 		-1.0 ~ -0.6 / 0.6 ~ 1.0 : strong correlation
+ * 		discard variables with weak correlation to shared memory index
+ * 
+ * constant variable:
+ * 		variable that remains constant in one profile
+ * 		always fails pearcorrelation test, but might be included in the expression
+ * 		variance = 0 --> constant variable
+ */
 
 public class PearsonCorrelation {
 	private List<String> vars;

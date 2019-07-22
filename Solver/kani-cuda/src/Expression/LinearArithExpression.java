@@ -6,25 +6,55 @@ import java.util.*;
 public class LinearArithExpression {
 	
 	/*
+	 * arithmetic expression is written in a linear style
+	 * 
+	 * unit : constant or variable
+	 * term : unit, or unit multiplies unit/term, no +/- allowed
+	 * expression : unit/term +/- unit/term +/- unit/term ...
+	 * 
+	 * expression is limited by number of operators
+	 * 
+	 * value of unit = index (start from 1) of the constant/variable
+	 * [1, 2], [x, y, z]  -> v(1) = 1, v(y) = 4
+	 * 
+	 * value of term = sum of v(unit) * M ^ (index in term)
+	 * v(y * y * 1) = 4 * 5^2 + 4 * 5^1 + 1 * 5^0
+	 * 
+	 * value of current unit should not exceed value of previous unit
+	 * y * x is okay, x * y is not
+	 * 
+	 * value of current term should not exceed value of previous term
+	 * x * 2 + y is okay, y + x * 2 is not, y - x - y * 2 is not
+	 * Note: this rule applies to +/-, but not to transition from + to -
+	 * x * 2 - y is okay, y - x * 2 is also okay
+	 * 
+	 * generate only minus after the first appearance of minus
+	 * 
 	 * limit = [value of previous term, 
 	 * 			value of previous unit,
 	 * 			number of operations remaining,
 	 * 			value of current term]
+	 * 
 	 * 1 : constant		2 : variable
 	 * 3 : +	4 : - 	5 : *
+	 * 
+	 * Example:	
+	 * constant list = [1, 2], variable list = [x, y, z]
+	 * [1, 2] = 2		[2, 1] = x
+	 * [2, 1, 4, 1, 2] = x - 2
 	 */
 	
-	public int[] arr;
-	private int[] consts;
-	private int[] vars;
-	private int[][] profile;
-	private int[][] profile_copy;
-	private int cSize;
-	private int vSize;
-	private int M;
-	private int smidIndex;
-	private int lineCount;
-	private List<String> varNames;
+	public int[] arr;				// the expression
+	private int[] consts;			// constants to generate
+	private int[] vars;				// variables to generate
+	private int[][] profile;		// profile
+	private int[][] profile_copy;	// profile copy for conditional expressions
+	private int cSize;				// how many constants to generate
+	private int vSize;				// how many variables to generate
+	private int M;					// Max value of unit
+	private int smidIndex;			// index of shared memory id in variable list
+	private int lineCount;			// number of lines in profile
+	private List<String> varNames;	// list of variable names
 	
 	public LinearArithExpression(int[] consts, int[] vars,
 			int[][] profile, int smidIndex, int lineCount, List<String> names) {
@@ -39,6 +69,7 @@ public class LinearArithExpression {
 		M = cSize + vSize + 1;
 	}
 	
+	// Generates the left of conditional expression
 	public String generate_partial(int op_max, int max_error) {
 		profile_copy = new int[lineCount][profile[0].length];
 		for (int i = 0; i < lineCount; i++) {
@@ -208,6 +239,7 @@ public class LinearArithExpression {
 		return 0;
 	}
 	
+	// writes out the expression
 	public String arithToString(int end) {
 		String result = " ";
 		int index = 0;

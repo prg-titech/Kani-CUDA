@@ -99,7 +99,6 @@ public class Synthesizer {
 		LinearArithExpression exp = new LinearArithExpression(new int[] {1, 2},
 				rel_var_index, avail_arr, smidIndex, avail_line_count, var_names);
 		String result = exp.generate(num);
-		if (!result.equals("f")) { System.out.println(result); }
 		return result;
 	}
 
@@ -107,7 +106,6 @@ public class Synthesizer {
 		LinearLogicExpression exp = new LinearLogicExpression(new int[] {1}, all_var_index,
 				all_arr, smidIndex, all_line_count, var_names);
 		String result = exp.generate();
-		System.out.println(result);
 		return result;
 	}
 	
@@ -175,9 +173,7 @@ public class Synthesizer {
 		}
 		String arith_exp = synthesizeArith(3);
 		if (arith_exp.equals("f")) {
-			//TODO arith_exp = synthesizeIf
 			arith_exp = synthesizeIf();
-			System.out.println(arith_exp);
 		}
 		if (arith_exp.equals("f")) {
 			System.out.println("Not synthesized from " + profile.toString());

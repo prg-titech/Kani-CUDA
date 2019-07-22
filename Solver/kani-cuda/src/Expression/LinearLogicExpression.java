@@ -3,25 +3,37 @@ package Expression;
 import java.util.*;
 
 /*
- * 0 : pass		-4 : !=
- * -1 : &&		-5 : <
- * -2 : ||		-6 : >
- * -3 : ==
+ * logic expression is written in a binary tree style (left & right)
+ * 
+ * generate and store all arithmetic expressions
+ * then generates, tests and discards logic expression
+ * 
+ * value of the right should not exceed value of the left
+ * 
+ * 0 : pass		-4 : !=			2 : variable
+ * -1 : &&		-5 : <			3 : +
+ * -2 : ||		-6 : >			4 : -
+ * -3 : ==		1  : constant
+ * 
+ * Example:	
+ * constant list = [1, 2], variable list = [x, y, z]
+ * [1, 2] = 2		[2, 1] = x
+ * [-4, 1, 2, 2, 1] = (2 != x)
  */
 
 public class LinearLogicExpression {
 	
-	public int[] arr;
-	private int[] consts;
-	private int[] vars;
-	private int[][] profile;
-	private int cSize;
-	private int vSize;
-	private int M;
-	public ArrayList<int[]> lst;
-	private int smidIndex;
-	private int lineCount;
-	private List<String> varNames;
+	public int[] arr;				// the expression
+	private int[] consts;			// constants to generate
+	private int[] vars;				// variables to generate
+	private int[][] profile;		// profile
+	private int cSize;				// number of constants
+	private int vSize;				// number of variables
+	private int M;					// max value of unit
+	public ArrayList<int[]> lst;	// stores all arithmetic expressions
+	private int smidIndex;			// index of shared memory id in variable list
+	private int lineCount;			// number of lines in profile
+	private List<String> varNames;	// list of variable names
 	
 	int count = 0;
 	
@@ -57,8 +69,6 @@ public class LinearLogicExpression {
 		gen_bool(1, Integer.MAX_VALUE, new LogicCallBack(tcb));
 		arr[0] = -2;
 		gen_bool(1, Integer.MAX_VALUE, new LogicCallBack(tcb));
-		//System.out.println(count + " logic expressions are correct");
-		//System.out.println(tcb.count_logic);
 	}
 	
 	public void gen_bool(int index, int limit, CallBack cb) {
@@ -140,6 +150,7 @@ public class LinearLogicExpression {
 		throw new RuntimeException(logicToString());
 	}
 	
+	// evaluates the actual value of the expression
 	public boolean evaluate(Cursor cursor, int line) {
 		boolean result;
 		int index = cursor.getIndex();
