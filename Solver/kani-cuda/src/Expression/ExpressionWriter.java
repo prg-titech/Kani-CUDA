@@ -74,7 +74,7 @@ public class ExpressionWriter {
 		int bc = 0;
 		int start = id.length() + this.code.indexOf(id);
 		int end = start;
-		
+
 		bc++;
 		//System.out.println(this.code.charAt(end));
 		while(bc!=0){
@@ -85,15 +85,15 @@ public class ExpressionWriter {
 				bc--;
 			}
 		}	
-		
+
 		StringBuilder sb = new StringBuilder(this.code);
 		String[] memExps = sb.substring(start+1, end).toString().split(",");
 		String globalMemExp = memExps[0].trim();
 		String sharedMemExp = memExps[1].trim();
 		String memCopyExp = "\nif" + exp + "{" + sharedMemExp + "=" + globalMemExp + ";}";
-		
+
 		sb.replace(this.code.indexOf(id), end+1, sharedMemExp);
-		
+
 		String insert = "__insert();";
 		int insertPoint = this.code.indexOf(insert) + insert.length();
 		sb.insert(insertPoint, memCopyExp);

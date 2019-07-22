@@ -49,7 +49,6 @@ public class LinearLogicExpression {
 	}
 	
 	public void gen() {
-		//TODO
 		arr = new int[25];
 		gen_arith();
 		TestCallBack tcb = new TestCallBack();
@@ -138,8 +137,6 @@ public class LinearLogicExpression {
 			}
 		}
 		count++;
-		//System.out.println(Arrays.toString(arr) + " " + index);
-		// System.out.println(logicToString());
 		throw new RuntimeException(logicToString());
 	}
 	

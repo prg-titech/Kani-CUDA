@@ -119,17 +119,13 @@ public class LinearArithExpression {
 	
 	public boolean test(int end) {
 		int x;
-		//System.out.print(Arrays.toString(arr));
 		for (int line = 0; line < lineCount; line++) {
-			//System.out.println(profile[line][smidIndex] + " " + evaluate(end, line));
 			if ((x = profile[line][smidIndex]) != -1) {
 				if (x != evaluate(end, line)) {
 					return false;
 				}
 			}
 		}
-		//System.out.println(Arrays.toString(arr) + end);
-		//System.out.println(arithToString(end));
 		count++;
 		throw new RuntimeException(arithToString(end));
 	}
@@ -168,7 +164,6 @@ public class LinearArithExpression {
 		if (arr[index] == 1) {
 			return arr[index + 1];
 		} else if (arr[index] == 2) {
-			//TODO: this should be the variable value
 			return profile[line][arr[index + 1]];
 		}
 		return 0;

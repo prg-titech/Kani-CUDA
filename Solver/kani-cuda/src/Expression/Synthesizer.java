@@ -90,6 +90,7 @@ public class Synthesizer {
 		}
 		
 		// The following codes are old ones
+		/*
 		this.data = new ArrayList<String>();
 		try{
 			if(file.exists()){
@@ -113,6 +114,8 @@ public class Synthesizer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		*/
 
 	}
 	
@@ -138,36 +141,6 @@ public class Synthesizer {
 				varIndex, avail_arr, smidIndex, avail_line_count, vars);
 		exp.generate(3);
 
-		
-		// The following are old codes
-		List<Expression> exps = env.generateArith2(num, relVars, constantVars);
-		/*
-		File write = new File("Expressions");
-		try {
-			write.createNewFile();
-			FileWriter writer = new FileWriter(write);
-			for(Expression ex : exps){
-				writer.write(ex.toStringExp() + "\n");
-			}
-			writer.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		*/
-		Iterator<Expression> it = exps.iterator();
-		int size = this.data.size();
-		loop : while(it.hasNext()){
-			Expression e = it.next();
-			for(int i = 0; i < size; i++){
-				env.setVal(vars, Arrays.asList(data.get(i).split(" ")));
-				if (env.exsitsSmIdx() && (e.eval(env) != env.getSmIdx())) {
-					break;
-				}
-				if (i == size-1) {
-					return e;
-				}
-			}
-		}
 		return new None();
 	}
 	
@@ -180,49 +153,7 @@ public class Synthesizer {
 		LinearLogicExpression exp = new LinearLogicExpression(new int[] {1}, allVar,
 				all_arr, smidIndex, all_line_count, vars);
 		exp.generate();
-		
-		// The following are old codes
-		List<BoolExpression> exps = env.generateBoolAux(1);
-		Iterator<BoolExpression> it = exps.iterator();
-		int size = this.data.size();
-		while(it.hasNext()){
-			BoolExpression e = it.next();
-			boolean temp = false;
-			for(int i = 0; i < size; i++){
-				env.setVal(vars, Arrays.asList(data.get(i).split(" ")));
-				temp = env.exsitsSmIdx();
-				if (e.eval(env) != temp) {
-					break;
-				}
-				if (i == size-1) {
-					//System.out.printf("The number of variables: %d%n", this.vars.size()-2);
-					//System.out.printf("The number of datum: %d%n", size);
-					//System.out.println("Synthesized expression:");
-					//e.print();
-					return e;
-				}
-			}
-		}		
-		exps = env.generateBool(1);
-		it = exps.iterator();
-		while(it.hasNext()){
-			BoolExpression e = it.next();
-			boolean temp = false;
-			for(int i = 0; i < size; i++){
-				env.setVal(vars, Arrays.asList(data.get(i).split(" ")));
-				temp = env.exsitsSmIdx();
-				if (e.eval(env) != temp) {
-					break;
-				}
-				if (i == size-1) {
-					//System.out.printf("The number of variables: %d%n", this.vars.size()-2);
-					//System.out.printf("The number of datum: %d%n", size);
-					//System.out.println("Synthesized expression:");
-					//e.print();
-					return e;
-				}
-			}
-		}
+
 		return new BNone();
 	}
 	
@@ -386,14 +317,19 @@ public class Synthesizer {
 		return "";	
 	}
 	
-	public String synthMemExp(File profile){				
+	public String synthMemExp(File profile){
+		
 		long start, end;
 		BoolExpression bnone = new BNone();
 		Expression none = new None();
 		BoolExpression bexp = bnone;
 		Expression exp = none;
 		this.inputData(profile);
-		
+
+		synthesizeBool();
+		synthesizeArith(3);
+
+		/*
 		bexp = this.synthesizeBool();
 
 		if(!bexp.equals(bnone)){
@@ -408,6 +344,7 @@ public class Synthesizer {
 			System.out.println("Expression synthesized from " + profile.toString() + ":");
 			return bexp.toStringExp() + " ? sb[" + exp.toStringExp() + "] : ";
 		}
+		*/
 		return "";
 	}	
 	
@@ -429,10 +366,10 @@ public class Synthesizer {
 			smidIndex = pc.getSmid();
 			if(file.getName().contains("forMemCopyExp")){
 				exp = this.synthMemCopyExp(file);
-				writer.assignMemCopyExp(exp, file.getName().substring("forMemCopyExp".length()));
+				//writer.assignMemCopyExp(exp, file.getName().substring("forMemCopyExp".length()));
 			}else{
 				exp = this.synthMemExp(file);
-				writer.assignMemExp(exp, file.getName());
+				//writer.assignMemExp(exp, file.getName());
 			}	
 		}
 		
