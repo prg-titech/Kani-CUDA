@@ -39,13 +39,13 @@ public class LinearLogicExpression {
 		lst = new ArrayList<>();
 	}
 	
-	public void generate() {
+	public String generate() {
 		try {
 			gen();
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			return;
+			return e.getMessage();
 		}
+		return "f";
 	}
 	
 	public void gen() {
@@ -188,7 +188,7 @@ public class LinearLogicExpression {
 	}
  	
 	public String helper(Cursor cursor) {
-		String result = "";
+		String result = " ";
 		int index = cursor.getIndex();
 		cursor.addIndex(1);
 		switch (arr[index]) {

@@ -6,7 +6,11 @@ import java.util.*;
 public class LinearArithExpression {
 	
 	/*
-	 * limit = [term, unit, op_rm, value]
+	 * limit = [value of previous term, 
+	 * 			value of previous unit,
+	 * 			number of operations remaining,
+	 * 			value of current term]
+	 * 1 : constant		2 : variable
 	 * 3 : +	4 : - 	5 : *
 	 */
 	
@@ -36,8 +40,7 @@ public class LinearArithExpression {
 		M = cSize + vSize + 1;
 	}
 	
-	public void generate(int op_max) {
-		//if (op_max == 0) { return; }
+	public String generate(int op_max) {
 		arr = new int[3 * op_max + 2];
 		int[] limit = new int[4];
 		limit[0] = Integer.MAX_VALUE;
@@ -48,10 +51,9 @@ public class LinearArithExpression {
 		try {
 			gen(0, limit, tcb);
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			return;
+			return e.getMessage();
 		}
-		//System.out.println(tcb.count);
+		return "f";
 	}
 	
 	public void gen(int index, int[] limit, CallBack cb) {
@@ -170,7 +172,7 @@ public class LinearArithExpression {
 	}
 	
 	public String arithToString(int end) {
-		String result = "";
+		String result = " ";
 		int index = 0;
 		while (index < end) {
 			switch(arr[index]) {

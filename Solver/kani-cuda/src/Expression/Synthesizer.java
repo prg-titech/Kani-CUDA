@@ -135,16 +135,16 @@ public class Synthesizer {
 	}
 
 
-	public Expression synthesizeArith(int num){
+	public String synthesizeArith(int num){
 
 		LinearArithExpression exp = new LinearArithExpression(new int[] {1, 2},
 				varIndex, avail_arr, smidIndex, avail_line_count, vars);
-		exp.generate(3);
-
-		return new None();
+		String result = exp.generate(num);
+		System.out.println(result);
+		return result;
 	}
-	
-	public BoolExpression synthesizeBool(){
+
+	public String synthesizeBool(){
 
 		int[] allVar = new int[vars.size() - smidIndex - 1];
 		for (int i = smidIndex + 1; i < vars.size(); i++) {
@@ -152,9 +152,9 @@ public class Synthesizer {
 		}
 		LinearLogicExpression exp = new LinearLogicExpression(new int[] {1}, allVar,
 				all_arr, smidIndex, all_line_count, vars);
-		exp.generate();
-
-		return new BNone();
+		String result = exp.generate();
+		System.out.println(result);
+		return result;
 	}
 	
 	public Expression synthsizeIf() {
@@ -318,16 +318,27 @@ public class Synthesizer {
 	}
 	
 	public String synthMemExp(File profile){
-		
-		long start, end;
-		BoolExpression bnone = new BNone();
-		Expression none = new None();
-		BoolExpression bexp = bnone;
-		Expression exp = none;
+
 		this.inputData(profile);
 
-		synthesizeBool();
-		synthesizeArith(3);
+		String logic_exp = synthesizeBool();
+		if (logic_exp.equals("f")) {
+			System.out.println("Expression synthesized from "
+					+ profile.toString() + ":");
+			return "";
+		}
+		String arith_exp = synthesizeArith(3);
+		if (arith_exp.equals("f")) {
+			//TODO arith_exp = synthesizeIf
+		}
+		if (arith_exp.equals("f")) {
+			System.out.println("Expression synthesized from "
+					+ profile.toString() + ":");
+			return "";
+		} else {
+			System.out.println("Expression synthesized from " + profile.toString() + ":");
+			return logic_exp + " ? sb[" + arith_exp + "] : ";
+		}
 
 		/*
 		bexp = this.synthesizeBool();
@@ -345,7 +356,6 @@ public class Synthesizer {
 			return bexp.toStringExp() + " ? sb[" + exp.toStringExp() + "] : ";
 		}
 		*/
-		return "";
 	}	
 	
 	public void synthesizeFrom(File profiles){	
@@ -366,16 +376,16 @@ public class Synthesizer {
 			smidIndex = pc.getSmid();
 			if(file.getName().contains("forMemCopyExp")){
 				exp = this.synthMemCopyExp(file);
-				//writer.assignMemCopyExp(exp, file.getName().substring("forMemCopyExp".length()));
+				writer.assignMemCopyExp(exp, file.getName().substring("forMemCopyExp".length()));
 			}else{
 				exp = this.synthMemExp(file);
-				//writer.assignMemExp(exp, file.getName());
+				writer.assignMemExp(exp, file.getName());
 			}	
 		}
 		
 		long end = System.currentTimeMillis();		
 		
-		//System.out.println(writer.getCode());
+		System.out.println(writer.getCode());
 		System.out.println("Synthesis time: " + (end - start) + "ms");
 		
 		writer.output();
