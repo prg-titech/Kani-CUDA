@@ -18,6 +18,7 @@ public class LinearArithExpression {
 	private int[] consts;
 	private int[] vars;
 	private int[][] profile;
+	private int[][] profile_copy;
 	private int cSize;
 	private int vSize;
 	private int M;
@@ -39,6 +40,10 @@ public class LinearArithExpression {
 	}
 	
 	public String generate_partial(int op_max, int max_error) {
+		profile_copy = new int[lineCount][profile[0].length];
+		for (int i = 0; i < lineCount; i++) {
+			System.arraycopy(profile[i], 0, profile_copy[i], 0, profile[i].length);
+		}
 		arr = new int[3 * op_max + 2];
 		int[] limit = new int[4];
 		limit[0] = Integer.MAX_VALUE;
@@ -134,30 +139,35 @@ public class LinearArithExpression {
 	}
 	
 	public void test(int end) {
-		int x;
+		int x = 0;
 		for (int line = 0; line < lineCount; line++) {
 			if ((x = profile[line][smidIndex]) != -1) {
-				if (x != evaluate(end, line)) {
-					return;
+				if (x != evaluate(end, line)) { return; }
+			}
+		}
+		throw new RuntimeException(arithToString(end));
+	}
+	
+	public void testPartial(int end, int max_error) {
+		int x = 0;
+		int error = 0;
+		for (int line = 0; line < lineCount; line++) {
+			if ((x = profile[line][smidIndex]) != -1) {
+				if (x != evaluate(end, line)) { error++; }
+			}
+			if (error > max_error) { return; }
+		}
+		for (int line = 0; line < lineCount; line++) {
+			if ((x = profile[line][smidIndex]) != -1) {
+				if (x == evaluate(end, line)) {
+					profile_copy[line][smidIndex] = -1;
 				}
 			}
 		}
 		throw new RuntimeException(arithToString(end));
 	}
 	
-	public void test_partial(int end, int max_error) {
-		int x;
-		int count = 0;
-		for (int line = 0; line < lineCount; line++) {
-			if ((x = profile[line][smidIndex]) != -1) {
-				if (x != evaluate(end, line)) {
-					count++;
-				}
-				if (count > max_error) { return; }
-			}
-		}
-		throw new RuntimeException(arithToString(end));
-	}
+	public int[][] getPartial() { return profile_copy; }
 	
 	public int evaluate(int end, int line) {
 		Cursor cursor = new Cursor();

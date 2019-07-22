@@ -9,7 +9,7 @@ public class PartialCallBack implements CallBack {
 	}
 	
 	public void call(int index, int[] limit, LinearArithExpression exp) {
-		exp.test_partial(index, max_error);
+		exp.testPartial(index, max_error);
 	}
 
 	public void call(int index, int limit, LinearLogicExpression exp) {}

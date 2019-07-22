@@ -4,20 +4,20 @@ import java.io.*;
 import java.util.*;
 
 public class Synthesizer {
-	List<String> vars;
-	List<File> profiles;
-	int[][] avail_arr;
-	int[][] all_arr;
-	int[] varIndex;
-	int avail_line_count;
-	int all_line_count;
-	int max_error;
-	int smidIndex;
-	int[] allVarIndex;
+	List<String> var_names;	// list of all variable names
+	List<File> profiles;	// list of all profile names
+	int[][] avail_arr;		// all profiles with available shared memory id
+	int[][] all_arr;		// all profiles
+	int[] rel_var_index;	// includes constant variables and variables passed correlation test
+	int[] all_var_index;	// does not include variables before shared memory id
+	int avail_line_count;	// number of lines in avail_arr
+	int all_line_count;		// number of lines in all_arr
+	int max_error;			// max error for generating conditional expressions
+	int smidIndex;			// index of shared memory id in variable list, skip the variables before it
 
 	public Synthesizer() {
 		super();
-		this.vars = new ArrayList<String>();
+		this.var_names = new ArrayList<String>();
 		this.profiles = new ArrayList<File>();
 	}
 	
@@ -27,7 +27,7 @@ public class Synthesizer {
 				FileReader fr = new FileReader(file);
 				BufferedReader br = new BufferedReader(fr);
 				String datum = br.readLine();
-				this.vars = Arrays.asList(datum.split(" "));
+				this.var_names = Arrays.asList(datum.split(" "));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -35,7 +35,7 @@ public class Synthesizer {
 	}
 	
 	public void addAllArr(List<String> lst) {
-		for (int i = 0; i < vars.size(); i++) {
+		for (int i = 0; i < var_names.size(); i++) {
 			if (lst.get(i).equals("N")) {
 				all_arr[all_line_count][i] = -1;
 				continue;
@@ -46,14 +46,13 @@ public class Synthesizer {
 	}
 	
 	public void addAvailArr(List<String> lst) {
-		for (int i = 0; i < vars.size(); i++) {
+		for (int i = 0; i < var_names.size(); i++) {
 			avail_arr[avail_line_count][i] = Integer.parseInt(lst.get(i));
 		}
 		avail_line_count++;
 	}
 
 	public void inputData(File file){
-		
 		try {
 			if(file.exists()) {
 				FileReader fr = new FileReader(file);
@@ -91,39 +90,47 @@ public class Synthesizer {
 			}
 		}
 		//TODO hardcoded this size
-		all_arr = new int[3000][this.vars.size()];
-		avail_arr = new int[3000][this.vars.size()];
+		all_arr = new int[3000][this.var_names.size()];
+		avail_arr = new int[3000][this.var_names.size()];
 	}
 
 
 	public String synthesizeArith(int num){
-
 		LinearArithExpression exp = new LinearArithExpression(new int[] {1, 2},
-				varIndex, avail_arr, smidIndex, avail_line_count, vars);
+				rel_var_index, avail_arr, smidIndex, avail_line_count, var_names);
 		String result = exp.generate(num);
-		System.out.println(result);
+		if (!result.equals("f")) { System.out.println(result); }
 		return result;
 	}
 
 	public String synthesizeBool(){
-
-		int[] allVar = new int[vars.size() - smidIndex - 1];
-		for (int i = smidIndex + 1; i < vars.size(); i++) {
-			allVar[i - smidIndex - 1] = i;
-		}
-		LinearLogicExpression exp = new LinearLogicExpression(new int[] {1}, allVar,
-				all_arr, smidIndex, all_line_count, vars);
+		LinearLogicExpression exp = new LinearLogicExpression(new int[] {1}, all_var_index,
+				all_arr, smidIndex, all_line_count, var_names);
 		String result = exp.generate();
 		System.out.println(result);
 		return result;
 	}
 	
 	public String synthesizeIf() {
+		// find first arith expression
 		LinearArithExpression exp = new LinearArithExpression(new int[] {1, 2},
-				varIndex, avail_arr, smidIndex, avail_line_count, vars);
-		String result = exp.generate_partial(3, max_error);
-		System.out.println(result);
-		return result;
+				rel_var_index, avail_arr, smidIndex, avail_line_count, var_names);
+		String firstArith = exp.generate_partial(3, max_error);
+		if (firstArith.equals("f")) { return firstArith; }
+		
+		// find conditional statement
+		int[][] conditionalProfile = exp.getPartial();
+		LinearLogicExpression lexp = new LinearLogicExpression(new int[] {1}, all_var_index,
+				conditionalProfile, smidIndex, avail_line_count, var_names);
+		String condition = lexp.generate();
+		if (condition.equals("f")) { return condition; }
+		
+		// find second arith expression
+		LinearArithExpression sexp = new LinearArithExpression(new int[] {1, 2},
+				rel_var_index, conditionalProfile, smidIndex, avail_line_count, var_names);
+		String secondArith = sexp.generate(3);
+		if (secondArith.equals("f")) { return secondArith; }
+		return condition + " ?" + firstArith + ":"  + secondArith;
 	}
 	
 	public String synthMemCopyExp(File profile){
@@ -170,6 +177,7 @@ public class Synthesizer {
 		if (arith_exp.equals("f")) {
 			//TODO arith_exp = synthesizeIf
 			arith_exp = synthesizeIf();
+			System.out.println(arith_exp);
 		}
 		if (arith_exp.equals("f")) {
 			System.out.println("Not synthesized from " + profile.toString());
@@ -190,10 +198,14 @@ public class Synthesizer {
 		this.input(profiles);
 		for(File file : this.profiles){
 			String exp;
-			PearsonCorrelation pc = new PearsonCorrelation(vars, avail_arr, avail_line_count);
+			PearsonCorrelation pc = new PearsonCorrelation(var_names, avail_arr, avail_line_count);
 			pc.process();
-			varIndex = pc.getVarIndex();
+			rel_var_index = pc.getVarIndex();
 			smidIndex = pc.getSmid();
+			all_var_index = new int[var_names.size() - smidIndex - 1];
+			for (int i = smidIndex + 1; i < var_names.size(); i++) {
+				all_var_index[i - smidIndex - 1] = i;
+			}
 			if (file.getName().contains("forMemCopyExp")) {
 				exp = this.synthMemCopyExp(file);
 				writer.assignMemCopyExp(exp, file.getName().substring("forMemCopyExp".length()));
@@ -205,7 +217,7 @@ public class Synthesizer {
 		
 		long end = System.currentTimeMillis();		
 		
-		//System.out.println(writer.getCode());
+		System.out.println(writer.getCode());
 		System.out.println("Synthesis time: " + (end - start) + "ms");
 		
 		writer.output();

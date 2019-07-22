@@ -30,10 +30,10 @@ __global__ void diffusion_kernel(float* in,
     int t = (k == nz-1)     ? c : c + xy;
     out[c] = 
         cc * in[c] 
-      + cw * ((((i - 1)!=(blockDim.y + 1))&&(i!=blockDim.x)) ? sb[ csb + 1 - 2 ] : in[w]) 
-      + ce * ((((blockDim.y + 1)!=i)&&((blockDim.x - 1)!=i)) ? sb[ csb + 1 ] : in[e]) 
-      + cs * ((((csb - 1)<j)||(blockDim.x!=threadIdx.y)) ? sb[ csb + blockDim.x ] : in[s])
-      + cn * (((j==0)||(threadIdx.y!=0)) ? sb[ csb + 1 - blockDim.y ] : in[n]) 
+      + cw * ((((i - 1)!=(blockDim.y + 1))&&(i!=blockDim.x)) ? sb[(threadIdx.x==0) ? csb + 1 - 2 : csb ] : in[w]) 
+      + ce * ((((blockDim.y + 1)!=i)&&((blockDim.x - 1)!=i)) ? sb[((threadIdx.x + 1)==blockDim.x) ? csb + 1 : csb ] : in[e]) 
+      + cs * ((((csb - 1)<j)||(blockDim.x!=threadIdx.y)) ? sb[(blockDim.x==threadIdx.y) ? csb + blockDim.x : csb ] : in[s])
+      + cn * (((j==0)||(threadIdx.y!=0)) ? sb[(threadIdx.y==0) ? csb + 1 - blockDim.y : threadIdx.x ] : in[n]) 
       + cb * in[b] 
       + ct * in[t];   
     c += xy;
