@@ -4,7 +4,6 @@ import java.io.*;
 import java.util.*;
 
 public class Synthesizer {
-	Environment env;
 	List<String> vars;
 	List<File> profiles;
 	int[][] avail_arr;
@@ -18,7 +17,6 @@ public class Synthesizer {
 
 	public Synthesizer() {
 		super();
-		this.env = new Environment();
 		this.vars = new ArrayList<String>();
 		this.profiles = new ArrayList<File>();
 	}
@@ -30,7 +28,6 @@ public class Synthesizer {
 				BufferedReader br = new BufferedReader(fr);
 				String datum = br.readLine();
 				this.vars = Arrays.asList(datum.split(" "));
-				this.env = new Environment(this.vars);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
