@@ -61,7 +61,7 @@ public class LinearArithExpression {
 		limit[1] = M - 2;
 		limit[2] = op_max;
 		limit[3] = 0;
-		CallBack tcb = new TestCallBack();
+		TestCallBack tcb = new TestCallBack();
 		try {
 			gen(0, limit, tcb);
 		} catch (Exception e) {

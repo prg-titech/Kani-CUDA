@@ -163,8 +163,7 @@ public class Synthesizer {
 
 		String logic_exp = synthesizeBool();
 		if (logic_exp.equals("f")) {
-			System.out.println("Expression synthesized from "
-					+ profile.toString() + ":");
+			System.out.println("Not synthesized from " + profile.toString());
 			return "";
 		}
 		String arith_exp = synthesizeArith(3);
@@ -173,8 +172,7 @@ public class Synthesizer {
 			arith_exp = synthesizeIf();
 		}
 		if (arith_exp.equals("f")) {
-			System.out.println("Expression synthesized from "
-					+ profile.toString() + ":");
+			System.out.println("Not synthesized from " + profile.toString());
 			return "";
 		} else {
 			System.out.println("Expression synthesized from " + profile.toString() + ":");
@@ -192,7 +190,7 @@ public class Synthesizer {
 		this.input(profiles);
 		for(File file : this.profiles){
 			String exp;
-			PearsonCorrelation pc = new PearsonCorrelation(file, vars, avail_arr, avail_line_count);
+			PearsonCorrelation pc = new PearsonCorrelation(vars, avail_arr, avail_line_count);
 			pc.process();
 			varIndex = pc.getVarIndex();
 			smidIndex = pc.getSmid();
