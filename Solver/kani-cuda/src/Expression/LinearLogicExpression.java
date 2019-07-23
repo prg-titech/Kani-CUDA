@@ -130,13 +130,12 @@ public class LinearLogicExpression {
 	}
 	
 	public boolean test(int index) {
-		int x;
 		Cursor cursor = new Cursor();
 		boolean curr;
 		for (int line = 0; line < lineCount; line++) {
 			cursor.setIndex(0);
 			curr = evaluate(cursor, line);
-			if ((x = profile[line][smidIndex]) == -1) {
+			if ((profile[line][smidIndex]) == -1) {
 				if (curr) {
 					return false;
 				}

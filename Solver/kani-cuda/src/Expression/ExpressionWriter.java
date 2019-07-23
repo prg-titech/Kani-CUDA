@@ -1,7 +1,6 @@
 package Expression;
 
 import java.io.*;
-import java.util.*;
 
 public class ExpressionWriter {
 	String code;
@@ -24,6 +23,7 @@ public class ExpressionWriter {
 				while ((datum = br.readLine()) != null) {
 					this.code = this.code + "\n" + datum;
 				}
+				br.close();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
