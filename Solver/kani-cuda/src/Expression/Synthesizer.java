@@ -28,6 +28,8 @@ public class Synthesizer {
 				BufferedReader br = new BufferedReader(fr);
 				String datum = br.readLine();
 				this.var_names = Arrays.asList(datum.split(" "));
+				br.close();
+				fr.close();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -72,6 +74,7 @@ public class Synthesizer {
 					addAllArr(lst);
 				}
 				max_error = (int) (max_error * 0.2);
+				br.close();
 				fr.close();
 			}
 		} catch (IOException e) {
@@ -184,6 +187,7 @@ public class Synthesizer {
 		}
 	}	
 	
+	// Interface
 	public void synthesizeFrom(File profiles){	
 		long start = System.currentTimeMillis();
 		

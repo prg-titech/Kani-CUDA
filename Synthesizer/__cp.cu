@@ -27,10 +27,10 @@ __global__ void diffusion_kernel(float* in,
     int t = (k == nz-1)     ? c : c + xy;
     out[c] = 
         cc * in[c] 
-      + cw * __opt__467198.in[w] 
-      + ce * __opt__951889.in[e] 
-      + cs * __opt__628731.in[s]
-      + cn * __opt__848239.in[n] 
+      + cw * __opt__726144.in[w] 
+      + ce * __opt__880083.in[e] 
+      + cs * __opt__59052.in[s]
+      + cn * __opt__617039.in[n] 
       + cb * in[b] 
       + ct * in[t];   
     c += xy;
