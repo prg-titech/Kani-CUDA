@@ -88,13 +88,13 @@ public class Synthesizer {
 		for(File file : profile.listFiles()){
 			if (file.equals(vars)) {
 				this.inputVars(file);
+				//TODO hardcoded this size
+				all_arr = new int[3000][this.var_names.size()];
+				avail_arr = new int[3000][this.var_names.size()];
 			} else {
 				this.profiles.add(file);
 			}
 		}
-		//TODO hardcoded this size
-		all_arr = new int[3000][this.var_names.size()];
-		avail_arr = new int[3000][this.var_names.size()];
 	}
 
 

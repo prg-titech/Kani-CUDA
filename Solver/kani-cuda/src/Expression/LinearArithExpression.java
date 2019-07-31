@@ -10,7 +10,7 @@ public class LinearArithExpression {
 	 * 
 	 * unit : constant or variable
 	 * term : unit, or unit multiplies unit/term, no +/- allowed
-	 * expression : unit/term +/- unit/term +/- unit/term ...
+	 * expression : term +/- term +/- term ...
 	 * 
 	 * expression is limited by number of operators
 	 * 
@@ -40,8 +40,8 @@ public class LinearArithExpression {
 	 * 
 	 * Example:	
 	 * constant list = [1, 2], variable list = [x, y, z]
-	 * [1, 2] = 2		[2, 1] = x
-	 * [2, 1, 4, 1, 2] = x - 2
+	 * [1, 1] = 2		[2, 0] = x
+	 * [2, 0, 4, 1, 1] = x - 2
 	 */
 	
 	public int[] arr;				// the expression
